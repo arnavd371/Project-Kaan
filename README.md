@@ -20,9 +20,9 @@ within seconds — no internet required.
 ### Model Performance
 - Training data: IRRI Rice Acoustic Sensor Dataset
   (Balingbing et al., Computers & Electronics in Agriculture, 2024)
-- Validation accuracy: 94.74%
+- Best validation accuracy: 97.76% (macro F1 0.98; leakage-fixed + SpecAugment/deeper CNN, audited)
 - Exceeds reference paper accuracy of 84.51%
-- Model size: 124 KB (INT8 quantized TFLite)
+- Model size: 333 KB (INT8 quantized TFLite)
 - Classes: clean, rice weevil, lesser grain borer, red flour beetle
 
 ### Novel Contribution

@@ -118,19 +118,37 @@ def main():
 
     print(f"Loaded {len(X)} samples across {len(CLASS_NAMES)} classes.")
 
-    X_train, X_val, y_train, y_val = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+    # Keep file paths alongside spectrograms so augmentation cannot pull from
+    # validation-held-out recordings (leakage bug fixed Jul 2026).
+    paths = []
+    for class_idx, class_name in enumerate(CLASS_NAMES):
+        class_dir = DATA_DIR / class_name
+        for wav_path in sorted(class_dir.glob("*.wav")):
+            paths.append(str(wav_path))
+    paths = np.array(paths)
+    if len(paths) != len(X):
+        raise RuntimeError(
+            f"Path count ({len(paths)}) does not match spectrogram count ({len(X)}). "
+            "load_dataset and path listing must stay in sync."
+        )
+
+    X_train, X_val, y_train, y_val, paths_train, paths_val = train_test_split(
+        X, y, paths, test_size=0.2, random_state=42, stratify=y
     )
 
-    # Apply augmentation to training set only
+    train_files_by_class = {
+        class_name: paths_train[y_train == class_idx].tolist()
+        for class_idx, class_name in enumerate(CLASS_NAMES)
+    }
+
+    # Apply augmentation to training set only, sourcing only from train-split files
     X_train_aug = []
     y_train_aug = []
     for spec, label in zip(X_train, y_train):
         X_train_aug.append(spec)
         y_train_aug.append(label)
         if np.random.random() < 0.5:
-            class_dir = DATA_DIR / CLASS_NAMES[label]
-            wav_files = list(class_dir.glob("*.wav"))
+            wav_files = train_files_by_class[CLASS_NAMES[label]]
             if wav_files:
                 wav_path = np.random.choice(wav_files)
                 y_wave = load_audio(wav_path)
