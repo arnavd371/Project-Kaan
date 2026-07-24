@@ -9,7 +9,6 @@ from typing import Any, Dict, Union
 
 import librosa
 import numpy as np
-import tensorflow as tf
 
 import sys
 
@@ -26,6 +25,25 @@ MODEL_PATH = Path(__file__).resolve().parent.parent / "model" / "grainear.tflite
 DEMO_RMS_THRESHOLD = 0.02
 DEMO_CENTROID_LOW = 300
 DEMO_CENTROID_HIGH = 500
+
+
+def _load_interpreter_class():
+    """Prefer LiteRT (works on Streamlit Cloud / Python 3.13); fall back to TF."""
+    try:
+        from ai_edge_litert.interpreter import Interpreter
+
+        return Interpreter
+    except ImportError:
+        pass
+    try:
+        from tflite_runtime.interpreter import Interpreter
+
+        return Interpreter
+    except ImportError:
+        pass
+    import tensorflow as tf
+
+    return tf.lite.Interpreter
 
 
 def estimate_severity(audio_path):
@@ -91,7 +109,8 @@ class GrainEarPredictor:
             self._load_model()
 
     def _load_model(self):
-        self.interpreter = tf.lite.Interpreter(model_path=str(self.model_path))
+        Interpreter = _load_interpreter_class()
+        self.interpreter = Interpreter(model_path=str(self.model_path))
         self.interpreter.allocate_tensors()
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
