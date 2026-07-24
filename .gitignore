@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+venv/
+.venv/
+*.env
+data/rice_weevil/
+data/lesser_grain_borer/
+data/red_flour_beetle/
+data/clean/
+*.wav
+*.mp3
