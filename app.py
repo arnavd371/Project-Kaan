@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import sys
 from pathlib import Path
@@ -22,12 +23,19 @@ from utils.inference import GrainEarPredictor, estimate_severity
 from utils.language import LANGUAGES, get_advisory, get_pest_name, get_ui
 from utils.visualizer import plot_spectrogram
 
-if "page" not in st.session_state:
-    st.session_state.page = "intro"
-if "lang" not in st.session_state:
-    st.session_state.lang = "en"
-if "audio_bytes" not in st.session_state:
-    st.session_state.audio_bytes = None
+_DEFAULTS = {
+    "page": "intro",
+    "lang": "en",
+    "audio_bytes": None,
+    "audio_id": None,
+    "upload_file_id": None,
+    "result": None,
+    "severity": None,
+    "pending_analyze": False,
+}
+for _key, _val in _DEFAULTS.items():
+    if _key not in st.session_state:
+        st.session_state[_key] = _val
 
 GITHUB_REPO_URL = "https://github.com/arnavdhiman/GrainEar"
 
@@ -608,12 +616,38 @@ hr {{ border: none !important; border-top: 1px solid var(--pi-line) !important; 
 
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-INSTANT_CLEAR_CSS = """
+def page_chrome_css(page: str) -> str:
+    """Kill Streamlit morph animations and hide sidebar on the intro screen."""
+    hide_sidebar = ""
+    if page == "intro":
+        hide_sidebar = """
+        [data-testid="stSidebar"],
+        [data-testid="stSidebarCollapsedControl"],
+        [data-testid="collapsedControl"] {
+          display: none !important;
+          width: 0 !important;
+          min-width: 0 !important;
+          visibility: hidden !important;
+        }
+        [data-testid="stAppViewContainer"] .main {
+          margin-left: 0 !important;
+        }
+        """
+    return f"""
 <style>
-[data-testid="stAppViewContainer"] {
-    animation: none !important;
-    transition: none !important;
-}
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > .main,
+section.main,
+.stApp,
+[data-testid="stVerticalBlock"],
+[data-testid="stHorizontalBlock"],
+[data-testid="element-container"],
+[data-testid="stDecoration"],
+[data-testid="stHeader"] {{
+  animation: none !important;
+  transition: none !important;
+}}
+{hide_sidebar}
 </style>
 """
 
@@ -627,12 +661,14 @@ def load_predictor() -> GrainEarPredictor:
     return GrainEarPredictor()
 
 
+@st.cache_data(show_spinner=False)
 def generate_demo_audio() -> bytes:
     sr = 16000
-    duration = 10
+    duration = 3  # short clip — enough for demo, much faster to plot/analyze
     t = np.linspace(0, duration, sr * duration, endpoint=False)
     tone = 0.3 * np.sin(2 * np.pi * 360 * t)
-    noise = 0.01 * np.random.randn(len(tone))
+    rng = np.random.default_rng(0)
+    noise = 0.01 * rng.standard_normal(len(tone))
     audio = (tone + noise).astype(np.float32)
     import soundfile as sf
 
@@ -644,10 +680,18 @@ def generate_demo_audio() -> bytes:
 
 def plot_waveform(audio_bytes: bytes) -> plt.Figure:
     y, sr = librosa.load(io.BytesIO(audio_bytes), sr=16000, mono=True)
-    times = np.arange(len(y)) / sr
+    # Downsample plot points for speed on long recordings
+    max_points = 4000
+    if len(y) > max_points:
+        step = max(1, len(y) // max_points)
+        y_plot = y[::step]
+        times = (np.arange(len(y_plot)) * step) / sr
+    else:
+        y_plot = y
+        times = np.arange(len(y)) / sr
     fig, ax = plt.subplots(figsize=(10, 2.4), facecolor=BG)
     ax.set_facecolor(SURFACE)
-    ax.plot(times, y, color=INK, linewidth=0.6)
+    ax.plot(times, y_plot, color=INK, linewidth=0.6)
     ax.set_xlabel("Time (seconds)", color=INK, fontfamily="monospace")
     ax.set_ylabel("Amplitude", color=INK, fontfamily="monospace")
     ax.set_title("Audio Waveform", color=INK, fontsize=11, fontweight="bold", fontfamily="monospace")
@@ -661,14 +705,92 @@ def plot_waveform(audio_bytes: bytes) -> plt.Figure:
 
 def fig_to_image(fig: plt.Figure) -> bytes:
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=120, facecolor=fig.get_facecolor(), bbox_inches="tight")
+    fig.savefig(buf, format="png", dpi=100, facecolor=fig.get_facecolor(), bbox_inches="tight")
     plt.close(fig)
     buf.seek(0)
     return buf.read()
 
 
+@st.cache_data(show_spinner=False)
+def cached_waveform_png(audio_bytes: bytes) -> bytes:
+    return fig_to_image(plot_waveform(audio_bytes))
+
+
+@st.cache_data(show_spinner=False)
+def cached_spectrogram_png(audio_bytes: bytes) -> bytes:
+    return fig_to_image(plot_spectrogram(audio_bytes))
+
+
+def set_audio(audio_bytes: bytes, *, analyze: bool = False) -> None:
+    """Replace current audio and clear stale results so UI never overlaps old output."""
+    st.session_state.audio_bytes = audio_bytes
+    st.session_state.audio_id = hashlib.md5(audio_bytes).hexdigest()
+    st.session_state.result = None
+    st.session_state.severity = None
+    st.session_state.pending_analyze = analyze
+
+
+def run_analysis(predictor: GrainEarPredictor, audio_bytes: bytes) -> None:
+    result = predictor.predict(audio_bytes)
+    st.session_state.result = result
+    if result.get("confident") and result.get("class") != "clean":
+        st.session_state.severity = estimate_severity(io.BytesIO(audio_bytes))
+    else:
+        st.session_state.severity = None
+    st.session_state.pending_analyze = False
+
+
+def render_result_block(lang: str, result: dict) -> None:
+    pest_name = get_pest_name(lang, result["class"])
+    is_pest = result["class"] != "clean"
+
+    if result["confident"]:
+        if is_pest:
+            st.markdown(
+                f'<div class="result-pest"><h2>⚠️ {_no_emdash(get_ui(lang, "result_pest"))}</h2>'
+                f"<h3>{pest_name}</h3></div>",
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                f'<div class="result-clean"><h2>✅ {_no_emdash(get_ui(lang, "result_clean"))}</h2>'
+                f"<h3>{pest_name}</h3></div>",
+                unsafe_allow_html=True,
+            )
+    else:
+        st.markdown(
+            f'<div class="result-low"><h2>🔶 {_no_emdash(get_ui(lang, "low_confidence_title"))}</h2>'
+            f'<p>{_no_emdash(get_ui(lang, "low_confidence_msg"))}</p>'
+            f'<p><b>{pest_name}</b> ({result["confidence"]:.0%})</p></div>',
+            unsafe_allow_html=True,
+        )
+    st.caption("Result indicated by both colour and symbol for accessibility.")
+
+    if st.session_state.severity is not None:
+        render_severity(lang, st.session_state.severity)
+
+    st.markdown(f"**{_no_emdash(get_ui(lang, 'confidence_label'))}:** {result['confidence']:.1%}")
+    st.progress(result["confidence"])
+
+    st.markdown(f"### {_no_emdash(get_ui(lang, 'all_scores_title'))}")
+    scores_df = pd.DataFrame(
+        {
+            "Class": [get_pest_name(lang, k) for k in result["all_scores"]],
+            "Probability": list(result["all_scores"].values()),
+        }
+    ).set_index("Class")
+    st.bar_chart(scores_df, use_container_width=True, color=CHART)
+
+    st.markdown(f"### {_no_emdash(get_ui(lang, 'advisory_title'))}")
+    st.markdown(
+        f'<div class="advisory">{_no_emdash(get_advisory(lang, result["class"]))}</div>',
+        unsafe_allow_html=True,
+    )
+    st.caption(_no_emdash(get_ui(lang, "disclaimer")))
+
+
 def render_intro():
-    st.markdown(INSTANT_CLEAR_CSS, unsafe_allow_html=True)
+    st.markdown(page_chrome_css("intro"), unsafe_allow_html=True)
     lang = st.session_state.lang
 
     st.markdown('<div class="kaan-intro">', unsafe_allow_html=True)
@@ -697,7 +819,12 @@ def render_intro():
     st.markdown(f'<p class="kaan-manifesto">{manifesto}</p>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button(CTA_LISTEN.get(lang, CTA_LISTEN["en"]), type="primary", use_container_width=True):
+    if st.button(
+        CTA_LISTEN.get(lang, CTA_LISTEN["en"]),
+        type="primary",
+        use_container_width=True,
+        key="cta_listen",
+    ):
         st.session_state.page = "main"
         st.rerun()
 
@@ -780,16 +907,26 @@ def render_detect(lang: str, predictor: GrainEarPredictor):
             _no_emdash(get_ui(lang, "mode_record")),
         ],
         horizontal=True,
+        key="input_mode",
     )
+
+    def _ingest_upload(uploaded_file) -> None:
+        file_id = f"{uploaded_file.name}:{uploaded_file.size}:{getattr(uploaded_file, 'file_id', '')}"
+        if file_id == st.session_state.upload_file_id:
+            return
+        st.session_state.upload_file_id = file_id
+        set_audio(uploaded_file.getvalue(), analyze=True)
+        st.rerun()
 
     if input_mode == _no_emdash(get_ui(lang, "mode_upload")):
         uploaded = st.file_uploader(
             _no_emdash(get_ui(lang, "upload_label")),
-            type=["wav", "mp3"],
+            type=["wav", "mp3", "m4a", "ogg"],
             help=_no_emdash(get_ui(lang, "upload_help")),
+            key="detect_upload",
         )
         if uploaded is not None:
-            st.session_state.audio_bytes = uploaded.read()
+            _ingest_upload(uploaded)
     else:
         st.markdown(f"### {_no_emdash(get_ui(lang, 'record_title'))}")
         for key in ("record_step_1", "record_step_2", "record_step_3", "record_step_4"):
@@ -803,89 +940,62 @@ def render_detect(lang: str, predictor: GrainEarPredictor):
         st.markdown(f'<div class="record-box">{diagram}</div>', unsafe_allow_html=True)
         uploaded = st.file_uploader(
             _no_emdash(get_ui(lang, "upload_label")),
-            type=["wav", "mp3"],
+            type=["wav", "mp3", "m4a", "ogg"],
             key="record_upload",
         )
         if uploaded is not None:
-            st.session_state.audio_bytes = uploaded.read()
+            _ingest_upload(uploaded)
 
-    if st.button(_no_emdash(get_ui(lang, "try_demo_btn")), use_container_width=False):
-        st.session_state.audio_bytes = generate_demo_audio()
-        st.rerun()
+    demo_col, clear_col = st.columns([2, 1])
+    with demo_col:
+        if st.button(_no_emdash(get_ui(lang, "try_demo_btn")), use_container_width=True, key="try_demo"):
+            set_audio(generate_demo_audio(), analyze=True)
+            st.rerun()
+    with clear_col:
+        if st.session_state.audio_bytes and st.button("Clear", use_container_width=True, key="clear_audio"):
+            st.session_state.audio_bytes = None
+            st.session_state.audio_id = None
+            st.session_state.upload_file_id = None
+            st.session_state.result = None
+            st.session_state.severity = None
+            st.session_state.pending_analyze = False
+            st.rerun()
 
     if st.session_state.audio_bytes:
         audio_bytes = st.session_state.audio_bytes
+
+        if st.session_state.pending_analyze:
+            with st.spinner(_no_emdash(get_ui(lang, "analyze_btn")) + "…"):
+                run_analysis(predictor, audio_bytes)
+            st.rerun()
+
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(
                 f'<div class="panel"><span class="panel-label">{_no_emdash(get_ui(lang, "waveform_title"))}</span></div>',
                 unsafe_allow_html=True,
             )
-            st.image(fig_to_image(plot_waveform(audio_bytes)), use_container_width=True)
+            st.image(cached_waveform_png(audio_bytes), use_container_width=True)
         with col2:
             st.markdown(
                 f'<div class="panel"><span class="panel-label">{_no_emdash(get_ui(lang, "spectrogram_title"))}</span></div>',
                 unsafe_allow_html=True,
             )
-            st.image(fig_to_image(plot_spectrogram(audio_bytes)), use_container_width=True)
+            st.image(cached_spectrogram_png(audio_bytes), use_container_width=True)
+
+        st.audio(audio_bytes)
 
         if st.button(
             _no_emdash(get_ui(lang, "analyze_btn")),
             type="primary",
             use_container_width=True,
+            key="analyze_btn",
         ):
-            with st.spinner("..."):
-                result = predictor.predict(audio_bytes)
+            st.session_state.pending_analyze = True
+            st.rerun()
 
-            pest_name = get_pest_name(lang, result["class"])
-            is_pest = result["class"] != "clean"
-
-            if result["confident"]:
-                if is_pest:
-                    st.markdown(
-                        f'<div class="result-pest"><h2>⚠️ {_no_emdash(get_ui(lang, "result_pest"))}</h2>'
-                        f"<h3>{pest_name}</h3></div>",
-                        unsafe_allow_html=True,
-                    )
-                else:
-                    st.markdown(
-                        f'<div class="result-clean"><h2>✅ {_no_emdash(get_ui(lang, "result_clean"))}</h2>'
-                        f"<h3>{pest_name}</h3></div>",
-                        unsafe_allow_html=True,
-                    )
-            else:
-                st.markdown(
-                    f'<div class="result-low"><h2>🔶 {_no_emdash(get_ui(lang, "low_confidence_title"))}</h2>'
-                    f'<p>{_no_emdash(get_ui(lang, "low_confidence_msg"))}</p>'
-                    f'<p><b>{pest_name}</b> ({result["confidence"]:.0%})</p></div>',
-                    unsafe_allow_html=True,
-                )
-            st.caption("Result indicated by both colour and symbol for accessibility.")
-
-            if result["confident"] and is_pest:
-                severity = estimate_severity(io.BytesIO(audio_bytes))
-                render_severity(lang, severity)
-
-            st.markdown(
-                f"**{_no_emdash(get_ui(lang, 'confidence_label'))}:** {result['confidence']:.1%}"
-            )
-            st.progress(result["confidence"])
-
-            st.markdown(f"### {_no_emdash(get_ui(lang, 'all_scores_title'))}")
-            scores_df = pd.DataFrame(
-                {
-                    "Class": [get_pest_name(lang, k) for k in result["all_scores"]],
-                    "Probability": list(result["all_scores"].values()),
-                }
-            ).set_index("Class")
-            st.bar_chart(scores_df, use_container_width=True, color=CHART)
-
-            st.markdown(f"### {_no_emdash(get_ui(lang, 'advisory_title'))}")
-            st.markdown(
-                f'<div class="advisory">{_no_emdash(get_advisory(lang, result["class"]))}</div>',
-                unsafe_allow_html=True,
-            )
-            st.caption(_no_emdash(get_ui(lang, "disclaimer")))
+        if st.session_state.result is not None:
+            render_result_block(lang, st.session_state.result)
     else:
         st.markdown(
             f'<div class="panel"><span class="panel-label">Input</span>'
@@ -918,7 +1028,7 @@ def render_how(lang: str):
     st.markdown(f"### {_no_emdash(get_ui(lang, 'how_mel_title'))}")
     st.markdown(_no_emdash(get_ui(lang, "how_mel_desc")))
     try:
-        st.image(fig_to_image(plot_spectrogram(generate_demo_audio())), use_container_width=True)
+        st.image(cached_spectrogram_png(generate_demo_audio()), use_container_width=True)
     except Exception as exc:
         st.caption(f"Spectrogram preview unavailable: {exc}")
     for key in (
@@ -989,7 +1099,7 @@ def render_about(lang: str):
 
 
 def render_main():
-    st.markdown(INSTANT_CLEAR_CSS, unsafe_allow_html=True)
+    st.markdown(page_chrome_css("main"), unsafe_allow_html=True)
     lang = render_sidebar(st.session_state.lang)
     st.session_state.lang = lang
     predictor = load_predictor()
@@ -1002,22 +1112,32 @@ def render_main():
         unsafe_allow_html=True,
     )
 
-    tab_detect, tab_how, tab_about = st.tabs(
-        [
-            _no_emdash(get_ui(lang, "tab_detect")),
-            _no_emdash(get_ui(lang, "tab_how")),
-            _no_emdash(get_ui(lang, "tab_about")),
-        ]
+    # Stable keys avoid Streamlit tab remount flicker and survive language switches.
+    section_keys = ["detect", "how", "about"]
+    section_labels = {
+        "detect": _no_emdash(get_ui(lang, "tab_detect")),
+        "how": _no_emdash(get_ui(lang, "tab_how")),
+        "about": _no_emdash(get_ui(lang, "tab_about")),
+    }
+    section = st.radio(
+        "Section",
+        section_keys,
+        format_func=lambda k: section_labels[k],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="main_section",
     )
-    with tab_detect:
+    if section == "detect":
         render_detect(lang, predictor)
-    with tab_how:
+    elif section == "how":
         render_how(lang)
-    with tab_about:
+    else:
         render_about(lang)
 
 
 def main():
+    # Inject transition CSS before any page body so old/new never animate over each other.
+    st.markdown(page_chrome_css(st.session_state.page), unsafe_allow_html=True)
     if st.session_state.page == "intro":
         render_intro()
     else:
