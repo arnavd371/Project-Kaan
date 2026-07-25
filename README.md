@@ -60,3 +60,9 @@ Balingbing C et al. (2024). Application of a multi-layer CNN
 to classify major insect pests in stored rice detected by an
 acoustic device. Computers and Electronics in Agriculture,
 225, 109297.
+
+### License
+MIT License. Copyright (c) 2026 Arnav Dhiman. See [LICENSE](LICENSE).
+
+Pest training audio is from the open IRRI Rice Acoustic Sensor dataset
+(Balingbing et al.): https://github.com/cbalingbing/Rice-Acoustic-Sensor
