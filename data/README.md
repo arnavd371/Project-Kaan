@@ -75,10 +75,10 @@ python model/convert_tflite.py
 
 ```
 data/
-  clean/                  *.wav — no insects
-  rice_weevil/            *.wav — Sitophilus oryzae
-  lesser_grain_borer/     *.wav — Rhyzopertha dominica
-  red_flour_beetle/       *.wav — Tribolium castaneum
+  clean/                  *.wav  --  no insects
+  rice_weevil/            *.wav  --  Sitophilus oryzae
+  lesser_grain_borer/     *.wav  --  Rhyzopertha dominica
+  red_flour_beetle/       *.wav  --  Tribolium castaneum
 ```
 
 ## Notes

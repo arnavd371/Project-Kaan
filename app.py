@@ -1,4 +1,4 @@
-"""Kaan (कान) - Acoustic grain pest detector for Indian farmers."""
+"""Kaan (कान) -- Acoustic grain pest detector for Indian farmers."""
 
 from __future__ import annotations
 
@@ -653,7 +653,7 @@ section.main,
 
 
 def _no_emdash(text: str) -> str:
-    return text.replace("\u2014", " - ").replace("\u2013", "-").replace("—", " - ").replace("–", "-")
+    return text.replace("\u2014", " -- ").replace("\u2013", "-").replace(" -- ", " -- ").replace("–", "-")
 
 
 @st.cache_resource
@@ -664,7 +664,7 @@ def load_predictor() -> ProjectKaanPredictor:
 @st.cache_data(show_spinner=False)
 def generate_demo_audio() -> bytes:
     sr = 16000
-    duration = 3  # short clip — enough for demo, much faster to plot/analyze
+    duration = 3  # short clip -- enough for demo, much faster to plot/analyze
     t = np.linspace(0, duration, sr * duration, endpoint=False)
     tone = 0.3 * np.sin(2 * np.pi * 360 * t)
     rng = np.random.default_rng(0)
@@ -1047,7 +1047,90 @@ def render_how(lang: str):
             st.markdown(_no_emdash(get_ui(lang, key)))
 
 
+def render_summit():
+    """AI Impact Summit recognition brief (English, shared with the public web app)."""
+    st.markdown("## Kaan at the AI Impact Summit")
+    st.caption("Recognition")
+    st.markdown(
+        "Kaan is an AI-powered acoustic detector that helps Indian farmers catch "
+        "stored-grain insect infestation early using a normal phone, offline, in their language."
+    )
+    blocks = [
+        (
+            "Problem",
+            "India stores over 80 million tonnes of food grain. Insects in storage cause about "
+            "1,300 crore rupees in annual loss (IGMRI). Smallholders often find damage only after "
+            "10 to 20 percent of the grain is already affected, because hand and smell checks miss "
+            "early activity.",
+        ),
+        (
+            "Solution",
+            "Farmers record grain sounds by holding their phone against the bag or bin. Kaan converts "
+            "the audio to a mel spectrogram and runs a compact CNN that classifies clean grain, rice "
+            "weevil, lesser grain borer, and red flour beetle. It returns the pest class, confidence, "
+            "a simple advisory, and an accessibility-safe result using both symbol and text.",
+        ),
+        (
+            "Why AI",
+            "These pests produce overlapping sounds in the 300 to 4000 Hz range. Rule-based thresholds "
+            "cannot separate them reliably. A trained CNN learns the subtle spectral patterns needed "
+            "for species-level screening.",
+        ),
+        (
+            "Impact and inclusion",
+            "Available in English, Hindi, Marathi, Punjabi, and Telugu. Designed for low-resource "
+            "settings using phone mic, offline classification, and a guided tour. Aimed at farmers, "
+            "FPOs, and Krishi Vigyan Kendras as a screening aid. Open pipeline so local agencies can "
+            "retrain on regional audio.",
+        ),
+        (
+            "Ethics and limits",
+            "Reports confidence and can stay uncertain instead of guessing. Phone quality, noise, and "
+            "early low-density infestations still need field validation. Pulse beetle and legume "
+            "detection are future work.",
+        ),
+    ]
+    items = ""
+    for i, (title, body) in enumerate(blocks, start=1):
+        items += (
+            f'<div class="pi-timeline-item">'
+            f'<div class="pi-timeline-row">'
+            f'<span class="pi-timeline-title">{title}</span>'
+            f'<span class="pi-timeline-meta">{i:02d}</span>'
+            f"</div>"
+            f'<p class="pi-timeline-body">{body}</p>'
+            f"</div>"
+        )
+    tech = (
+        "<ul>"
+        "<li>Validation accuracy 97.76 percent, macro F1 0.98, after leakage-aware retraining</li>"
+        "<li>INT8 model runs on-device / in the browser with no cloud needed for inference</li>"
+        "<li>Built on open IRRI acoustic research data, released under MIT</li>"
+        "<li>Live at kaan-web.vercel.app</li>"
+        "</ul>"
+    )
+    items += (
+        f'<div class="pi-timeline-item">'
+        f'<div class="pi-timeline-row">'
+        f'<span class="pi-timeline-title">Technical highlights</span>'
+        f'<span class="pi-timeline-meta">{len(blocks)+1:02d}</span>'
+        f"</div>"
+        f'<div class="pi-timeline-body">{tech}</div>'
+        f"</div>"
+    )
+    st.markdown(f'<div class="pi-timeline">{items}</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="panel"><span class="panel-label">Summit pitch</span>'
+        "<p>Kaan listens to grain so farmers do not have to wait until they can see the damage. "
+        "Open, multilingual, offline AI for food security and farmer livelihoods.</p></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("---")
+
+
+
 def render_about(lang: str):
+    render_summit()
     st.markdown(f"## {_no_emdash(get_ui(lang, 'about_title'))}")
     sections = [
         ("Problem", "about_problem"),
