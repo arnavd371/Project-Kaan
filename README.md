@@ -41,9 +41,9 @@ Model: custom CNN trained in TensorFlow/Keras
 
 Quantization: INT8 via TensorFlow Lite (`project-kaan.tflite`)
 
-Frontend (this repo): Streamlit prototype with multilingual advisories
+Frontend: Streamlit prototype (`app.py`) plus public Next.js website in `web/` (ONNX Runtime Web, same trained model)
 
-Public web app: Next.js + ONNX Runtime Web at https://kaan-web.vercel.app (same trained model)
+Public URL: https://kaan-web.vercel.app
 
 Languages: English, Hindi, Marathi, Punjabi, Telugu
 
@@ -91,17 +91,37 @@ IGMRI (2015). Annual Report. Indian Grain Storage Management and Research Instit
 ### Live Demo
 https://kaan-web.vercel.app
 
-Web source: https://github.com/arnavd371/kaan-web
+### Repository layout
+This monorepo contains the full Project Kaan stack:
+
+| Path | What it is |
+|---|---|
+| `app.py`, `utils/`, `model/` | Streamlit prototype, training, and TFLite inference |
+| `web/` | Public Next.js website (ONNX in-browser CNN, guided tour, summit page) |
+| `web/android`, `web/ios` | Capacitor mobile shells for the same web build |
+
+Canonical GitHub repo: https://github.com/arnavd371/Project-Kaan
 
 ### Licence
 MIT
 
-### Run locally (this repo)
+### Run locally
+
+Streamlit (training / research UI):
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Training scripts live under `model/`. Retrain and export TFLite with `model/train.py` / `model/train_kaggle.py` and `model/convert_tflite.py`.
+Public website:
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 for the website. Training scripts live under `model/`. Retrain and export TFLite with `model/train.py` / `model/train_kaggle.py` and `model/convert_tflite.py`.
+
+To deploy the website from this monorepo on Vercel, set the project Root Directory to `web`.
 
 Copyright (c) 2026 Arnav Dhiman.

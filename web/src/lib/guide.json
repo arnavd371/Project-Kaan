@@ -1,0 +1,276 @@
+{
+  "chrome": {
+    "en": {
+      "toggle_label": "Guided tour",
+      "toggle_on": "On",
+      "toggle_off": "Off",
+      "toggle_help": "Turn the guide on to highlight each part of the app before you start.",
+      "next": "Next",
+      "back": "Back",
+      "skip": "Skip guide",
+      "done": "Got it",
+      "step_of": "{n} of {total}",
+      "restart": "Show guide"
+    },
+    "hi": {
+      "toggle_label": "मार्गदर्शिका",
+      "toggle_on": "चालू",
+      "toggle_off": "बंद",
+      "toggle_help": "शुरू करने से पहले ऐप के हर हिस्से को हाइलाइट करने के लिए गाइड चालू करें।",
+      "next": "आगे",
+      "back": "पीछे",
+      "skip": "गाइड छोड़ें",
+      "done": "समझ गया",
+      "step_of": "{n} / {total}",
+      "restart": "गाइड दिखाएँ"
+    },
+    "mr": {
+      "toggle_label": "मार्गदर्शक",
+      "toggle_on": "सुरू",
+      "toggle_off": "बंद",
+      "toggle_help": "सुरू करण्यापूर्वी अॅपचा प्रत्येक भाग हायलाइट करण्यासाठी मार्गदर्शक चालू करा.",
+      "next": "पुढे",
+      "back": "मागे",
+      "skip": "मार्गदर्शक वगळा",
+      "done": "समजले",
+      "step_of": "{n} / {total}",
+      "restart": "मार्गदर्शक दाखवा"
+    },
+    "pa": {
+      "toggle_label": "ਗਾਈਡ",
+      "toggle_on": "ਚਾਲੂ",
+      "toggle_off": "ਬੰਦ",
+      "toggle_help": "ਸ਼ੁਰੂ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਐਪ ਦੇ ਹਰ ਹਿੱਸੇ ਨੂੰ ਹਾਈਲਾਈਟ ਕਰਨ ਲਈ ਗਾਈਡ ਚਾਲੂ ਕਰੋ।",
+      "next": "ਅੱਗੇ",
+      "back": "ਪਿੱਛੇ",
+      "skip": "ਗਾਈਡ ਛੱਡੋ",
+      "done": "ਸਮਝ ਗਿਆ",
+      "step_of": "{n} / {total}",
+      "restart": "ਗਾਈਡ ਵਿਖਾਓ"
+    },
+    "te": {
+      "toggle_label": "గైడ్",
+      "toggle_on": "ఆన్",
+      "toggle_off": "ఆఫ్",
+      "toggle_help": "ప్రారంభించే ముందు యాప్‌లోని ప్రతి భాగాన్ని హైలైట్ చేయడానికి గైడ్‌ను ఆన్ చేయండి.",
+      "next": "తదుపరి",
+      "back": "వెనుక",
+      "skip": "గైడ్ దాటవేయి",
+      "done": "అర్థమైంది",
+      "step_of": "{n} / {total}",
+      "restart": "గైడ్ చూపించు"
+    }
+  },
+  "steps": {
+    "en": {
+      "intro_lang": {
+        "title": "Choose your language",
+        "body": "Pick English, Hindi, Marathi, Punjabi, or Telugu. The whole app, including advisories, follows this choice."
+      },
+      "intro_story": {
+        "title": "Why Kaan exists",
+        "body": "This short story explains the problem: farmers often find insect damage too late. Kaan listens to grain sounds instead."
+      },
+      "intro_toggle": {
+        "title": "Guided tour on or off",
+        "body": "Leave the guide On to walk through each control after you enter. Turn it Off if you already know the app."
+      },
+      "intro_start": {
+        "title": "Start detecting",
+        "body": "Tap here to open the detector. If the guide is On, the next screen will highlight each part for you."
+      },
+      "app_lang": {
+        "title": "Language anytime",
+        "body": "Change language here without leaving the page. Results and farmer advice update immediately."
+      },
+      "app_tabs": {
+        "title": "Three sections",
+        "body": "Detect runs the CNN. How It Works explains the science. About and Impact covers problem, SDGs, ethics, and deployment."
+      },
+      "app_upload": {
+        "title": "Your own recording",
+        "body": "Upload a WAV or MP3 from your phone. Place the phone against a grain bag, record 10-30 seconds, then choose the file."
+      },
+      "app_samples": {
+        "title": "Try IRRI samples",
+        "body": "One tap runs the real CNN on open research clips for rice weevil, lesser grain borer, red flour beetle, or clean grain."
+      },
+      "app_how": {
+        "title": "How It Works",
+        "body": "See mel spectrograms, model accuracy (97.76%), and where the training data comes from."
+      },
+      "app_about": {
+        "title": "About and Impact",
+        "body": "Read the problem statement with IGMRI citation, inclusion, why AI is needed, ethics, and the public MIT release."
+      }
+    },
+    "hi": {
+      "intro_lang": {
+        "title": "अपनी भाषा चुनें",
+        "body": "अंग्रेज़ी, हिंदी, मराठी, पंजाबी या तेलुगु चुनें। पूरा ऐप और सलाह इसी भाषा में दिखेगी।"
+      },
+      "intro_story": {
+        "title": "Kaan क्यों बना",
+        "body": "यह कहानी समस्या बताती है: किसान अक्सर बहुत देर से कीट नुकसान देखते हैं। Kaan अनाज की आवाज़ सुनता है।"
+      },
+      "intro_toggle": {
+        "title": "गाइड चालू या बंद",
+        "body": "गाइड चालू रखें तो अगली स्क्रीन पर हर बटन समझाया जाएगा। जानते हों तो बंद करें।"
+      },
+      "intro_start": {
+        "title": "जांच शुरू करें",
+        "body": "यहाँ टैप करके डिटेक्टर खोलें। गाइड चालू हो तो अगली स्क्रीन पर हिस्सों को रोशन किया जाएगा।"
+      },
+      "app_lang": {
+        "title": "कभी भी भाषा बदलें",
+        "body": "यहाँ से भाषा बदलें। परिणाम और किसान सलाह तुरंत नई भाषा में आ जाते हैं।"
+      },
+      "app_tabs": {
+        "title": "तीन भाग",
+        "body": "पता लगाएँ में CNN चलता है। कैसे काम करता है विज्ञान बताता है। परिचय और प्रभाव समस्या, SDG और नैतिकता बताता है।"
+      },
+      "app_upload": {
+        "title": "अपनी रिकॉर्डिंग",
+        "body": "फ़ोन से WAV या MP3 अपलोड करें। बोरी पर फ़ोन रखकर 10-30 सेकंड रिकॉर्ड करें, फिर फ़ाइल चुनें।"
+      },
+      "app_samples": {
+        "title": "IRRI नमूने आज़माएँ",
+        "body": "एक टैप से असली CNN चावल घुन, अनाज छेदक, लाल आटा भृंग या साफ़ अनाज के शोध क्लिप पर चलता है।"
+      },
+      "app_how": {
+        "title": "कैसे काम करता है",
+        "body": "मेल स्पेक्ट्रोग्राम, 97.76% सटीकता, और प्रशिक्षण डेटा का स्रोत यहाँ देखें।"
+      },
+      "app_about": {
+        "title": "परिचय और प्रभाव",
+        "body": "IGMRI संदर्भ के साथ समस्या, समावेशन, AI की ज़रूरत, नैतिकता और MIT रिलीज़ यहाँ पढ़ें।"
+      }
+    },
+    "mr": {
+      "intro_lang": {
+        "title": "भाषा निवडा",
+        "body": "इंग्रजी, हिंदी, मराठी, पंजाबी किंवा तेलुगू निवडा. संपूर्ण अॅप या भाषेत दिसेल."
+      },
+      "intro_story": {
+        "title": "Kaan का?",
+        "body": "शेतकरी अनेकदा उशिरा कीड नुकसान पाहतात. Kaan धान्याची आवाज ऐकतो."
+      },
+      "intro_toggle": {
+        "title": "मार्गदर्शक सुरू/बंद",
+        "body": "सुरू ठेवल्यास पुढील स्क्रीनवर प्रत्येक भाग समजावला जाईल."
+      },
+      "intro_start": {
+        "title": "शुरू करा",
+        "body": "डिटेक्टर उघडण्यासाठी येथे टॅप करा."
+      },
+      "app_lang": {
+        "title": "भाषा कधीही बदला",
+        "body": "येथून भाषा बदला. निकाल लगेच अपडेट होतात."
+      },
+      "app_tabs": {
+        "title": "तीन विभाग",
+        "body": "शोधा, कसे काम करते, आणि परिचय व प्रभाव."
+      },
+      "app_upload": {
+        "title": "तुमची रेकॉर्डिंग",
+        "body": "WAV/MP3 अपलोड करा. पोत्यावर फोन ठेवून 10-30 सेकंद रेकॉर्ड करा."
+      },
+      "app_samples": {
+        "title": "IRRI नमुने",
+        "body": "एका टॅपने खरा CNN संशोधन क्लिपवर चालतो."
+      },
+      "app_how": {
+        "title": "कसे काम करते",
+        "body": "मेल स्पेक्ट्रोग्राम आणि 97.76% अचूकता येथे पाहा."
+      },
+      "app_about": {
+        "title": "परिचय व प्रभाव",
+        "body": "समस्या, SDG, समावेश आणि MIT परवाना येथे वाचा."
+      }
+    },
+    "pa": {
+      "intro_lang": {
+        "title": "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
+        "body": "ਅੰਗਰੇਜ਼ੀ, ਹਿੰਦੀ, ਮਰਾਠੀ, ਪੰਜਾਬੀ ਜਾਂ ਤੇਲਗੂ ਚੁਣੋ। ਪੂਰੀ ਐਪ ਇਸ ਭਾਸ਼ਾ ਵਿੱਚ ਦਿਖੇਗੀ।"
+      },
+      "intro_story": {
+        "title": "Kaan ਕਿਉਂ",
+        "body": "ਕਿਸਾਨ ਅਕਸਰ ਬਹੁਤ ਦੇਰ ਨਾਲ ਕੀੜੇ ਦਾ ਨੁਕਸਾਨ ਵੇਖਦੇ ਹਨ। Kaan ਅਨਾਜ ਦੀ ਆਵਾਜ਼ ਸੁਣਦਾ ਹੈ।"
+      },
+      "intro_toggle": {
+        "title": "ਗਾਈਡ ਚਾਲੂ ਜਾਂ ਬੰਦ",
+        "body": "ਗਾਈਡ ਚਾਲੂ ਰੱਖੋ ਤਾਂ ਅਗਲੀ ਸਕ੍ਰੀਨ ਤੇ ਹਰ ਹਿੱਸਾ ਸਮਝਾਇਆ ਜਾਵੇਗਾ।"
+      },
+      "intro_start": {
+        "title": "ਸ਼ੁਰੂ ਕਰੋ",
+        "body": "ਡਿਟੈਕਟਰ ਖੋਲ੍ਹਣ ਲਈ ਇੱਥੇ ਟੈਪ ਕਰੋ।"
+      },
+      "app_lang": {
+        "title": "ਭਾਸ਼ਾ ਕਦੇ ਵੀ ਬਦਲੋ",
+        "body": "ਇੱਥੋਂ ਭਾਸ਼ਾ ਬਦਲੋ। ਨਤੀਜੇ ਤੁਰੰਤ ਅੱਪਡੇਟ ਹੁੰਦੇ ਹਨ।"
+      },
+      "app_tabs": {
+        "title": "ਤਿੰਨ ਭਾਗ",
+        "body": "ਖੋਜੋ, ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ, ਅਤੇ ਜਾਣ-ਪਛਾਣ ਤੇ ਪ੍ਰਭਾਵ।"
+      },
+      "app_upload": {
+        "title": "ਆਪਣੀ ਰਿਕਾਰਡਿੰਗ",
+        "body": "WAV ਜਾਂ MP3 ਅਪਲੋਡ ਕਰੋ। ਬੋਰੀ ਉੱਤੇ ਫ਼ੋਨ ਰੱਖ ਕੇ 10-30 ਸਕਿੰਟ ਰਿਕਾਰਡ ਕਰੋ।"
+      },
+      "app_samples": {
+        "title": "IRRI ਨਮੂਨੇ",
+        "body": "ਇੱਕ ਟੈਪ ਨਾਲ ਅਸਲੀ CNN ਖੋਜ ਕਲਿੱਪਾਂ ਉੱਤੇ ਚੱਲਦਾ ਹੈ।"
+      },
+      "app_how": {
+        "title": "ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ",
+        "body": "ਮੇਲ ਸਪੈਕਟ੍ਰੋਗ੍ਰਾਮ ਅਤੇ 97.76% ਸਟੀਕਤਾ ਇੱਥੇ ਵੇਖੋ।"
+      },
+      "app_about": {
+        "title": "ਜਾਣ-ਪਛਾਣ ਤੇ ਪ੍ਰਭਾਵ",
+        "body": "ਸਮੱਸਿਆ, SDG, ਨੈਤਿਕਤਾ ਅਤੇ MIT ਲਾਇਸੰਸ ਇੱਥੇ ਪੜ੍ਹੋ।"
+      }
+    },
+    "te": {
+      "intro_lang": {
+        "title": "మీ భాషను ఎంచుకోండి",
+        "body": "ఇంగ్లీష్, హిందీ, మరాఠీ, పంజాబీ లేదా తెలుగు ఎంచుకోండి. మొత్తం యాప్ ఈ భాషలో కనిపిస్తుంది."
+      },
+      "intro_story": {
+        "title": "Kaan ఎందుకు",
+        "body": "రైతులు తరచుగా చాలా ఆలస్యంగా కీటక నష్టాన్ని చూస్తారు. Kaan ధాన్యం శబ్దాలను వింటుంది."
+      },
+      "intro_toggle": {
+        "title": "గైడ్ ఆన్ లేదా ఆఫ్",
+        "body": "గైడ్ ఆన్ ఉంచితే తదుపరి స్క్రీన్‌లో ప్రతి భాగం వివరించబడుతుంది."
+      },
+      "intro_start": {
+        "title": "ప్రారంభించండి",
+        "body": "డిటెక్టర్ తెరవడానికి ఇక్కడ టాప్ చేయండి."
+      },
+      "app_lang": {
+        "title": "ఎప్పుడైనా భాష మార్చండి",
+        "body": "ఇక్కడి నుండి భాష మార్చండి. ఫలితాలు వెంటనే అప్‌డేట్ అవుతాయి."
+      },
+      "app_tabs": {
+        "title": "మూడు విభాగాలు",
+        "body": "గుర్తించు, ఎలా పనిచేస్తుంది, మరియు గురించి మరియు ప్రభావం."
+      },
+      "app_upload": {
+        "title": "మీ రికార్డింగ్",
+        "body": "WAV లేదా MP3 అప్‌లోడ్ చేయండి. బస్తాపై ఫోన్ ఉంచి 10-30 సెకన్లు రికార్డ్ చేయండి."
+      },
+      "app_samples": {
+        "title": "IRRI నమూనాలు",
+        "body": "ఒక టాప్‌తో నిజమైన CNN పరిశోధన క్లిప్‌లపై నడుస్తుంది."
+      },
+      "app_how": {
+        "title": "ఎలా పనిచేస్తుంది",
+        "body": "మెల్ స్పెక్ట్రోగ్రామ్‌లు మరియు 97.76% ఖచ్చితత్వం ఇక్కడ చూడండి."
+      },
+      "app_about": {
+        "title": "గురించి మరియు ప్రభావం",
+        "body": "సమస్య, SDG, నైతికత మరియు MIT లైసెన్స్ ఇక్కడ చదవండి."
+      }
+    }
+  }
+}
