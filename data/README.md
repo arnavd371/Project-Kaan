@@ -1,4 +1,4 @@
-# GrainEar Data Directory
+# Project Kaan Data Directory
 
 This directory holds training audio organized by pest class. Follow these steps to prepare your dataset.
 

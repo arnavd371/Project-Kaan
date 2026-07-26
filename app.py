@@ -19,7 +19,7 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from utils.inference import GrainEarPredictor, estimate_severity
+from utils.inference import ProjectKaanPredictor, estimate_severity
 from utils.language import LANGUAGES, get_advisory, get_pest_name, get_ui
 from utils.visualizer import plot_spectrogram
 
@@ -37,7 +37,7 @@ for _key, _val in _DEFAULTS.items():
     if _key not in st.session_state:
         st.session_state[_key] = _val
 
-GITHUB_REPO_URL = "https://github.com/arnavdhiman/GrainEar"
+GITHUB_REPO_URL = "https://github.com/arnavd371/Project-Kaan"
 
 # Physical Intelligence design tokens
 BG = "#F7F6F2"
@@ -657,8 +657,8 @@ def _no_emdash(text: str) -> str:
 
 
 @st.cache_resource
-def load_predictor() -> GrainEarPredictor:
-    return GrainEarPredictor()
+def load_predictor() -> ProjectKaanPredictor:
+    return ProjectKaanPredictor()
 
 
 @st.cache_data(show_spinner=False)
@@ -730,7 +730,7 @@ def set_audio(audio_bytes: bytes, *, analyze: bool = False) -> None:
     st.session_state.pending_analyze = analyze
 
 
-def run_analysis(predictor: GrainEarPredictor, audio_bytes: bytes) -> None:
+def run_analysis(predictor: ProjectKaanPredictor, audio_bytes: bytes) -> None:
     result = predictor.predict(audio_bytes)
     st.session_state.result = result
     if result.get("confident") and result.get("class") != "clean":
@@ -833,7 +833,7 @@ def render_intro():
 
 def render_sidebar(lang: str):
     st.sidebar.markdown('<p class="sidebar-logo">Kaan</p>', unsafe_allow_html=True)
-    st.sidebar.caption(_no_emdash(get_ui(lang, "app_tagline")).replace("GrainEar", "Kaan"))
+    st.sidebar.caption(_no_emdash(get_ui(lang, "app_tagline")).replace("Project Kaan", "Kaan"))
 
     labels = [label for _, label in LANG_BUTTONS]
     codes = [code for code, _ in LANG_BUTTONS]
@@ -849,7 +849,7 @@ def render_sidebar(lang: str):
     st.sidebar.markdown(
         f'<div class="sidebar-card">'
         f'<strong style="color:#000;">About</strong><br><br>'
-        f'{_no_emdash(get_ui(lang, "sidebar_about_1")).replace("GrainEar", "Kaan")}<br><br>'
+        f'{_no_emdash(get_ui(lang, "sidebar_about_1")).replace("Project Kaan", "Kaan")}<br><br>'
         f'{_no_emdash(get_ui(lang, "sidebar_about_2"))}<br><br>'
         f'{_no_emdash(get_ui(lang, "sidebar_about_3"))}'
         f"</div>",
@@ -893,10 +893,10 @@ def render_severity(lang: str, severity: dict):
     )
 
 
-def render_detect(lang: str, predictor: GrainEarPredictor):
+def render_detect(lang: str, predictor: ProjectKaanPredictor):
     if predictor.demo_mode:
         st.markdown(
-            f'<div class="demo-banner">{_no_emdash(get_ui(lang, "demo_banner")).replace("GrainEar", "Kaan")}</div>',
+            f'<div class="demo-banner">{_no_emdash(get_ui(lang, "demo_banner")).replace("Project Kaan", "Kaan")}</div>',
             unsafe_allow_html=True,
         )
 
@@ -1005,7 +1005,7 @@ def render_detect(lang: str, predictor: GrainEarPredictor):
 
 
 def render_how(lang: str):
-    st.markdown(f"## {_no_emdash(get_ui(lang, 'how_title')).replace('GrainEar', 'Kaan')}")
+    st.markdown(f"## {_no_emdash(get_ui(lang, 'how_title')).replace('Project Kaan', 'Kaan')}")
     steps = [
         ("01", "Record", _no_emdash(get_ui(lang, "how_step_1"))),
         ("02", "Transform", _no_emdash(get_ui(lang, "how_step_2"))),
@@ -1066,7 +1066,7 @@ def render_about(lang: str):
     ]
     items = ""
     for i, (title, key) in enumerate(sections, start=1):
-        text = _no_emdash(get_ui(lang, key)).replace("GrainEar", "Kaan")
+        text = _no_emdash(get_ui(lang, key)).replace("Project Kaan", "Kaan")
         items += (
             f'<div class="pi-timeline-item">'
             f'<div class="pi-timeline-row">'
@@ -1079,7 +1079,7 @@ def render_about(lang: str):
     st.markdown(f'<div class="pi-timeline">{items}</div>', unsafe_allow_html=True)
     st.markdown(
         f'<div class="panel"><p style="margin:0;color:#000;font-weight:700;">'
-        f'{_no_emdash(get_ui(lang, "about_team")).replace("GrainEar", "Kaan")}</p></div>',
+        f'{_no_emdash(get_ui(lang, "about_team")).replace("Project Kaan", "Kaan")}</p></div>',
         unsafe_allow_html=True,
     )
     st.markdown(
@@ -1107,7 +1107,7 @@ def render_main():
     st.markdown(
         f'<div class="kaan-tool-header">'
         f"<h1>Kaan</h1>"
-        f'<p>{_no_emdash(get_ui(lang, "app_tagline")).replace("GrainEar", "Kaan")}</p>'
+        f'<p>{_no_emdash(get_ui(lang, "app_tagline")).replace("Project Kaan", "Kaan")}</p>'
         f"</div>",
         unsafe_allow_html=True,
     )

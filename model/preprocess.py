@@ -1,4 +1,4 @@
-"""Audio preprocessing pipeline for GrainEar CNN model."""
+"""Audio preprocessing pipeline for Project Kaan CNN model."""
 
 from __future__ import annotations
 

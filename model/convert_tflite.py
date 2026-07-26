@@ -1,4 +1,4 @@
-"""Convert trained GrainEar Keras model to INT8 quantized TFLite."""
+"""Convert trained Project Kaan Keras model to INT8 quantized TFLite."""
 
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from model.train import load_dataset  # noqa: E402
 
 MODEL_DIR = Path(__file__).resolve().parent
-H5_PATH = MODEL_DIR / "grainear_model.h5"
-TFLITE_PATH = MODEL_DIR / "grainear.tflite"
+H5_PATH = MODEL_DIR / "project-kaan_model.h5"
+TFLITE_PATH = MODEL_DIR / "project-kaan.tflite"
 NUM_CALIBRATION_SAMPLES = 100
 
 

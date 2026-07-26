@@ -1,4 +1,4 @@
-"""Kaan / GrainEar — improved retrain (v5) on top of the leakage-fixed baseline.
+"""Kaan / Project Kaan — improved retrain (v5) on top of the leakage-fixed baseline.
 
 Improvements vs. the audited 84.91% run:
   1. Deduplicate identical WAV contents and identical spectrograms BEFORE the
@@ -430,7 +430,7 @@ x = layers.GlobalAveragePooling2D()(x)
 x = layers.Dense(192, activation="relu")(x)
 x = layers.Dropout(0.45)(x)
 outputs = layers.Dense(len(CLASS_NAMES), activation="softmax")(x)
-model = keras.Model(inputs, outputs, name="grainear_cnn_v5")
+model = keras.Model(inputs, outputs, name="project_kaan_cnn_v5")
 
 train_seq = SpecAugmentSequence(X_train, y_train_cat, batch_size=32, shuffle=True)
 steps_per_epoch = len(train_seq)
@@ -477,7 +477,7 @@ if best_w.exists():
     model.load_weights(best_w)
     print("Loaded best val_accuracy checkpoint.")
 
-MODEL_PATH = MODEL_DIR / "grainear_model.h5"
+MODEL_PATH = MODEL_DIR / "project-kaan_model.h5"
 model.save(MODEL_PATH)
 print(f"\nModel saved to {MODEL_PATH}")
 
@@ -543,7 +543,7 @@ converter.inference_input_type = tf.uint8
 converter.inference_output_type = tf.uint8
 tflite_model = converter.convert()
 
-TFLITE_PATH = MODEL_DIR / "grainear.tflite"
+TFLITE_PATH = MODEL_DIR / "project-kaan.tflite"
 TFLITE_PATH.write_bytes(tflite_model)
 print(f"TFLite saved to {TFLITE_PATH} ({TFLITE_PATH.stat().st_size / 1024:.1f} KB)")
 print("\nALL DONE.")

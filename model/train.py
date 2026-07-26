@@ -1,4 +1,4 @@
-"""Train the GrainEar CNN model on acoustic grain pest data."""
+"""Train the Project Kaan CNN model on acoustic grain pest data."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from model.preprocess import (  # noqa: E402
 CLASS_NAMES = ["clean", "rice_weevil", "lesser_grain_borer", "red_flour_beetle"]
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 MODEL_DIR = Path(__file__).resolve().parent
-MODEL_PATH = MODEL_DIR / "grainear_model.h5"
+MODEL_PATH = MODEL_DIR / "project-kaan_model.h5"
 HISTORY_PATH = MODEL_DIR / "training_history.png"
 
 
@@ -53,7 +53,7 @@ def load_dataset(augment: bool = False, augment_prob: float = 0.5):
 
 
 def build_model() -> keras.Model:
-    """Build the GrainEar CNN architecture."""
+    """Build the Project Kaan CNN architecture."""
     model = keras.Sequential(
         [
             layers.Input(shape=(128, 128, 1)),
@@ -70,7 +70,7 @@ def build_model() -> keras.Model:
             layers.Dropout(0.4),
             layers.Dense(len(CLASS_NAMES), activation="softmax"),
         ],
-        name="grainear_cnn",
+        name="project_kaan_cnn",
     )
     return model
 

@@ -20,7 +20,7 @@ CONFIDENCE_THRESHOLD = 0.60
 
 CLASS_NAMES = ["clean", "rice_weevil", "lesser_grain_borer", "red_flour_beetle"]
 
-MODEL_PATH = Path(__file__).resolve().parent.parent / "model" / "grainear.tflite"
+MODEL_PATH = Path(__file__).resolve().parent.parent / "model" / "project-kaan.tflite"
 
 DEMO_RMS_THRESHOLD = 0.02
 DEMO_CENTROID_LOW = 300
@@ -92,7 +92,7 @@ def estimate_severity(audio_path):
         }
 
 
-class GrainEarPredictor:
+class ProjectKaanPredictor:
     """Load TFLite model and run pest detection on audio input."""
 
     def __init__(self, model_path: Path | None = None):

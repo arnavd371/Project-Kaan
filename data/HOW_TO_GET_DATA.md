@@ -17,5 +17,5 @@ This generates 500 pink noise files for the clean class.
 python model/train.py
 python model/convert_tflite.py
 
-Note: grainear.tflite is included so the app works
+Note: project-kaan.tflite is included so the app works
 immediately without retraining.
