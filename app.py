@@ -663,8 +663,17 @@ def load_predictor() -> ProjectKaanPredictor:
 
 @st.cache_data(show_spinner=False)
 def generate_demo_audio() -> bytes:
+    """Load a real IRRI rice weevil clip (not a synthetic tone) for CNN demos."""
+    candidates = [
+        Path(__file__).resolve().parent / "web" / "public" / "samples" / "rice_weevil.wav",
+        Path(__file__).resolve().parent / "public" / "samples" / "rice_weevil.wav",
+    ]
+    for path in candidates:
+        if path.is_file():
+            return path.read_bytes()
+    # Fallback only if samples are missing from the checkout
     sr = 16000
-    duration = 3  # short clip -- enough for demo, much faster to plot/analyze
+    duration = 3
     t = np.linspace(0, duration, sr * duration, endpoint=False)
     tone = 0.3 * np.sin(2 * np.pi * 360 * t)
     rng = np.random.default_rng(0)

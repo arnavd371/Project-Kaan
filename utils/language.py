@@ -298,7 +298,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "about_techstack": "Tech stack: Python, TensorFlow/Keras (model training), librosa (audio signal processing), scikit-learn (evaluation), Streamlit (interface), TensorFlow Lite with INT8 quantization (on-device inference). Training was run on a cloud GPU; inference runs offline on-device.",
         "about_deployment": "Deployment status: Kaan is open-sourced under the MIT licence on GitHub, with the full training pipeline included so anyone can inspect, retrain, or redeploy it. It has been tested end-to-end as a working prototype; pilot deployment through Krishi Vigyan Kendras is the next step.",
         "about_team": "Project Kaan -- Built with TensorFlow, librosa, and Streamlit. Future versions will include pulse beetle detection for legume storage once validated real-world audio datasets become available for Indian storage conditions.",
-        "try_demo_btn": "Try Demo Audio (360 Hz test tone)",
+        "try_demo_btn": "Try IRRI rice weevil sample",
     },
     "hi": {
         "app_title": "Project Kaan",
@@ -367,7 +367,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "about_techstack": "टेक स्टैक: Python, TensorFlow/Keras (मॉडल प्रशिक्षण), librosa (ऑडियो सिग्नल प्रोसेसिंग), scikit-learn (मूल्यांकन), Streamlit (इंटरफ़ेस), INT8 क्वांटाइज़ेशन के साथ TensorFlow Lite (ऑन-डिवाइस अनुमान)। प्रशिक्षण क्लाउड GPU पर चलाया गया; अनुमान डिवाइस पर ऑफ़लाइन चलता है।",
         "about_deployment": "तैनाती स्थिति: Kaan को GitHub पर MIT लाइसेंस के तहत ओपन-सोर्स किया गया है, पूरी प्रशिक्षण पाइपलाइन के साथ ताकि कोई भी इसे जांच सके, फिर से प्रशिक्षित कर सके, या फिर से तैनात कर सके। इसे एक कार्यशील प्रोटोटाइप के रूप में पूरी तरह परखा जा चुका है; अगला कदम कृषि विज्ञान केंद्रों के माध्यम से पायलट तैनाती है।",
         "about_team": "Project Kaan -- भारतीय भंडारण स्थितियों के लिए मान्य वास्तविक दुनिया के ऑडियो डेटासेट उपलब्ध होने पर भविष्य के संस्करणों में दलहन भंडारण हेतु दाल की सुंडी पहचान शामिल की जाएगी।",
-        "try_demo_btn": "डेमो ऑडियो आज़माएं (360 Hz टेस्ट टोन)",
+        "try_demo_btn": "IRRI चावल घुन नमूना आज़माएँ",
     },
     "mr": {
         "app_title": "Project Kaan",
@@ -436,7 +436,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "about_techstack": "टेक स्टॅक: Python, TensorFlow/Keras (मॉडेल प्रशिक्षण), librosa (ऑडिओ सिग्नल प्रक्रिया), scikit-learn (मूल्यांकन), Streamlit (इंटरफेस), INT8 क्वांटायझेशनसह TensorFlow Lite (ऑन-डिव्हाइस अनुमान). प्रशिक्षण क्लाउड GPU वर चालवले गेले; अनुमान डिव्हाइसवर ऑफलाइन चालते.",
         "about_deployment": "तैनाती स्थिती: Kaan GitHub वर MIT परवान्याअंतर्गत ओपन-सोर्स केले आहे, संपूर्ण प्रशिक्षण पाइपलाइनसह जेणेकरून कोणीही ते तपासू शकेल, पुन्हा प्रशिक्षित करू शकेल किंवा पुन्हा तैनात करू शकेल. एक कार्यरत नमुना म्हणून याची संपूर्ण चाचणी झाली आहे; कृषी विज्ञान केंद्रांमार्फत पायलट तैनाती हे पुढचे पाऊल आहे.",
         "about_team": "Project Kaan -- भारतीय साठवण परिस्थितींसाठी वैध वास्तविक-जगातील ऑडिओ डेटासेट उपलब्ध झाल्यावर भविष्यातील आवृत्त्यांमध्ये कडधान्य साठवणीसाठी कडधान्य भुंगा ओळख समाविष्ट केली जाईल.",
-        "try_demo_btn": "डेमो ऑडिओ वापरून पहा (360 Hz)",
+        "try_demo_btn": "IRRI तांदूळ भुंगा नमुना वापरा",
     },
     "pa": {
         "app_title": "Project Kaan",
@@ -505,7 +505,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "about_techstack": "ਟੈਕ ਸਟੈਕ: Python, TensorFlow/Keras (ਮਾਡਲ ਸਿਖਲਾਈ), librosa (ਆਡੀਓ ਸਿਗਨਲ ਪ੍ਰੋਸੈਸਿੰਗ), scikit-learn (ਮੁਲਾਂਕਣ), Streamlit (ਇੰਟਰਫੇਸ), INT8 ਕੁਆਂਟਾਈਜ਼ੇਸ਼ਨ ਨਾਲ TensorFlow Lite (ਔਨ-ਡਿਵਾਈਸ ਅਨੁਮਾਨ)। ਸਿਖਲਾਈ ਕਲਾਊਡ GPU ਤੇ ਚਲਾਈ ਗਈ; ਅਨੁਮਾਨ ਡਿਵਾਈਸ ਤੇ ਔਫਲਾਈਨ ਚੱਲਦਾ ਹੈ।",
         "about_deployment": "ਤੈਨਾਤੀ ਸਥਿਤੀ: Kaan ਨੂੰ GitHub ਤੇ MIT ਲਾਇਸੰਸ ਤਹਿਤ ਓਪਨ-ਸੋਰਸ ਕੀਤਾ ਗਿਆ ਹੈ, ਪੂਰੀ ਸਿਖਲਾਈ ਪਾਈਪਲਾਈਨ ਨਾਲ ਤਾਂ ਜੋ ਕੋਈ ਵੀ ਇਸਨੂੰ ਜਾਂਚ ਸਕੇ, ਮੁੜ-ਸਿਖਲਾਈ ਦੇ ਸਕੇ, ਜਾਂ ਮੁੜ-ਤੈਨਾਤ ਕਰ ਸਕੇ। ਇਸਨੂੰ ਇੱਕ ਕਾਰਜਸ਼ੀਲ ਪ੍ਰੋਟੋਟਾਈਪ ਵਜੋਂ ਪੂਰੀ ਤਰ੍ਹਾਂ ਪਰਖਿਆ ਗਿਆ ਹੈ; ਅਗਲਾ ਕਦਮ ਕ੍ਰਿਸ਼ੀ ਵਿਗਿਆਨ ਕੇਂਦਰਾਂ ਰਾਹੀਂ ਪਾਇਲਟ ਤੈਨਾਤੀ ਹੈ।",
         "about_team": "Project Kaan -- ਭਾਰਤੀ ਸਟੋਰੇਜ ਹਾਲਤਾਂ ਲਈ ਪ੍ਰਮਾਣਿਤ ਅਸਲ-ਦੁਨੀਆ ਦੇ ਆਡੀਓ ਡੇਟਾਸੈੱਟ ਉਪਲਬਧ ਹੋਣ ਤੇ ਭਵਿੱਖ ਦੇ ਵਰਜਨਾਂ ਵਿੱਚ ਦਲਹਨ ਸਟੋਰੇਜ ਲਈ ਦਾਲ ਦੇ ਕੀੜੇ ਦੀ ਪਛਾਣ ਸ਼ਾਮਲ ਕੀਤੀ ਜਾਵੇਗੀ।",
-        "try_demo_btn": "ਡੈਮੋ ਆਡੀਓ ਅਜ਼ਮਾਓ (360 Hz)",
+        "try_demo_btn": "IRRI ਚਾਵਲ ਘੁਣ ਨਮੂਨਾ ਅਜ਼ਮਾਓ",
     },
     "te": {
         "app_title": "Project Kaan",
@@ -574,7 +574,7 @@ UI_STRINGS: Dict[str, Dict[str, str]] = {
         "about_techstack": "టెక్ స్టాక్: Python, TensorFlow/Keras (మోడల్ శిక్షణ), librosa (ఆడియో సిగ్నల్ ప్రాసెసింగ్), scikit-learn (మూల్యాంకనం), Streamlit (ఇంటర్‌ఫేస్), INT8 క్వాంటైజేషన్‌తో TensorFlow Lite (ఆన్-డివైస్ అనుమితి). శిక్షణ క్లౌడ్ GPUలో నడిపారు; అనుమితి పరికరంలో ఆఫ్‌లైన్‌లో నడుస్తుంది.",
         "about_deployment": "విస్తరణ స్థితి: Kaan GitHubలో MIT లైసెన్స్ కింద ఓపెన్-సోర్స్ చేయబడింది, పూర్తి శిక్షణ పైప్‌లైన్‌తో సహా, తద్వారా ఎవరైనా దీన్ని పరిశీలించవచ్చు, తిరిగి శిక్షణ ఇవ్వవచ్చు, లేదా తిరిగి మోహరించవచ్చు. ఇది పని చేసే ప్రోటోటైప్‌గా పూర్తిగా పరీక్షించబడింది; కృషి విజ్ఞాన కేంద్రాల ద్వారా పైలట్ విస్తరణ తదుపరి అడుగు.",
         "about_team": "Project Kaan -- భారతీయ నిల్వ పరిస్థితుల కోసం ధ్రువీకరించిన వాస్తవ-ప్రపంచ ఆడియో డేటాసెట్‌లు అందుబాటులోకి వచ్చిన తర్వాత భవిష్యత్తు వెర్షన్లలో పప్పుధాన్యాల నిల్వ కోసం పప్పు పురుగు గుర్తింపు చేర్చబడుతుంది.",
-        "try_demo_btn": "డెమో ఆడియో ప్రయత్నించండి (360 Hz)",
+        "try_demo_btn": "IRRI వరి తుమ్మెద నమూనా ప్రయత్నించండి",
     },
 }
 
