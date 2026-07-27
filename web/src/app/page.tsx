@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import GuideTour from "@/components/GuideTour";
-import SummitSummary from "@/components/SummitSummary";
 import { LANGUAGES, type Lang } from "@/lib/language";
 import {
   INTRO_GUIDE_ORDER,
@@ -96,7 +95,6 @@ export default function IntroPage() {
           Listen to your grain
         </button>
 
-        <SummitSummary />
       </div>
 
       <GuideTour

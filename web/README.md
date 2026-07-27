@@ -11,7 +11,7 @@ Live demo: https://kaan-web.vercel.app
 - Mel spectrogram preprocessing matched to the Python training pipeline
 - Severity estimate from acoustic signal density
 - English, Hindi, Marathi, Punjabi, Telugu
-- Guided tour and AI Impact Summit recognition section
+- Guided tour for first-time users
 - Colour + symbol results for accessibility
 
 ## Local development
