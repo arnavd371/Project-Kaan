@@ -78,7 +78,7 @@ SDG 2 (Zero Hunger): Reduces post-harvest grain loss for smallholder farmers, di
 SDG 12 (Responsible Consumption and Production): Reduces prophylactic pesticide use through targeted, evidence-based intervention.
 
 ### GTM and Sustainability (Metric 1: Sustainable Pathways)
-Distribution pathway: Krishi Vigyan Kendras (731 district-level agricultural extension centres across India), Farmer Producer Organisations, and state agriculture departments. One URL shared by one KVK officer per district reaches thousands of farmers without requiring app store deployment. Released under MIT licence. The open retraining pipeline allows state agriculture departments to retrain the model on locally recorded audio from specific regions, grain varieties, and storage conditions, enabling long-term sustainability without dependence on the original developers.
+Distribution pathway: Krishi Vigyan Kendras (731 district-level agricultural extension centres across India), Farmer Producer Organisations, and state agriculture departments. One URL shared by one KVK officer per district reaches thousands of farmers without requiring app store deployment. Released under the Apache License 2.0. The open retraining pipeline allows state agriculture departments to retrain the model on locally recorded audio from specific regions, grain varieties, and storage conditions, enabling long-term sustainability without dependence on the original developers.
 
 ### Responsible AI Principles
 Kaan follows the Promote Equity and Inclusion principle by providing a free, offline, multilingual tool that reaches populations excluded from conventional agricultural technology. It follows Enable Transparency and Explainability by showing confidence scores, spectrogram visualizations, and explicit uncertainty flags. It follows Advance Security, Safety, and Reliability by framing all outputs as screening recommendations requiring professional confirmation.
@@ -103,7 +103,7 @@ This monorepo contains the full Project Kaan stack:
 Canonical GitHub repo: https://github.com/arnavd371/Project-Kaan
 
 ### Licence
-MIT
+Apache License 2.0
 
 ### Run locally
 

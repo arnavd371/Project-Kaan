@@ -1093,7 +1093,7 @@ def render_about(lang: str):
     )
     st.markdown(
         '<div class="panel">'
-        "<p>Kaan is released as open-source under MIT licence. The full training pipeline is "
+        "<p>Kaan is released as open-source under the Apache License 2.0. The full training pipeline is "
         "documented on GitHub to allow state agriculture departments and Krishi Vigyan Kendras "
         "to retrain the model on locally recorded data from their specific region and grain "
         "variety.</p>"

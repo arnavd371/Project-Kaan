@@ -33,4 +33,4 @@ npx vercel --prod
 See [MOBILE.md](MOBILE.md). Capacitor project folders are `android/` and `ios/` under `web/`.
 
 ## Licence
-MIT. Copyright (c) 2026 Arnav Dhiman.
+Apache License 2.0. Copyright 2026 Arnav Dhiman.

@@ -101,7 +101,7 @@
       },
       "app_about": {
         "title": "About and Impact",
-        "body": "Read the problem statement with IGMRI citation, inclusion, why AI is needed, ethics, and the public MIT release."
+        "body": "Read the problem statement with IGMRI citation, inclusion, why AI is needed, ethics, and the public Apache License 2.0 release."
       }
     },
     "hi": {
@@ -143,7 +143,7 @@
       },
       "app_about": {
         "title": "परिचय और प्रभाव",
-        "body": "IGMRI संदर्भ के साथ समस्या, समावेशन, AI की ज़रूरत, नैतिकता और MIT रिलीज़ यहाँ पढ़ें।"
+        "body": "IGMRI संदर्भ के साथ समस्या, समावेशन, AI की ज़रूरत, नैतिकता और Apache License 2.0 रिलीज़ यहाँ पढ़ें।"
       }
     },
     "mr": {
@@ -185,7 +185,7 @@
       },
       "app_about": {
         "title": "परिचय व प्रभाव",
-        "body": "समस्या, SDG, समावेश आणि MIT परवाना येथे वाचा."
+        "body": "समस्या, SDG, समावेश आणि Apache License 2.0 परवाना येथे वाचा."
       }
     },
     "pa": {
@@ -227,7 +227,7 @@
       },
       "app_about": {
         "title": "ਜਾਣ-ਪਛਾਣ ਤੇ ਪ੍ਰਭਾਵ",
-        "body": "ਸਮੱਸਿਆ, SDG, ਨੈਤਿਕਤਾ ਅਤੇ MIT ਲਾਇਸੰਸ ਇੱਥੇ ਪੜ੍ਹੋ।"
+        "body": "ਸਮੱਸਿਆ, SDG, ਨੈਤਿਕਤਾ ਅਤੇ Apache License 2.0 ਲਾਇਸੰਸ ਇੱਥੇ ਪੜ੍ਹੋ।"
       }
     },
     "te": {
@@ -269,7 +269,7 @@
       },
       "app_about": {
         "title": "గురించి మరియు ప్రభావం",
-        "body": "సమస్య, SDG, నైతికత మరియు MIT లైసెన్స్ ఇక్కడ చదవండి."
+        "body": "సమస్య, SDG, నైతికత మరియు Apache License 2.0 లైసెన్స్ ఇక్కడ చదవండి."
       }
     }
   }

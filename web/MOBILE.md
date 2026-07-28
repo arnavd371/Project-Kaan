@@ -49,4 +49,4 @@ Version is set in `android/app/build.gradle` (`versionCode` / `versionName`).
 
 - Inference runs the INT8 CNN in the WebView (ONNX Runtime). First launch may download the WASM runtime from the CDN unless later bundled.
 - IRRI sample WAVs are packaged under `public/samples/` for demos.
-- License: MIT (see `LICENSE`).
+- License: Apache License 2.0 (see `LICENSE`).
