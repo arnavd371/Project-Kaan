@@ -29,7 +29,7 @@ This exceeds the reference paper's reported accuracy of 84.51 percent on the sam
 
 Model size: about 333 KB (INT8 quantized TFLite), runs on-device
 
-Architecture: mel spectrogram CNN, INT8 quantization, Streamlit + LiteRT / TensorFlow Lite inference (same model family as the public web app)
+Architecture: mel spectrogram CNN, INT8 quantization, LiteRT / TensorFlow Lite and ONNX Runtime Web for on-device / in-browser inference
 
 ### Novel Contribution (Metric 2: Idea Novelty)
 Every existing acoustic grain pest detection system uses dedicated hardware: Raspberry Pi Zero with Adafruit SPH0645 MEMS microphone (Balingbing et al. 2024), USDA piezoelectric sensors, commercial acoustic probes costing Rs 2 lakh or more. Kaan is the first system to run acoustic grain pest detection on a standard smartphone microphone, offline, in Indian languages, at no cost. The underlying acoustic technique is established in the literature. The delivery mechanism for Indian smallholder farmers is the novel contribution. Additionally, Kaan provides severity estimation from acoustic signal density (RMS energy and impulse rate), a feature absent from any published acoustic pest detection system.
@@ -41,13 +41,13 @@ Model: custom CNN trained in TensorFlow/Keras
 
 Quantization: INT8 via TensorFlow Lite (`project-kaan.tflite`)
 
-Frontend: Streamlit prototype (`app.py`) plus public Next.js website in `web/` (ONNX Runtime Web, same trained model)
+Frontend: public Next.js website in `web/` (ONNX Runtime Web, same trained model)
 
 Public URL: https://kaan-web.vercel.app
 
 Languages: English, Hindi, Marathi, Punjabi, Telugu
 
-Deployment: Streamlit Community Cloud / local; web on Vercel (zero backend cost for classification)
+Deployment: web on Vercel (zero backend cost for classification); training scripts run locally
 
 Hardware target: any Android or iOS smartphone with built-in microphone. INT8 model designed for AI-optimised mobile chipsets including Qualcomm Hexagon NPU for accelerated on-device inference.
 
@@ -96,7 +96,7 @@ This monorepo contains the full Project Kaan stack:
 
 | Path | What it is |
 |---|---|
-| `app.py`, `utils/`, `model/` | Streamlit prototype, training, and TFLite inference |
+| `model/`, `utils/` | Training, preprocessing, and TFLite inference helpers |
 | `web/` | Public Next.js website (ONNX in-browser CNN, guided tour, summit page) |
 | `web/android`, `web/ios` | Capacitor mobile shells for the same web build |
 
@@ -107,17 +107,16 @@ Apache License 2.0
 
 ### Run locally
 
-Streamlit (training / research UI):
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
 Public website:
 ```bash
 cd web
 npm install
 npm run dev
+```
+
+Python training / TFLite helpers:
+```bash
+pip install -r requirements.txt
 ```
 
 Open http://localhost:3000 for the website. Training scripts live under `model/`. Retrain and export TFLite with `model/train.py` / `model/train_kaggle.py` and `model/convert_tflite.py`.

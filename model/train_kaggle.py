@@ -1,10 +1,10 @@
-"""Kaan / Project Kaan -- improved retrain (v5) on top of the leakage-fixed baseline.
+"""Kaan / Project Kaan: improved retrain (v5) on top of the leakage-fixed baseline.
 
 Improvements vs. the audited 84.91% run:
   1. Deduplicate identical WAV contents and identical spectrograms BEFORE the
      train/val split (the previous run had 15 exact train/val spectrogram
      collisions from duplicate IRRI files).
-  2. SpecAugment (time + frequency masking) during training -- standard for
+  2. SpecAugment (time + frequency masking) during training: standard for
      spectrogram CNNs; helps rice_weevil vs lesser_grain_borer confusion.
   3. Slightly deeper CNN (extra 128-filter block + SpatialDropout) while
      staying small enough for INT8 TFLite on phones.
@@ -150,11 +150,11 @@ def trim_and_pad(y):
     if len(y_trimmed) == 0:
         y_trimmed = y
     if len(y_trimmed) >= N_SAMPLES:
-        start = (len(y_trimmed) -- N_SAMPLES) // 2
+        start = (len(y_trimmed) - N_SAMPLES) // 2
         return y_trimmed[start : start + N_SAMPLES].astype(np.float32)
-    pad_total = N_SAMPLES -- len(y_trimmed)
+    pad_total = N_SAMPLES - len(y_trimmed)
     pad_left = pad_total // 2
-    pad_right = pad_total -- pad_left
+    pad_right = pad_total - pad_left
     return np.pad(y_trimmed, (pad_left, pad_right), mode="constant").astype(np.float32)
 
 
@@ -186,13 +186,13 @@ def waveform_to_mel_spectrogram(y):
     mel = librosa.feature.melspectrogram(y=y, sr=SAMPLE_RATE, n_mels=N_MELS, n_fft=N_FFT, hop_length=HOP_LENGTH)
     mel_db = librosa.power_to_db(mel, ref=np.max)
     mel_min, mel_max = mel_db.min(), mel_db.max()
-    mel_norm = (mel_db -- mel_min) / (mel_max -- mel_min) if mel_max -- mel_min > 1e-8 else np.zeros_like(mel_db)
+    mel_norm = (mel_db - mel_min) / (mel_max - mel_min) if mel_max - mel_min > 1e-8 else np.zeros_like(mel_db)
     zoom_factors = (MEL_SHAPE[0] / mel_norm.shape[0], MEL_SHAPE[1] / mel_norm.shape[1])
     mel_resized = ndimage.zoom(mel_norm, zoom_factors, order=1)[: MEL_SHAPE[0], : MEL_SHAPE[1]]
     if mel_resized.shape[0] < MEL_SHAPE[0] or mel_resized.shape[1] < MEL_SHAPE[1]:
         mel_resized = np.pad(
             mel_resized,
-            ((0, MEL_SHAPE[0] -- mel_resized.shape[0]), (0, MEL_SHAPE[1] -- mel_resized.shape[1])),
+            ((0, MEL_SHAPE[0] - mel_resized.shape[0]), (0, MEL_SHAPE[1] - mel_resized.shape[1])),
             mode="constant",
         )
     return mel_resized.reshape(MEL_SHAPE[0], MEL_SHAPE[1], 1).astype(np.float32)
@@ -215,13 +215,13 @@ def spec_augment_np(spec, freq_mask=16, time_mask=24, n_freq=2, n_time=2):
         f = np.random.randint(0, freq_mask + 1)
         if f == 0 or f >= h:
             continue
-        f0 = np.random.randint(0, h -- f + 1)
+        f0 = np.random.randint(0, h - f + 1)
         out[f0 : f0 + f, :, :] = 0.0
     for _ in range(n_time):
         t = np.random.randint(0, time_mask + 1)
         if t == 0 or t >= w:
             continue
-        t0 = np.random.randint(0, w -- t + 1)
+        t0 = np.random.randint(0, w - t + 1)
         out[:, t0 : t0 + t, :] = 0.0
     return out
 
@@ -394,15 +394,15 @@ assert len(set(CLEAN_TRAIN_FILES) & set(CLEAN_VAL_FILES)) == 0
 print("  PASS")
 
 print("\n=== AUDIT 3: exact-duplicate spectrogram check (train vs val) ===")
-# Compare only unaugmented originals that could collide -- check all train vs val hashes
+# Compare only unaugmented originals that could collide: check all train vs val hashes
 val_hashes = {spec_hash(s) for s in X_val}
 # Prefer checking unaugmented pest train originals; also check full train set
 dupe_count = sum(1 for s in X_train if spec_hash(s) in val_hashes)
 print(f"  Exact duplicate spectrograms shared between train and val: {dupe_count}")
 if dupe_count > 0:
-    print("  WARNING: duplicates remain (likely from clean window overlap -- unexpected).")
+    print("  WARNING: duplicates remain (likely from clean window overlap: unexpected).")
 else:
-    print("  PASS -- zero exact duplicates between train and val.")
+    print("  PASS: zero exact duplicates between train and val.")
 
 # ---------------------------------------------------------------------------
 # 6. Model + training

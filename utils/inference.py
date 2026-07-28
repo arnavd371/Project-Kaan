@@ -28,7 +28,7 @@ DEMO_CENTROID_HIGH = 500
 
 
 def _load_interpreter_class():
-    """Prefer LiteRT (works on Streamlit Cloud / Python 3.13); fall back to TF."""
+    """Prefer LiteRT (works on Python 3.13+); fall back to TF."""
     try:
         from ai_edge_litert.interpreter import Interpreter
 

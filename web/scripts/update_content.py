@@ -171,8 +171,8 @@ def main() -> None:
             "analyzing": "Analyzing with CNN...",
             "a11y_result_note": "Result indicated by both colour and a symbol for accessibility.",
             "cnn_note": (
-                "Classification runs the trained INT8 CNN in your browser (same model family "
-                "as the Streamlit app; 97.76% validation accuracy). First analysis may take a "
+                "Classification runs the trained INT8 CNN in your browser "
+                "(97.76% validation accuracy). First analysis may take a "
                 "few seconds while the model loads."
             ),
         }
