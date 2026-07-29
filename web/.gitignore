@@ -1,0 +1,27 @@
+node_modules/
+.next/
+out/
+.env*.local
+.DS_Store
+*.log
+.vercel
+.env*
+
+# Android build artifacts (keep the Capacitor project)
+android/.gradle/
+android/app/build/
+android/build/
+android/captures/
+android/local.properties
+android/.idea/
+*.apk
+*.aab
+*.keystore
+
+# iOS build artifacts
+ios/App/build/
+ios/DerivedData/
+ios/App/Pods/
+ios/**/*.xcuserstate
+ios/**/xcuserdata/
+tsconfig.tsbuildinfo
