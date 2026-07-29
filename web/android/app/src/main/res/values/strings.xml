@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kaan</string>
+    <string name="title_activity_main">Kaan</string>
+    <string name="package_name">com.arnavdhiman.kaan</string>
+    <string name="custom_url_scheme">com.arnavdhiman.kaan</string>
+</resources>
