@@ -11,7 +11,11 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 import numpy as np
-from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import (
+    ExtraTreesClassifier,
+    HistGradientBoostingClassifier,
+    RandomForestClassifier,
+)
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
@@ -19,6 +23,7 @@ from sklearn.metrics import (
     confusion_matrix,
     f1_score,
 )
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -348,11 +353,8 @@ def train_cnn(
 def _count_sklearn_params(est) -> int | None:
     if hasattr(est, "coef_"):
         return int(np.size(est.coef_) + (np.size(est.intercept_) if hasattr(est, "intercept_") else 0))
-    if hasattr(est, "n_features_in_"):
-        # Approximate capacity for tree / MLP
-        if hasattr(est, "coefs_"):
-            return int(sum(np.size(c) for c in est.coefs_) + sum(np.size(b) for b in est.intercepts_))
-        return None
+    if hasattr(est, "coefs_"):
+        return int(sum(np.size(c) for c in est.coefs_) + sum(np.size(b) for b in est.intercepts_))
     return None
 
 
@@ -453,12 +455,223 @@ def train_logreg(X_train, y_train, X_val, y_val, smoke: bool = False) -> Approac
     )
 
 
+def train_rf(X_train, y_train, X_val, y_val, smoke: bool = False) -> ApproachResult:
+    t0 = time.perf_counter()
+    clf = RandomForestClassifier(
+        n_estimators=80 if smoke else 400,
+        max_depth=None,
+        min_samples_leaf=1,
+        class_weight="balanced_subsample",
+        random_state=42,
+        n_jobs=-1,
+    )
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_val)
+    return _pack_metrics(
+        "rf",
+        y_val,
+        y_pred,
+        None,
+        time.perf_counter() - t0,
+        notes="RandomForest on MFCC+spectral vector",
+    )
+
+
+def train_extratrees(X_train, y_train, X_val, y_val, smoke: bool = False) -> ApproachResult:
+    t0 = time.perf_counter()
+    clf = ExtraTreesClassifier(
+        n_estimators=80 if smoke else 400,
+        max_depth=None,
+        min_samples_leaf=1,
+        class_weight="balanced_subsample",
+        random_state=42,
+        n_jobs=-1,
+    )
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_val)
+    return _pack_metrics(
+        "extratrees",
+        y_val,
+        y_pred,
+        None,
+        time.perf_counter() - t0,
+        notes="ExtraTrees on MFCC+spectral vector",
+    )
+
+
+def train_knn(X_train, y_train, X_val, y_val, smoke: bool = False) -> ApproachResult:
+    t0 = time.perf_counter()
+    clf = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            ("knn", KNeighborsClassifier(n_neighbors=3 if smoke else 7, weights="distance")),
+        ]
+    )
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_val)
+    return _pack_metrics(
+        "knn",
+        y_val,
+        y_pred,
+        None,
+        time.perf_counter() - t0,
+        notes="k-NN on MFCC+spectral vector",
+    )
+
+
+def build_cnn1d(n_classes: int = 4):
+    """1D CNN over mel time (frequency bins as channels)."""
+    from tensorflow import keras
+    from tensorflow.keras import layers
+
+    inputs = layers.Input(shape=(128, 128))
+    x = layers.Conv1D(64, 5, activation="relu", padding="same")(inputs)
+    x = layers.BatchNormalization()(x)
+    x = layers.MaxPooling1D(2)(x)
+    x = layers.Conv1D(128, 5, activation="relu", padding="same")(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.MaxPooling1D(2)(x)
+    x = layers.Conv1D(128, 3, activation="relu", padding="same")(x)
+    x = layers.GlobalAveragePooling1D()(x)
+    x = layers.Dense(128, activation="relu")(x)
+    x = layers.Dropout(0.4)(x)
+    outputs = layers.Dense(n_classes, activation="softmax")(x)
+    return keras.Model(inputs, outputs, name="project_kaan_cnn1d")
+
+
+def train_cnn1d(
+    X_mel_train: np.ndarray,
+    y_train: np.ndarray,
+    X_mel_val: np.ndarray,
+    y_val: np.ndarray,
+    epochs: int = 60,
+    smoke: bool = False,
+) -> ApproachResult:
+    if not tensorflow_available():
+        return _skipped("cnn1d", "TensorFlow not installed; cnn1d skipped.")
+
+    from tensorflow import keras
+
+    t0 = time.perf_counter()
+    X_tr = np.squeeze(X_mel_train, axis=-1).astype(np.float32)
+    X_va = np.squeeze(X_mel_val, axis=-1).astype(np.float32)
+    model = build_cnn1d(n_classes=len(CLASS_NAMES))
+    fit_epochs = 3 if smoke else epochs
+    bs = min(32, max(4, len(X_tr)))
+    model.compile(
+        optimizer=keras.optimizers.Adam(1e-3),
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"],
+    )
+    callbacks = []
+    if not smoke:
+        callbacks.append(
+            keras.callbacks.EarlyStopping(
+                patience=15, restore_best_weights=True, monitor="val_accuracy", mode="max"
+            )
+        )
+    history = model.fit(
+        X_tr,
+        y_train,
+        validation_data=(X_va, y_val),
+        epochs=fit_epochs,
+        batch_size=bs,
+        callbacks=callbacks,
+        verbose=0 if smoke else 1,
+    )
+    y_pred = np.argmax(model.predict(X_va, verbose=0), axis=1)
+    result = _pack_metrics(
+        "cnn1d",
+        y_val,
+        y_pred,
+        int(model.count_params()),
+        time.perf_counter() - t0,
+        notes="1D CNN on mel time axis (freq as channels)",
+    )
+    result._history = {k: [float(x) for x in v] for k, v in history.history.items()}  # type: ignore[attr-defined]
+    return result
+
+
+def _yamnet_embeddings(waveforms: np.ndarray) -> np.ndarray:
+    """Mean-pool YAMNet frame embeddings (16 kHz mono)."""
+    import tensorflow_hub as hub
+
+    model = hub.load("https://tfhub.dev/google/yamnet/1")
+    emb_list = []
+    for i in range(len(waveforms)):
+        wav = waveforms[i].astype(np.float32)
+        peak = float(np.max(np.abs(wav))) + 1e-8
+        _scores, embeddings, _spec = model(wav / peak)
+        emb_list.append(np.mean(embeddings.numpy(), axis=0))
+    return np.stack(emb_list).astype(np.float32)
+
+
+def train_yamnet_probe(
+    wave_train: np.ndarray | None,
+    y_train: np.ndarray,
+    wave_val: np.ndarray | None,
+    y_val: np.ndarray,
+    smoke: bool = False,
+) -> ApproachResult:
+    if wave_train is None or wave_val is None:
+        return _skipped("yamnet_probe", "Waveforms not provided; yamnet_probe skipped.")
+    try:
+        import tensorflow_hub  # noqa: F401
+    except Exception:
+        return _skipped("yamnet_probe", "tensorflow_hub not installed; yamnet_probe skipped.")
+    if not tensorflow_available():
+        return _skipped("yamnet_probe", "TensorFlow not installed; yamnet_probe skipped.")
+
+    t0 = time.perf_counter()
+    try:
+        if smoke:
+            n_tr = min(len(wave_train), 16)
+            n_va = min(len(wave_val), 8)
+            wave_train = wave_train[:n_tr]
+            y_train = y_train[:n_tr]
+            wave_val = wave_val[:n_va]
+            y_val = y_val[:n_va]
+        X_tr = _yamnet_embeddings(wave_train)
+        X_va = _yamnet_embeddings(wave_val)
+    except Exception as e:
+        return _skipped("yamnet_probe", f"YAMNet embed failed: {e}")
+
+    clf = Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            (
+                "lr",
+                LogisticRegression(
+                    max_iter=200 if smoke else 2000,
+                    class_weight="balanced",
+                ),
+            ),
+        ]
+    )
+    clf.fit(X_tr, y_train)
+    y_pred = clf.predict(X_va)
+    n_params = _count_sklearn_params(clf.named_steps["lr"])
+    return _pack_metrics(
+        "yamnet_probe",
+        y_val,
+        y_pred,
+        n_params,
+        time.perf_counter() - t0,
+        notes="Frozen YAMNet embeddings + logistic probe",
+    )
+
+
 APPROACH_ORDER = [
     "cnn_shallow",
     "cnn_deep",
+    "cnn1d",
+    "yamnet_probe",
     "svm_rbf",
     "mlp",
     "gbdt",
+    "rf",
+    "extratrees",
+    "knn",
     "logreg",
 ]
 
@@ -475,6 +688,8 @@ def run_all_approaches(
     cnn_epochs: int = 60,
     cnn_strong: bool = True,
     cnn_recipe: dict | None = None,
+    wave_train: np.ndarray | None = None,
+    wave_val: np.ndarray | None = None,
 ) -> list[ApproachResult]:
     wanted = approaches or APPROACH_ORDER
     results: list[ApproachResult] = []
@@ -510,12 +725,26 @@ def run_all_approaches(
                     recipe=cnn_recipe,
                 )
             )
+        elif name == "cnn1d":
+            results.append(
+                train_cnn1d(X_mel_train, y_train, X_mel_val, y_val, epochs=cnn_epochs, smoke=smoke)
+            )
+        elif name == "yamnet_probe":
+            results.append(
+                train_yamnet_probe(wave_train, y_train, wave_val, y_val, smoke=smoke)
+            )
         elif name == "svm_rbf":
             results.append(train_svm_rbf(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
         elif name == "mlp":
             results.append(train_mlp(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
         elif name == "gbdt":
             results.append(train_gbdt(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
+        elif name == "rf":
+            results.append(train_rf(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
+        elif name == "extratrees":
+            results.append(train_extratrees(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
+        elif name == "knn":
+            results.append(train_knn(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
         elif name == "logreg":
             results.append(train_logreg(X_hand_train, y_train, X_hand_val, y_val, smoke=smoke))
         else:

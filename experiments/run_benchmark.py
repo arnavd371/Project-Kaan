@@ -1,10 +1,9 @@
-"""Same-split multi-approach benchmarks for Project Kaan.
+"""Same-split multi-approach benchmark for Project Kaan.
 
-Approaches: cnn_shallow, cnn_deep, svm_rbf, mlp, gbdt, logreg.
-Does not modify web/, Streamlit, TFLite, or ONNX deployment paths.
+Approaches: cnn_shallow, cnn_deep, cnn1d, yamnet_probe, svm_rbf, mlp, gbdt, rf,
+extratrees, knn, logreg. Also writes findings.md.
 
   python -m experiments.run_benchmark --smoke
-  python -m experiments.run_benchmark --seed 42 --out experiments/outputs/run_seed42
   python -m experiments.run_benchmark --seeds 42,43,44 --out experiments/outputs/multi
 """
 
@@ -44,6 +43,7 @@ from experiments.models import (
     run_all_approaches,
     tensorflow_available,
 )
+from experiments.findings import write_findings
 from experiments.plots import write_all_plots
 from experiments.stats import summarize_all, write_stats_report
 
@@ -183,9 +183,19 @@ def run_one_seed(
     split = make_split(paths, labels, test_size=test_size, seed=seed)
     write_split_manifest(split, out_dir / "split_manifest.json")
 
-    print("[features] extracting handcrafted + mel …")
-    X_hand_tr, X_mel_tr = build_feature_matrices(split["train_paths"], split["y_train"], smoke_seed=seed)
-    X_hand_va, X_mel_va = build_feature_matrices(split["val_paths"], split["y_val"], smoke_seed=seed)
+    need_waves = "yamnet_probe" in approaches
+    print("[features] extracting handcrafted + mel" + (" + waveforms" if need_waves else "") + " …")
+    if need_waves:
+        X_hand_tr, X_mel_tr, wave_tr = build_feature_matrices(
+            split["train_paths"], split["y_train"], smoke_seed=seed, return_waveforms=True
+        )
+        X_hand_va, X_mel_va, wave_va = build_feature_matrices(
+            split["val_paths"], split["y_val"], smoke_seed=seed, return_waveforms=True
+        )
+    else:
+        X_hand_tr, X_mel_tr = build_feature_matrices(split["train_paths"], split["y_train"], smoke_seed=seed)
+        X_hand_va, X_mel_va = build_feature_matrices(split["val_paths"], split["y_val"], smoke_seed=seed)
+        wave_tr = wave_va = None
 
     print(f"[features] handcrafted dim={X_hand_tr.shape[1]}, mel={X_mel_tr.shape[1:]}")
     print(f"[train] approaches={approaches}  tf={tensorflow_available()}  cnn_strong={cnn_strong}")
@@ -216,6 +226,8 @@ def run_one_seed(
         cnn_epochs=cnn_epochs,
         cnn_strong=cnn_strong,
         cnn_recipe=cnn_recipe,
+        wave_train=wave_tr,
+        wave_val=wave_va,
     )
 
     history_by = {}
@@ -231,6 +243,14 @@ def run_one_seed(
     _write_metrics(results, out_dir)
     write_all_plots(results, out_dir)
     _write_report(results, out_dir, seed=seed, smoke=smoke)
+    write_findings(
+        results,
+        out_dir,
+        X_mel_val=X_mel_va,
+        y_val=split["y_val"],
+        X_hand_val=X_hand_va,
+        seed=seed,
+    )
 
     for r in results:
         if r.skipped:

@@ -77,16 +77,24 @@ def build_feature_matrices(
     paths: Iterable[str],
     labels: np.ndarray | None = None,
     smoke_seed: int = 42,
-) -> tuple[np.ndarray, np.ndarray]:
+    return_waveforms: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
     paths = list(paths)
     hand: list[np.ndarray] = []
     mels: list[np.ndarray] = []
+    waves: list[np.ndarray] = []
     for i, path in enumerate(paths):
         class_hint = int(labels[i]) if labels is not None else None
         y = load_waveform(str(path), class_hint=class_hint, smoke_seed=smoke_seed)
         hand.append(extract_handcrafted(y))
         mels.append(extract_mel(y))
-    return np.stack(hand).astype(np.float32), np.stack(mels).astype(np.float32)
+        if return_waveforms:
+            waves.append(trim_and_pad(y).astype(np.float32))
+    X_hand = np.stack(hand).astype(np.float32)
+    X_mel = np.stack(mels).astype(np.float32)
+    if return_waveforms:
+        return X_hand, X_mel, np.stack(waves).astype(np.float32)
+    return X_hand, X_mel
 
 
 def feature_dim_handcrafted() -> int:
@@ -97,8 +105,13 @@ def describe_approaches() -> list[dict]:
     return [
         {"id": "cnn_shallow", "family": "cnn", "features": "mel", "note": "train.py Project Kaan CNN"},
         {"id": "cnn_deep", "family": "cnn", "features": "mel", "note": "train_kaggle.py v5 deeper CNN"},
+        {"id": "cnn1d", "family": "cnn", "features": "mel", "note": "1D CNN on mel time axis"},
+        {"id": "yamnet_probe", "family": "pretrained", "features": "waveform", "note": "YAMNet embed + logistic"},
         {"id": "svm_rbf", "family": "classical", "features": "handcrafted"},
         {"id": "mlp", "family": "classical", "features": "handcrafted"},
         {"id": "gbdt", "family": "classical", "features": "handcrafted"},
+        {"id": "rf", "family": "classical", "features": "handcrafted"},
+        {"id": "extratrees", "family": "classical", "features": "handcrafted"},
+        {"id": "knn", "family": "classical", "features": "handcrafted"},
         {"id": "logreg", "family": "classical", "features": "handcrafted"},
     ]

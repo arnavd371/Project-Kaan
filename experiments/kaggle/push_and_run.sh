@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Rebuild the self-contained embedded kernel and push it to Kaggle (GPU + internet).
+# Full v1.2 multi-approach + findings. No local training.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BUILD=/tmp/kaan-embed
@@ -11,12 +12,15 @@ rsync -a --exclude '__pycache__' --exclude 'outputs' --exclude 'kaggle' \
   "$ROOT/experiments/" "$BUILD/pkg/experiments/"
 cp "$ROOT/model/__init__.py" "$ROOT/model/preprocess.py" "$ROOT/model/generate_clean_data.py" \
   "$BUILD/pkg/model/"
+# Keep embed lean (Kaggle SaveKernel size limits). INT8 parity soft-skips without weights.
 
-python3 - <<PY
-import base64, io, json, zipfile
+export ROOT
+python3 - <<'PY'
+import base64, io, json, zipfile, os
 from pathlib import Path
 
-root = Path("$BUILD/pkg")
+ROOT = Path(os.environ["ROOT"])
+root = Path("/tmp/kaan-embed/pkg")
 buf = io.BytesIO()
 with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
     for p in root.rglob("*"):
@@ -24,10 +28,10 @@ with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
             zf.write(p, p.relative_to(root).as_posix())
 b64 = base64.b64encode(buf.getvalue()).decode("ascii")
 
-script = f'''"""Self-contained Kaggle kernel: Project Kaan multi-approach benchmark.
+script = f'''"""Self-contained Kaggle kernel: Project Kaan multi-approach benchmark v1.2.
 
-GPU + Internet required (IRRI clone + Speech Commands download).
-No external code dataset required  - experiments/ + model/preprocess are embedded.
+GPU + Internet required (IRRI clone + Speech Commands + YAMNet TF-Hub).
+Embedded experiments/ + model/preprocess (+ production weights if present).
 """
 from __future__ import annotations
 
@@ -66,17 +70,21 @@ if __name__ == "__main__":
     root = _extract()
     os.environ.pop("PROJECT_KAAN_DATA_DIR", None)
     os.environ.setdefault("CNN_EPOCHS", "60")
-    os.environ.setdefault("RUN_MODE", "ablations")
-    os.environ.pop("SEEDS", None)
+    os.environ.setdefault("SEEDS", "42,43,44")
+    os.environ.setdefault("RUN_MODE", "benchmark")
+    os.environ.setdefault(
+        "MODELS",
+        "cnn_shallow,cnn_deep,cnn1d,yamnet_probe,svm_rbf,mlp,gbdt,rf,extratrees,knn,logreg",
+    )
     runpy.run_path(str(root / "experiments" / "run_benchmark_kaggle.py"), run_name="__main__")
 '''
-out = Path("$ROOT/experiments/kaggle/kaan-multi-approach-benchmark.py")
+out = ROOT / "experiments/kaggle/kaan-multi-approach-benchmark.py"
 out.write_text(script)
 print("wrote", out, "bytes", out.stat().st_size)
 
 meta = {
     "id": "arnavd371/kaan-multi-approach-benchmark",
-    "title": "Kaan Multi-Approach Benchmark",
+    "title": "Kaan Multi-Approach Benchmark v1.2",
     "code_file": "kaan-multi-approach-benchmark.py",
     "language": "python",
     "kernel_type": "script",
@@ -90,7 +98,7 @@ meta = {
     "kernel_sources": [],
     "model_sources": [],
 }
-Path("$ROOT/experiments/kaggle/kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\\n")
+(ROOT / "experiments/kaggle/kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
 PY
 
 rm -rf "$KERNEL"
