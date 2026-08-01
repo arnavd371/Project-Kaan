@@ -79,3 +79,7 @@ See `experiments/WORKSHOP_CHECKLIST.md`.
 ## Licence
 
 Apache License 2.0 (same as the Project Kaan monorepo).
+
+## Paper pack
+
+Full methods + results tables for writing: [`PAPER_METHODOLOGY.md`](PAPER_METHODOLOGY.md).
