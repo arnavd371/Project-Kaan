@@ -12,9 +12,14 @@ Under a leakage-aware file-level split, do multiple approaches (deep mel-CNN and
 |---|---|---|
 | `cnn_shallow` | Project Kaan mel-CNN (`model/train.py`) | 128x128 mel image |
 | `cnn_deep` | Deeper mel-CNN v5 (`model/train_kaggle.py`) | 128x128 mel image |
+| `cnn1d` | 1D CNN over mel time (freq as channels) | Mel sequence |
+| `yamnet_probe` | Frozen YAMNet embeddings + logistic probe | Waveform |
 | `svm_rbf` | SVM (RBF) | MFCC + spectral summary vector |
 | `mlp` | Shallow MLP | Same handcrafted vector |
 | `gbdt` | HistGradientBoosting | Same handcrafted vector |
+| `rf` | RandomForest | Same handcrafted vector |
+| `extratrees` | ExtraTrees | Same handcrafted vector |
+| `knn` | k-NN | Same handcrafted vector |
 | `logreg` | Logistic regression (optional floor) | Same handcrafted vector |
 
 The app still ships the existing INT8 / ONNX CNN only. This folder compares approaches on the same file-level split; it does not replace the production model path.
@@ -58,11 +63,14 @@ Data prep matches `model/train_kaggle.py` (IRRI clone + Speech Commands clean wi
 - `metrics.json` / `metrics.csv`
 - `stats.md` / `stats.json` / `aggregate_metrics.json` (multi-seed)
 - `per_seed_metrics.json`
+- `findings.md` / `findings.json` (McNemar, confusions, SNR proxy, INT8 parity)
 - `audit_before_training.*` / `audit_after_training.*`
 - `ablation_table.*` (ablation runs)
 - `confusion_*.png`, `fig_*.png`
 - `split_manifest.json`
 - `report.md`
+
+Committed Kaggle summary tables: `experiments/results/`.
 
 ## Workshop checklist
 

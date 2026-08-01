@@ -43,13 +43,18 @@ Same file-level split, byte-deduped IRRI pest WAVs + Speech Commands background 
 | Approach | Acc mean ± std | Seeds above 84.51% |
 |---|---:|:---:|
 | gbdt | 95.36% ± 1.50 | 3/3 |
+| cnn_deep | 95.15% ± 0.48 | 3/3 |
+| extratrees | 94.94% ± 1.10 | 3/3 |
 | svm_rbf | 94.73% ± 1.20 | 3/3 |
-| cnn_deep | 94.62% ± 0.95 | 3/3 |
 | logreg | 94.09% ± 1.59 | 3/3 |
-| cnn_shallow | 93.78% ± 0.97 | 3/3 |
+| rf | 93.67% ± 0.95 | 3/3 |
+| cnn_shallow | 93.57% ± 1.28 | 3/3 |
 | mlp | 92.09% ± 0.32 | 3/3 |
+| knn | 90.30% ± 0.37 | 3/3 |
+| yamnet_probe | 85.65% ± 1.83 | 2/3 |
+| cnn1d | 64.77% ± 20.7 | 1/3 |
 
-Bootstrap 95% CIs for all six means sit above 84.51%. Audits, ablations, plots, and release assets live under `experiments/` and [GitHub Releases](https://github.com/arnavd371/Project-Kaan/releases).
+Bootstrap 95% CIs for the strong mel-CNN and handcrafted models sit above 84.51%. `yamnet_probe` is near the reference line; `cnn1d` is unstable and not competitive. Main confusions are rice weevil ↔ lesser grain borer. Audits, findings (McNemar, SNR proxy), plots, and release assets live under `experiments/` and [GitHub Releases](https://github.com/arnavd371/Project-Kaan/releases).
 
 CNN ablation (seed 42): full strong recipe keeps `cnn_deep` near ~95%; a bare Adam / sparse-CE baseline collapsed (`cnn_deep` ~7.6%). Leave-one-out removals of SpecAugment / class weights / label smoothing are single-seed and should not be over-interpreted.
 

@@ -1,0 +1,200 @@
+[
+  {
+    "seed": 42,
+    "approach_id": "cnn_shallow",
+    "accuracy": 0.9430379746835443,
+    "macro_f1": 0.9545498290531371
+  },
+  {
+    "seed": 42,
+    "approach_id": "cnn_deep",
+    "accuracy": 0.9556962025316456,
+    "macro_f1": 0.9647324851154067
+  },
+  {
+    "seed": 42,
+    "approach_id": "cnn1d",
+    "accuracy": 0.5822784810126582,
+    "macro_f1": 0.646964663243733
+  },
+  {
+    "seed": 42,
+    "approach_id": "yamnet_probe",
+    "accuracy": 0.8670886075949367,
+    "macro_f1": 0.8936608706113736
+  },
+  {
+    "seed": 42,
+    "approach_id": "svm_rbf",
+    "accuracy": 0.9556962025316456,
+    "macro_f1": 0.9648283999077429
+  },
+  {
+    "seed": 42,
+    "approach_id": "mlp",
+    "accuracy": 0.9177215189873418,
+    "macro_f1": 0.9338048344433942
+  },
+  {
+    "seed": 42,
+    "approach_id": "gbdt",
+    "accuracy": 0.9588607594936709,
+    "macro_f1": 0.9671396009985509
+  },
+  {
+    "seed": 42,
+    "approach_id": "rf",
+    "accuracy": 0.9367088607594937,
+    "macro_f1": 0.9488186546768932
+  },
+  {
+    "seed": 42,
+    "approach_id": "extratrees",
+    "accuracy": 0.9556962025316456,
+    "macro_f1": 0.9640731292517007
+  },
+  {
+    "seed": 42,
+    "approach_id": "knn",
+    "accuracy": 0.9050632911392406,
+    "macro_f1": 0.923239836379653
+  },
+  {
+    "seed": 42,
+    "approach_id": "logreg",
+    "accuracy": 0.9430379746835443,
+    "macro_f1": 0.9544216357119583
+  },
+  {
+    "seed": 43,
+    "approach_id": "cnn_shallow",
+    "accuracy": 0.9208860759493671,
+    "macro_f1": 0.9327221571550615
+  },
+  {
+    "seed": 43,
+    "approach_id": "cnn_deep",
+    "accuracy": 0.9525316455696202,
+    "macro_f1": 0.9581048168584091
+  },
+  {
+    "seed": 43,
+    "approach_id": "cnn1d",
+    "accuracy": 0.879746835443038,
+    "macro_f1": 0.9037845954423567
+  },
+  {
+    "seed": 43,
+    "approach_id": "yamnet_probe",
+    "accuracy": 0.8354430379746836,
+    "macro_f1": 0.8656974171782534
+  },
+  {
+    "seed": 43,
+    "approach_id": "svm_rbf",
+    "accuracy": 0.9525316455696202,
+    "macro_f1": 0.9583453897400267
+  },
+  {
+    "seed": 43,
+    "approach_id": "mlp",
+    "accuracy": 0.9240506329113924,
+    "macro_f1": 0.9392535672599405
+  },
+  {
+    "seed": 43,
+    "approach_id": "gbdt",
+    "accuracy": 0.9651898734177216,
+    "macro_f1": 0.9681593949055032
+  },
+  {
+    "seed": 43,
+    "approach_id": "rf",
+    "accuracy": 0.9462025316455697,
+    "macro_f1": 0.9529704709614208
+  },
+  {
+    "seed": 43,
+    "approach_id": "extratrees",
+    "accuracy": 0.9556962025316456,
+    "macro_f1": 0.9608504107729359
+  },
+  {
+    "seed": 43,
+    "approach_id": "knn",
+    "accuracy": 0.8987341772151899,
+    "macro_f1": 0.9190652488207206
+  },
+  {
+    "seed": 43,
+    "approach_id": "logreg",
+    "accuracy": 0.9556962025316456,
+    "macro_f1": 0.9648188129467618
+  },
+  {
+    "seed": 44,
+    "approach_id": "cnn_shallow",
+    "accuracy": 0.9430379746835443,
+    "macro_f1": 0.9503647493207439
+  },
+  {
+    "seed": 44,
+    "approach_id": "cnn_deep",
+    "accuracy": 0.9462025316455697,
+    "macro_f1": 0.9529870240800722
+  },
+  {
+    "seed": 44,
+    "approach_id": "cnn1d",
+    "accuracy": 0.4810126582278481,
+    "macro_f1": 0.5324767904509283
+  },
+  {
+    "seed": 44,
+    "approach_id": "yamnet_probe",
+    "accuracy": 0.8670886075949367,
+    "macro_f1": 0.8891478426274414
+  },
+  {
+    "seed": 44,
+    "approach_id": "svm_rbf",
+    "accuracy": 0.9335443037974683,
+    "macro_f1": 0.9390953008344313
+  },
+  {
+    "seed": 44,
+    "approach_id": "mlp",
+    "accuracy": 0.9208860759493671,
+    "macro_f1": 0.936304538135108
+  },
+  {
+    "seed": 44,
+    "approach_id": "gbdt",
+    "accuracy": 0.9367088607594937,
+    "macro_f1": 0.9452112269969413
+  },
+  {
+    "seed": 44,
+    "approach_id": "rf",
+    "accuracy": 0.9272151898734177,
+    "macro_f1": 0.9373871747516827
+  },
+  {
+    "seed": 44,
+    "approach_id": "extratrees",
+    "accuracy": 0.9367088607594937,
+    "macro_f1": 0.945192746188607
+  },
+  {
+    "seed": 44,
+    "approach_id": "knn",
+    "accuracy": 0.9050632911392406,
+    "macro_f1": 0.9196192643635022
+  },
+  {
+    "seed": 44,
+    "approach_id": "logreg",
+    "accuracy": 0.9240506329113924,
+    "macro_f1": 0.9387397942371765
+  }
+]

@@ -34,10 +34,10 @@ def _pip_install() -> None:
         "scipy",
         "pandas",
         "joblib",
+        "tensorflow_hub",
     ]
     subprocess.run([sys.executable, "-m", "pip", "install", "-q", *pkgs], check=True)
-    # TensorFlow is usually preinstalled on Kaggle GPU images; ensure present
-    try:
+        try:
         import tensorflow as tf  # noqa: F401
 
         print("TensorFlow already available:", tf.__version__, flush=True)
@@ -100,8 +100,7 @@ def _materialize_from_input(src: Path, dest: Path) -> None:
 
 def _sync_project_code() -> Path:
     PROJECT.mkdir(parents=True, exist_ok=True)
-    # Prefer the tree that contains this file (embedded kernel extract or repo checkout)
-    local = Path(__file__).resolve().parent.parent
+        local = Path(__file__).resolve().parent.parent
     if (local / "experiments").is_dir() and (local / "model" / "preprocess.py").exists():
         print(f"[code] using local tree: {local}", flush=True)
         return local
@@ -143,8 +142,7 @@ def main() -> None:
     sys.path.insert(0, str(project))
     os.chdir(project)
 
-    # Prefer /kaggle/temp for WAVs so kernel output download stays small
-    if TEMP.exists():
+        if TEMP.exists():
         data_parent = DATA_ROOT
     else:
         data_parent = project
@@ -246,12 +244,18 @@ def main() -> None:
         "stats.json",
         "aggregate_metrics.json",
         "per_seed_metrics.json",
+        "findings.md",
+        "findings.json",
     ):
         src = OUT_DIR / name
         if src.exists():
             shutil.copy2(src, WORK / name)
+                for seed_dir in sorted(OUT_DIR.glob("seed_*")):
+            s = seed_dir / name
+            if s.exists():
+                shutil.copy2(s, WORK / f"{seed_dir.name}_{name}")
     print(f"\n[done] outputs → {OUT_DIR}", flush=True)
-    print(f"[done] also copied report/metrics/audits to {WORK}", flush=True)
+    print(f"[done] also copied report/metrics/audits/findings to {WORK}", flush=True)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,497 @@
+[
+  {
+    "approach_id": "gbdt",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9535864978902954,
+    "accuracy_std": 0.01495511274130574,
+    "accuracy_ci95": {
+      "low": 0.9367088607594937,
+      "high": 0.9651898734177214
+    },
+    "macro_f1_mean": 0.9601700743003319,
+    "macro_f1_std": 0.012964772631549675,
+    "macro_f1_ci95": {
+      "low": 0.9452112269969413,
+      "high": 0.9681593949055033
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 12.564540938713073,
+      "p_value": 0.003137429803736472,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9588607594936709,
+      0.9651898734177216,
+      0.9367088607594937
+    ],
+    "per_seed_macro_f1": [
+      0.9671396009985509,
+      0.9681593949055032,
+      0.9452112269969413
+    ]
+  },
+  {
+    "approach_id": "cnn_deep",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9514767932489452,
+    "accuracy_std": 0.0048339406064934675,
+    "accuracy_ci95": {
+      "low": 0.9462025316455697,
+      "high": 0.9556962025316457
+    },
+    "macro_f1_mean": 0.9586081086846292,
+    "macro_f1_std": 0.005888882808300326,
+    "macro_f1_ci95": {
+      "low": 0.9529870240800721,
+      "high": 0.9647324851154067
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 38.11590287351042,
+      "p_value": 0.00034380284509889715,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9556962025316456,
+      0.9525316455696202,
+      0.9462025316455697
+    ],
+    "per_seed_macro_f1": [
+      0.9647324851154067,
+      0.9581048168584091,
+      0.9529870240800722
+    ]
+  },
+  {
+    "approach_id": "extratrees",
+    "n_seeds": 3,
+    "accuracy_mean": 0.949367088607595,
+    "accuracy_std": 0.010962346883347318,
+    "accuracy_ci95": {
+      "low": 0.9367088607594937,
+      "high": 0.9556962025316457
+    },
+    "macro_f1_mean": 0.9567054287377479,
+    "macro_f1_std": 0.010099647182268903,
+    "macro_f1_ci95": {
+      "low": 0.945192746188607,
+      "high": 0.9640731292517007
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 16.474200000000025,
+      "p_value": 0.0018321840491489353,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9556962025316456,
+      0.9556962025316456,
+      0.9367088607594937
+    ],
+    "per_seed_macro_f1": [
+      0.9640731292517007,
+      0.9608504107729359,
+      0.945192746188607
+    ]
+  },
+  {
+    "approach_id": "svm_rbf",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9472573839662447,
+    "accuracy_std": 0.011980819294937287,
+    "accuracy_ci95": {
+      "low": 0.9335443037974683,
+      "high": 0.9556962025316457
+    },
+    "macro_f1_mean": 0.9540896968274003,
+    "macro_f1_std": 0.013383993746417862,
+    "macro_f1_ci95": {
+      "low": 0.9390953008344313,
+      "high": 0.9648283999077428
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 14.768754543575168,
+      "p_value": 0.002276711830808113,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9556962025316456,
+      0.9525316455696202,
+      0.9335443037974683
+    ],
+    "per_seed_macro_f1": [
+      0.9648283999077429,
+      0.9583453897400267,
+      0.9390953008344313
+    ]
+  },
+  {
+    "approach_id": "logreg",
+    "n_seeds": 3,
+    "accuracy_mean": 0.940928270042194,
+    "accuracy_std": 0.015927920749516322,
+    "accuracy_ci95": {
+      "low": 0.9240506329113924,
+      "high": 0.9556962025316457
+    },
+    "macro_f1_mean": 0.9526600809652989,
+    "macro_f1_std": 0.013128446616330268,
+    "macro_f1_ci95": {
+      "low": 0.9387397942371765,
+      "high": 0.9648188129467618
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 10.420659113308995,
+      "p_value": 0.004541827067405877,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9430379746835443,
+      0.9556962025316456,
+      0.9240506329113924
+    ],
+    "per_seed_macro_f1": [
+      0.9544216357119583,
+      0.9648188129467618,
+      0.9387397942371765
+    ]
+  },
+  {
+    "approach_id": "rf",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9367088607594937,
+    "accuracy_std": 0.009493670886076,
+    "accuracy_ci95": {
+      "low": 0.9272151898734177,
+      "high": 0.9462025316455697
+    },
+    "macro_f1_mean": 0.9463921001299989,
+    "macro_f1_std": 0.008070062293247818,
+    "macro_f1_ci95": {
+      "low": 0.9373871747516827,
+      "high": 0.952970470961421
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 16.71336653260888,
+      "p_value": 0.0017804002420341491,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9367088607594937,
+      0.9462025316455697,
+      0.9272151898734177
+    ],
+    "per_seed_macro_f1": [
+      0.9488186546768932,
+      0.9529704709614208,
+      0.9373871747516827
+    ]
+  },
+  {
+    "approach_id": "cnn_shallow",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9356540084388186,
+    "accuracy_std": 0.012789404697238549,
+    "accuracy_ci95": {
+      "low": 0.9208860759493671,
+      "high": 0.9430379746835443
+    },
+    "macro_f1_mean": 0.9458789118429808,
+    "macro_f1_std": 0.011584639335352148,
+    "macro_f1_ci95": {
+      "low": 0.9327221571550615,
+      "high": 0.954549829053137
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 12.26360000000001,
+      "p_value": 0.0032917641967762147,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9430379746835443,
+      0.9208860759493671,
+      0.9430379746835443
+    ],
+    "per_seed_macro_f1": [
+      0.9545498290531371,
+      0.9327221571550615,
+      0.9503647493207439
+    ]
+  },
+  {
+    "approach_id": "mlp",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9208860759493671,
+    "accuracy_std": 0.0031645569620253333,
+    "accuracy_ci95": {
+      "low": 0.9177215189873418,
+      "high": 0.9240506329113924
+    },
+    "macro_f1_mean": 0.9364543132794809,
+    "macro_f1_std": 0.0027274524325697947,
+    "macro_f1_ci95": {
+      "low": 0.9338048344433942,
+      "high": 0.9392535672599406
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 41.479845559982316,
+      "p_value": 0.00029034698885811434,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9177215189873418,
+      0.9240506329113924,
+      0.9208860759493671
+    ],
+    "per_seed_macro_f1": [
+      0.9338048344433942,
+      0.9392535672599405,
+      0.936304538135108
+    ]
+  },
+  {
+    "approach_id": "knn",
+    "n_seeds": 3,
+    "accuracy_mean": 0.9029535864978904,
+    "accuracy_std": 0.003654115627782461,
+    "accuracy_ci95": {
+      "low": 0.8987341772151899,
+      "high": 0.9050632911392406
+    },
+    "macro_f1_mean": 0.9206414498546253,
+    "macro_f1_std": 0.0022672544421602162,
+    "macro_f1_ci95": {
+      "low": 0.9190652488207206,
+      "high": 0.9232398363796529
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 3,
+    "fraction_seeds_beat_reference": 1.0,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.43850296824495455,
+      "high": 1.0
+    },
+    "ttest_gt_reference": {
+      "t_stat": 27.42259999999991,
+      "p_value": 0.0006635711878064241,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 6.0,
+      "p_value": 0.125
+    },
+    "binom_seeds_beat_p05": 0.125,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": true,
+    "per_seed_accuracy": [
+      0.9050632911392406,
+      0.8987341772151899,
+      0.9050632911392406
+    ],
+    "per_seed_macro_f1": [
+      0.923239836379653,
+      0.9190652488207206,
+      0.9196192643635022
+    ]
+  },
+  {
+    "approach_id": "yamnet_probe",
+    "n_seeds": 3,
+    "accuracy_mean": 0.8565400843881856,
+    "accuracy_std": 0.018270578138912176,
+    "accuracy_ci95": {
+      "low": 0.8354430379746836,
+      "high": 0.8670886075949366
+    },
+    "macro_f1_mean": 0.8828353768056895,
+    "macro_f1_std": 0.015012464838914998,
+    "macro_f1_ci95": {
+      "low": 0.8656974171782533,
+      "high": 0.8936608706113734
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 2,
+    "fraction_seeds_beat_reference": 0.6666666666666666,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.20765960080204765,
+      "high": 0.9385080552796037
+    },
+    "ttest_gt_reference": {
+      "t_stat": 1.084520000000003,
+      "p_value": 0.19573305906400396,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 5.0,
+      "p_value": 0.25
+    },
+    "binom_seeds_beat_p05": 0.5,
+    "mean_beats_reference": true,
+    "ci_excludes_reference_below": false,
+    "per_seed_accuracy": [
+      0.8670886075949367,
+      0.8354430379746836,
+      0.8670886075949367
+    ],
+    "per_seed_macro_f1": [
+      0.8936608706113736,
+      0.8656974171782534,
+      0.8891478426274414
+    ]
+  },
+  {
+    "approach_id": "cnn1d",
+    "n_seeds": 3,
+    "accuracy_mean": 0.6476793248945149,
+    "accuracy_std": 0.20725633598327664,
+    "accuracy_ci95": {
+      "low": 0.48101265822784817,
+      "high": 0.8797468354430379
+    },
+    "macro_f1_mean": 0.6944086830456726,
+    "macro_f1_std": 0.1901461879005553,
+    "macro_f1_ci95": {
+      "low": 0.5324767904509283,
+      "high": 0.9037845954423567
+    },
+    "reference_acc": 0.8451,
+    "n_seeds_beat_reference": 1,
+    "fraction_seeds_beat_reference": 0.3333333333333333,
+    "fraction_seeds_beat_ci95": {
+      "low": 0.06149194472039615,
+      "high": 0.7923403991979523
+    },
+    "ttest_gt_reference": {
+      "t_stat": -1.6498537336626444,
+      "p_value": 0.8796222504229207,
+      "df": 2.0
+    },
+    "wilcoxon_gt_reference": {
+      "statistic": 1.0,
+      "p_value": 0.875
+    },
+    "binom_seeds_beat_p05": 0.875,
+    "mean_beats_reference": false,
+    "ci_excludes_reference_below": false,
+    "per_seed_accuracy": [
+      0.5822784810126582,
+      0.879746835443038,
+      0.4810126582278481
+    ],
+    "per_seed_macro_f1": [
+      0.646964663243733,
+      0.9037845954423567,
+      0.5324767904509283
+    ]
+  }
+]
