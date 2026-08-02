@@ -1,0 +1,32 @@
+\section{Problem setting and threat model}
+\label{sec:problem}
+% TARGET LENGTH: 2--2.5 pages
+
+\subsection{Operational task}
+% Farmer places phone on bag; short recording; needs actionable class + advisory.
+
+\subsection{Label taxonomy}
+\begin{table}[H]
+\centering
+\caption{Four-class taxonomy used throughout.}
+\label{tab:classes}
+\begin{tabular}{@{}llp{6cm}@{}}
+\toprule
+ID & Name & Meaning \\
+\midrule
+0 & \texttt{clean} & No pest detected (ambient / background) \\
+1 & \texttt{rice\_weevil} & \textit{Sitophilus oryzae} \\
+2 & \texttt{lesser\_grain\_borer} & \textit{Rhyzopertha dominica} \\
+3 & \texttt{red\_flour\_beetle} & \textit{Tribolium castaneum} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{In scope / out of scope}
+% Pulse beetle and other legumes out of scope; not legal certification.
+
+\subsection{Threat model and failure modes}
+% False negatives (missed infestation); false positives (unnecessary treatment); domain shift (lab mic $\to$ phone); overtrust.
+
+\subsection{Non-claims}
+% Soft vs hard scientific claims table (see FORMAT.md writing rules).

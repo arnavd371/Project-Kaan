@@ -1,0 +1,40 @@
+\section{Reproducibility and artifacts}
+\label{sec:repro}
+% TARGET LENGTH: 1--1.5 pages
+
+\subsection{Code and licence}
+Repository: \url{https://github.com/arnavd371/Project-Kaan} (Apache License 2.0).
+Live demo: \url{https://kaan-web.vercel.app}.
+
+\subsection{One-command paths}
+\begin{verbatim}
+# Web
+cd web && npm install && npm run dev
+
+# Smoke (synthetic; do not cite)
+python -m experiments.run_benchmark --smoke
+
+# Full IRRI GPU (Kaggle)
+bash experiments/kaggle/push_and_run.sh
+\end{verbatim}
+
+\subsection{Artifact checklist}
+\begin{table}[H]
+\centering
+\caption{Released / committed artifacts.}
+\label{tab:artifacts}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Artifact & Location \\
+\midrule
+Multi-seed stats & \texttt{experiments/results/stats.md} \\
+Findings (per seed) & \texttt{experiments/results/findings\_seed*.md} \\
+Methodology pack & \texttt{experiments/PAPER\_METHODOLOGY.md} \\
+Kaggle kernel & \texttt{arnavd371/kaan-multi-approach-benchmark} \\
+Production TFLite & \texttt{model/project-kaan.tflite} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Environment notes}
+% Python deps; TensorFlow / tensorflow\_hub for CNNs and YAMNet; Kaggle T4 + internet.

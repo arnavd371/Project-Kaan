@@ -83,3 +83,5 @@ Apache License 2.0 (same as the Project Kaan monorepo).
 ## Paper pack
 
 Full methods + results tables for writing: [`PAPER_METHODOLOGY.md`](PAPER_METHODOLOGY.md).
+
+35–40 page LaTeX format: [`../paper/FORMAT.md`](../paper/FORMAT.md).

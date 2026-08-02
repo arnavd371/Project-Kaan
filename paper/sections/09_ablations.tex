@@ -1,0 +1,21 @@
+\section{Ablations and analysis}
+\label{sec:ablations}
+% TARGET LENGTH: 2.5--3 pages
+
+\subsection{CNN recipe ablations (seed 42)}
+% Versions: full, no SpecAugment, no class weights, no label smoothing, baseline.
+% Qualitative: full/leave-one-out stay high ($\sim$94--97\%); baseline \texttt{cnn\_deep} collapses to $\sim$7.6\%.
+% Caution: leave-one-outs are single-seed.
+
+\subsection{Negative controls}
+\subsubsection{1D CNN}
+% High variance across seeds (48--88\%); not a deploy candidate; useful as architecture foil.
+
+\subsubsection{YAMNet probe}
+% Near reference line; loses to task-specific mel/handcrafted features on McNemar.
+
+\subsection{Hard class pair}
+% Spectro-temporal overlap of weevil and lesser grain borer; implications for advisory UX.
+
+\subsection{Implications for deployment model choice}
+% Classical models win bake-off accuracy/speed; production still ships compact mel-CNN for unified mobile feature path and existing ONNX/TFLite tooling---state the engineering rationale honestly.
