@@ -1,0 +1,39 @@
+\section{Data}
+\label{sec:data}
+% TARGET LENGTH: 2.5--3 pages
+
+\subsection{Pest recordings}
+% IRRI Rice Acoustic Sensor Dataset \citep{balingbing2024}; mapping to three pest folders.
+
+\subsection{Clean / ambient class}
+% Speech Commands v0.02 \texttt{\_background\_noise\_} windows; not synthetic silence.
+% Note train/val ambient file choices used in Kaggle prep.
+
+\subsection{Canonicalization}
+\begin{table}[H]
+\centering
+\caption{Audio canonicalization parameters.}
+\label{tab:audio}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Parameter & Value \\
+\midrule
+Sample rate & 16\,000\,Hz mono \\
+Window & 10.0\,s ($160\,000$ samples) \\
+Silence trim & \texttt{librosa.effects.trim}, \texttt{top\_db=20} \\
+Length fix & Center crop or zero-pad \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Deduplication and leakage control}
+\begin{enumerate}[leftmargin=*]
+  \item Byte-level MD5 dedupe before split.
+  \item Stratified \emph{file-level} train/val split ($80/20$).
+  \item Before-training audit: path overlap, byte twins, mel twins, class counts.
+  \item Persist \texttt{split\_manifest.json}, \texttt{dedupe\_report.json}.
+\end{enumerate}
+
+\subsection{Dataset statistics for the bake-off}
+% Report n train / n val after dedupe (val $n=316$ per seed in Kaggle findings).
+% Fig~\ref{fig:mels}: one mel example per class.

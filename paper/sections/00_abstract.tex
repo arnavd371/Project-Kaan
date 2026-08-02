@@ -1,0 +1,9 @@
+% Target: ~150--200 words
+Stored-grain insects cause large post-harvest losses, yet early infestation is often cryptic because pests feed inside kernels.
+Commercial acoustic probes exist but remain expensive for many smallholders.
+We present \textbf{Kaan}, an offline phone workflow that records contact audio against a storage bag, converts it to a mel spectrogram, and classifies four classes---clean, rice weevil (\textit{Sitophilus oryzae}), lesser grain borer (\textit{Rhyzopertha dominica}), and red flour beetle (\textit{Tribolium castaneum})---with a compact INT8 CNN.
+Beyond the deployed model, we run a leakage-aware, file-level, multi-seed bake-off of eleven approaches against the cited Balingbing et al.\ (2024) reference accuracy of 84.51\%.
+On byte-deduped IRRI pest recordings plus Speech Commands ambient windows for the clean class, gradient boosting reaches $95.36\%\pm 1.50$ mean accuracy and a strong mel-CNN reaches $95.15\%\pm 0.48$; bootstrap 95\% CIs for these means sit above 84.51\%.
+Ablations show that a bare deep-CNN training recipe can collapse, while leave-one-out removals of SpecAugment, class weights, or label smoothing remain high on a single seed.
+We release code, audits, findings, and a multilingual offline web app.
+Limits include a soft claim versus the cited reference number and the absence of a large Indian phone-microphone field corpus.

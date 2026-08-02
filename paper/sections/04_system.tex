@@ -1,0 +1,30 @@
+\section{System design}
+\label{sec:system}
+% TARGET LENGTH: 3--3.5 pages
+
+\subsection{End-to-end pipeline}
+% Fig~\ref{fig:pipeline}: phone $\to$ 10\,s @ 16\,kHz $\to$ trim/pad $\to$ mel $128\times128\times1$ $\to$ CNN $\to$ softmax $\to$ confidence gate.
+
+\begin{figure}[H]
+\centering
+% \includegraphics[width=0.95\linewidth]{pipeline.pdf}
+\fbox{\parbox{0.9\linewidth}{\centering\vspace{1.2cm} [Fig.~1: System pipeline]\vspace{1.2cm}}}
+\caption{Kaan inference pipeline. Classification runs on device or in-browser; audio need not be uploaded.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Preprocessing}
+% SAMPLE\_RATE=16000, DURATION=10\,s, trim top\_db=20, center crop / pad.
+
+\subsection{Deployed model path}
+% Production mel-CNN; INT8 TFLite ($\sim$333\,KB); ONNX for web; H5 $\sim$1.3\,MB.
+
+\subsection{Client application}
+% Next.js 14; Capacitor shells; languages: English, Hindi, Marathi, Punjabi, Telugu.
+% Confidence threshold $0.6$; re-record messaging.
+
+\subsection{Privacy and offline operation}
+% Inference-local; Vercel hosts static assets only.
+
+\subsection{Relationship to experimental models}
+% Live app ships mel-CNN path; bake-off compares alternatives on the same split and does not auto-replace production weights.

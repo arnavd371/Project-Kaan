@@ -1,0 +1,35 @@
+\section{Experimental protocol}
+\label{sec:protocol}
+% TARGET LENGTH: 2.5--3 pages
+
+\subsection{Research question}
+Under a leakage-aware file-level split on IRRI pest audio plus ambient clean windows, which approaches exceed the cited 84.51\% reference accuracy, and how do classical methods compare to mel-CNNs?
+
+\subsection{Design summary}
+\begin{table}[H]
+\centering
+\caption{Bake-off design factors.}
+\label{tab:design}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Factor & Choice \\
+\midrule
+Split & Stratified file-level, 80/20 \\
+Seeds & 42, 43, 44 \\
+Metrics & Accuracy, macro-F1, per-class F1, confusions \\
+Reference & Cited 84.51\% (soft claim) \\
+Statistics & Mean$\pm$std; bootstrap CI (10k); $t$-test; Wilcoxon; Wilson \\
+Paired tests & Exact McNemar on val predictions \\
+Compute & Kaggle GPU (Tesla T4) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ablation protocol}
+% full / no\_specaugment / no\_class\_weights / no\_label\_smoothing / baseline (seed 42).
+
+\subsection{Findings modules}
+% Efficiency, McNemar, confusions, SNR proxy, INT8 parity when weights available.
+
+\subsection{What is intentionally absent}
+% Locked Balingbing reimplementation; large phone field set; farmer RCT.
