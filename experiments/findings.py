@@ -359,7 +359,7 @@ def write_findings(
             "## Notes",
             "",
             "- McNemar is single-fold; report multi-seed CIs with it.",
-            "- SNR curve is a proxy, not a phone-mic field study.",
+            "- SNR curve is a proxy, not a phone-mic field test.",
             "- Reference 84.51% is the cited Balingbing number on this protocol, not a locked reimplementation.",
             "",
         ]

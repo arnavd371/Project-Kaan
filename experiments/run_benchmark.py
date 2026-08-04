@@ -135,7 +135,7 @@ def _write_report(results, out_dir: Path, seed: int, smoke: bool) -> None:
             [
                 "## Warning",
                 "",
-                "Smoke run on synthetic waveforms. Do not cite in the paper.",
+                "Smoke run on synthetic waveforms. Numbers are not for reporting.",
                 "",
             ]
         )
