@@ -68,6 +68,169 @@ def train_cost_sensitive_cnn(
     return _pack("cost_sensitive_pair", y_val, pred, probs, model, cw)
 
 
+def _split_encoder_and_head(model):
+    """Return (encoder_to_gap_dense, n_embed) assuming cnn_deep layout ending in Dense(softmax)."""
+    from tensorflow import keras
+    from tensorflow.keras import layers
+
+    # Find the pre-softmax Dense(192) or GAP output: last Dropout input is Dense(192)
+    # Robust path: clone up to the layer before final Dense
+    final = model.layers[-1]
+    if not isinstance(final, layers.Dense):
+        raise ValueError("expected final Dense softmax")
+    # Build encoder: input → layer before final Dense
+    # For Functional/Sequential-like Model from build_cnn_deep:
+    # ... GAP → Dense(192) → Dropout → Dense(n)
+    backbone_out = model.layers[-3].output  # Dense(192) relu
+    encoder = keras.Model(model.input, backbone_out, name="hier_encoder")
+    return encoder, int(backbone_out.shape[-1])
+
+
+def finetune_hierarchical_from_base(
+    base_model,
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+    X_val: np.ndarray,
+    y_val: np.ndarray,
+    *,
+    epochs: int = 40,
+    smoke: bool = False,
+    pair_lr: float = 3e-4,
+    unfreeze_last_blocks: bool = True,
+    gate_margin: float = 0.15,
+) -> dict[str, Any]:
+    """Fine-tune a weevil↔borer specialist on a trained 4-class CNN backbone.
+
+    Inference soft-fusion:
+      - keep baseline probs for clean / red_flour_beetle mass
+      - when baseline top class is weevil or borer (or their combined mass is high),
+        reallocate that mass with the pair head
+      - optional gate: only override when |p_weevil - p_borer| < gate_margin
+    """
+    if not tensorflow_available():
+        return {"skipped": True, "reason": "no tensorflow"}
+    if base_model is None:
+        return {"skipped": True, "reason": "no base_model"}
+
+    from tensorflow import keras
+    from tensorflow.keras import layers
+
+    fit_epochs = 3 if smoke else epochs
+    bs = min(32, max(4, len(X_train)))
+    mask_tr = (y_train == WEEVIL) | (y_train == BORER)
+    mask_va = (y_val == WEEVIL) | (y_val == BORER)
+    if int(mask_tr.sum()) < 4:
+        return {"skipped": True, "reason": "too few weevil/borer train samples"}
+
+    encoder, _ = _split_encoder_and_head(base_model)
+
+    # Pair head on frozen/lightly-unfrozen encoder
+    for layer in encoder.layers:
+        layer.trainable = False
+    if unfreeze_last_blocks:
+        # Unfreeze last conv block + Dense(192)
+        trainable_tail = {encoder.layers[-1].name}  # Dense 192
+        # also last few conv/BN before GAP
+        for layer in encoder.layers[::-1]:
+            if isinstance(layer, (layers.Conv2D, layers.Dense, layers.BatchNormalization)):
+                trainable_tail.add(layer.name)
+            if len(trainable_tail) >= 8:
+                break
+        for layer in encoder.layers:
+            if layer.name in trainable_tail:
+                layer.trainable = True
+
+    inp = encoder.input
+    h = encoder.output
+    x = layers.Dropout(0.3)(h)
+    x = layers.Dense(64, activation="relu")(x)
+    x = layers.Dropout(0.3)(x)
+    pair_out = layers.Dense(2, activation="softmax", name="pair_softmax")(x)
+    pair_model = keras.Model(inp, pair_out, name="weevil_borer_specialist")
+
+    y_p_tr = (y_train[mask_tr] == BORER).astype(np.int32)
+    X_p_tr = X_train[mask_tr]
+    y_p_oh = keras.utils.to_categorical(y_p_tr, 2)
+    seq_p = _make_spec_augment_sequence(
+        keras, X_p_tr, y_p_oh, batch_size=min(bs, max(4, len(X_p_tr)))
+    )
+    steps_p = max(1, len(seq_p))
+    pair_model.compile(
+        optimizer=keras.optimizers.Adam(
+            learning_rate=keras.optimizers.schedules.CosineDecay(
+                pair_lr, max(1, steps_p * fit_epochs), alpha=1e-5
+            )
+        ),
+        loss=keras.losses.CategoricalCrossentropy(label_smoothing=0.02),
+        metrics=["accuracy"],
+    )
+    val_pair = None
+    if int(mask_va.sum()) >= 2:
+        y_p_va = (y_val[mask_va] == BORER).astype(np.int32)
+        val_pair = (X_val[mask_va], keras.utils.to_categorical(y_p_va, 2))
+
+    hist = pair_model.fit(
+        seq_p,
+        validation_data=val_pair,
+        epochs=fit_epochs,
+        callbacks=[
+            keras.callbacks.EarlyStopping(
+                patience=3 if smoke else 12,
+                restore_best_weights=True,
+                monitor="val_accuracy" if val_pair else "loss",
+                mode="max" if val_pair else "min",
+            )
+        ],
+        verbose=1,
+    )
+
+    base_p = base_model.predict(X_val, verbose=0).astype(np.float64)
+    pair_p = pair_model.predict(X_val, verbose=0).astype(np.float64)
+
+    # Soft fusion
+    probs = base_p.copy()
+    n_override = 0
+    for i in range(len(y_val)):
+        mass = probs[i, WEEVIL] + probs[i, BORER]
+        top = int(np.argmax(probs[i]))
+        margin = abs(probs[i, WEEVIL] - probs[i, BORER])
+        should = top in (WEEVIL, BORER) or mass >= 0.45
+        if should and margin < gate_margin:
+            probs[i, WEEVIL] = mass * pair_p[i, 0]
+            probs[i, BORER] = mass * pair_p[i, 1]
+            n_override += 1
+        elif should and margin >= gate_margin:
+            # still soft-blend lightly toward specialist
+            alpha = 0.35
+            probs[i, WEEVIL] = (1 - alpha) * probs[i, WEEVIL] + alpha * mass * pair_p[i, 0]
+            probs[i, BORER] = (1 - alpha) * probs[i, BORER] + alpha * mass * pair_p[i, 1]
+            # renormalize weevil+borer to mass
+            s = probs[i, WEEVIL] + probs[i, BORER]
+            if s > 0:
+                probs[i, WEEVIL] *= mass / s
+                probs[i, BORER] *= mass / s
+            n_override += 1
+    probs = probs / probs.sum(axis=1, keepdims=True).clip(min=1e-12)
+    pred = probs.argmax(1)
+
+    out = _pack("hierarchical_finetuned", y_val, pred, probs, pair_model, None)
+    out["n_pair_overrides"] = int(n_override)
+    out["gate_margin"] = float(gate_margin)
+    out["pair_val_acc_hist"] = [float(x) for x in hist.history.get("val_accuracy", [])]
+    out["baseline_acc_reference"] = float(accuracy_score(y_val, base_p.argmax(1)))
+    out["models"] = {"base": base_model, "pair": pair_model}
+    if int(mask_va.sum()):
+        yt = y_val[mask_va]
+        yp = pred[mask_va]
+        out["pair_subset_accuracy"] = float(accuracy_score(yt, yp))
+        out["pair_confusion"] = confusion_matrix(yt, yp, labels=[WEEVIL, BORER]).tolist()
+        # specialist alone on true pair subset
+        pair_alone = pair_p[mask_va].argmax(1)
+        pair_alone_lbl = np.where(pair_alone == 1, BORER, WEEVIL)
+        out["pair_specialist_alone_acc"] = float(accuracy_score(yt, pair_alone_lbl))
+    return out
+
+
 def train_hierarchical_cnn(
     X_train: np.ndarray,
     y_train: np.ndarray,
@@ -76,14 +239,34 @@ def train_hierarchical_cnn(
     *,
     epochs: int = 60,
     smoke: bool = False,
+    base_model=None,
 ) -> dict[str, Any]:
-    """Stage A: clean vs pest vs flour_beetle-ish coarse? 
+    """If base_model given, fine-tune specialist; else legacy from-scratch cascade."""
+    if base_model is not None:
+        return finetune_hierarchical_from_base(
+            base_model,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
+            epochs=min(epochs, 40) if not smoke else epochs,
+            smoke=smoke,
+        )
+    return _train_hierarchical_from_scratch(
+        X_train, y_train, X_val, y_val, epochs=epochs, smoke=smoke
+    )
 
-    Practical hierarchy for the known failure mode:
-      Stage 1: {clean, pest_internal, red_flour_beetle} where pest_internal = weevil∪borer
-      Stage 2: weevil vs borer on pest_internal only
-    Final: map back to 4-class.
-    """
+
+def _train_hierarchical_from_scratch(
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+    X_val: np.ndarray,
+    y_val: np.ndarray,
+    *,
+    epochs: int = 60,
+    smoke: bool = False,
+) -> dict[str, Any]:
+    """Legacy: two CNNs from scratch (kept for ablation)."""
     if not tensorflow_available():
         return {"skipped": True, "reason": "no tensorflow"}
     from tensorflow import keras
@@ -92,7 +275,6 @@ def train_hierarchical_cnn(
     bs = min(32, max(4, len(X_train)))
 
     def to_coarse(y: np.ndarray) -> np.ndarray:
-        # 0 clean, 1 internal (weevil|borer), 2 red_flour_beetle
         out = np.zeros_like(y)
         out[y == 0] = 0
         out[(y == WEEVIL) | (y == BORER)] = 1
@@ -124,16 +306,14 @@ def train_hierarchical_cnn(
         verbose=1,
     )
 
-    # Stage 2: only weevil/borer samples
     mask_tr = (y_train == WEEVIL) | (y_train == BORER)
     mask_va = (y_val == WEEVIL) | (y_val == BORER)
     if mask_tr.sum() < 4:
         return {"skipped": True, "reason": "too few weevil/borer train samples"}
 
-    y_p_tr = (y_train[mask_tr] == BORER).astype(np.int32)  # 0 weevil, 1 borer
+    y_p_tr = (y_train[mask_tr] == BORER).astype(np.int32)
     X_p_tr = X_train[mask_tr]
     model_p = build_cnn_deep(n_classes=2)
-    # smaller head reuse architecture — fine for smoke/full
     y_p_oh = keras.utils.to_categorical(y_p_tr, 2)
     seq_p = _make_spec_augment_sequence(keras, X_p_tr, y_p_oh, batch_size=min(bs, max(4, len(X_p_tr))))
     steps_p = max(1, len(seq_p))
@@ -144,7 +324,6 @@ def train_hierarchical_cnn(
         loss=keras.losses.CategoricalCrossentropy(label_smoothing=0.05),
         metrics=["accuracy"],
     )
-    # val for pair if available
     val_pair = None
     if mask_va.sum() >= 2:
         y_p_va = (y_val[mask_va] == BORER).astype(np.int32)
@@ -164,11 +343,10 @@ def train_hierarchical_cnn(
         verbose=1,
     )
 
-    # Compose predictions
     coarse_p = model_c.predict(X_val, verbose=0)
     coarse = coarse_p.argmax(1)
     pair_p = model_p.predict(X_val, verbose=0)
-    pair = pair_p.argmax(1)  # 0 weevil, 1 borer
+    pair = pair_p.argmax(1)
 
     pred = np.zeros(len(y_val), dtype=np.int32)
     for i in range(len(y_val)):
@@ -180,7 +358,6 @@ def train_hierarchical_cnn(
         else:
             pred[i] = BORER if pair[i] == 1 else WEEVIL
 
-    # Soft 4-class probs for calibration: approximate
     probs = np.zeros((len(y_val), 4), dtype=np.float64)
     for i in range(len(y_val)):
         probs[i, 0] = coarse_p[i, 0]
@@ -191,7 +368,6 @@ def train_hierarchical_cnn(
 
     out = _pack("hierarchical_weevil_borer", y_val, pred, probs, None, None)
     out["models"] = {"coarse": model_c, "pair": model_p}
-    # pair-only accuracy when true is weevil or borer
     if mask_va.sum():
         yt = y_val[mask_va]
         yp = pred[mask_va]
