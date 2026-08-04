@@ -1,6 +1,6 @@
 # Limitations and domain shift
 
-Kaan is a **screening aid**, not a laboratory or legal diagnosis. The points below are intentional product and research constraints—especially for workshop-facing claims.
+Kaan is a **screening aid**, not a laboratory or legal diagnosis. The points below are intentional product and research constraints - especially for workshop-facing claims.
 
 ## Data domain
 
@@ -20,7 +20,7 @@ The **robustness ladder** replays validation audio under phone-like degradations
 
 Observed pattern (seed 42 baseline ~97% clean):
 
-- Mild muffling / reverb / compress / gain: often still high 80s–90s.
+- Mild muffling / reverb / compress / gain: often still high 80s-90s.
 - Phone band-pass and additive noise: **sharp collapse** (often &lt;50%, sometimes ~8% on hard combos).
 
 So laboratory accuracy **does not** imply phone-mic field accuracy. Any climate-adaptation claim must keep this gap visible.

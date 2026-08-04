@@ -1,6 +1,6 @@
 """Self-supervised mel pretrain (SimCLR-style) on public/ambient + IRRI audio, then fine-tune.
 
-Uses SpecAugment views of mel spectrograms — no field recordings required.
+Uses SpecAugment views of mel spectrograms - no field recordings required.
 Public sources available via prepare_kaggle_data: Speech Commands ambient windows + IRRI WAVs.
 """
 

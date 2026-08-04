@@ -154,7 +154,7 @@ def run(args: argparse.Namespace) -> dict:
     else:
         paths, labels = collect_wav_paths()
         if len(paths) == 0:
-            raise SystemExit("No WAVs — run prepare_kaggle_data first")
+            raise SystemExit("No WAVs - run prepare_kaggle_data first")
         paths, labels, dedupe = dedupe_by_file_bytes(paths, labels)
         split = make_split(paths, labels, test_size=0.2, seed=args.seed)
         write_split_manifest(split, out / "split_manifest.json")

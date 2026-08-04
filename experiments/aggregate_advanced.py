@@ -86,7 +86,7 @@ def aggregate_advanced(summaries: list[dict[str, Any]]) -> dict[str, Any]:
 
 def to_markdown(agg: dict[str, Any]) -> str:
     lines = [
-        "# Advanced suite — multi-seed aggregate",
+        "# Advanced suite - multi-seed aggregate",
         "",
         f"Seeds: `{agg.get('seeds')}` (n={agg.get('n_seeds')})",
         "",

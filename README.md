@@ -1,8 +1,8 @@
 # Kaan | कान
 
-**Acoustic stored-grain pest detector for Indian farmers.**
+**Kaan** (कान, Hindi/Punjabi for “ear”) is an open-source acoustic screening tool for stored-grain pests. A farmer holds a smartphone against a rice or wheat bag, records about ten seconds of contact audio, and gets a local class prediction plus a short advisory in English, Hindi, Marathi, Punjabi, or Telugu. Inference runs on-device (TFLite) or in the browser (ONNX). Audio does not need a cloud upload for classification.
 
-Hold a phone against a storage bag, record about ten seconds of audio, and get an on-device class prediction plus an actionable advisory in English, Hindi, Marathi, Punjabi, or Telugu.
+It is built for Indian smallholders and extension pilots: no special probe hardware, Apache-2.0 code and weights, and a leakage-aware experiment suite so others can retrain or audit the claims.
 
 | | |
 |---|---|
@@ -12,56 +12,145 @@ Hold a phone against a storage bag, record about ten seconds of audio, and get a
 | **Portfolio** | [arnavdportfolio.vercel.app](https://arnavdportfolio.vercel.app/) |
 | **Live demo** | [kaan-web.vercel.app](https://kaan-web.vercel.app) |
 | **Repository** | [arnavd371/Project-Kaan](https://github.com/arnavd371/Project-Kaan) |
-| **Latest release** | [v3.1.0](https://github.com/arnavd371/Project-Kaan/releases/tag/v3.1.0) |
-| **Licence** | [Apache License 2.0](LICENSE) — see [`LICENSE`](LICENSE), [`NOTICE`](NOTICE), [`CHANGELOG.md`](CHANGELOG.md) |
+| **Latest release** | [v3.1.1](https://github.com/arnavd371/Project-Kaan/releases/tag/v3.1.1) |
+| **Licence** | [Apache License 2.0](LICENSE) (see [`LICENSE`](LICENSE), [`NOTICE`](NOTICE), [`CHANGELOG.md`](CHANGELOG.md)) |
+| **SPDX** | `Apache-2.0` |
 
 ---
 
 ## Contents
 
-1. [What it does](#what-it-does)
-2. [Why it exists](#why-it-exists)
-3. [How it works](#how-it-works)
-4. [Classes](#classes)
-5. [Results](#results)
-6. [Workshop contribution framing](#workshop-contribution-framing)
-7. [Limitations](#limitations)
-8. [Repository layout](#repository-layout)
-9. [Technical stack](#technical-stack)
-10. [Data](#data)
-11. [Experiments (v2 bake-off)](#experiments-v2-bake-off)
-12. [Advanced suite (v3+)](#advanced-suite-v3)
-13. [Run locally](#run-locally)
-14. [Train and export](#train-and-export)
-15. [Privacy, safety, and limits](#privacy-safety-and-limits)
-16. [Author and copyright](#author-and-copyright)
-17. [Cite](#cite)
-18. [Acknowledgements](#acknowledgements)
+1. [Introduce Kaan](#introduce-kaan)
+2. [Open-source specifications](#open-source-specifications)
+3. [Load the trained models](#load-the-trained-models)
+4. [How it works](#how-it-works)
+5. [Classes](#classes)
+6. [Results](#results)
+7. [Workshop contribution framing](#workshop-contribution-framing)
+8. [Limitations](#limitations)
+9. [Repository layout](#repository-layout)
+10. [Technical stack](#technical-stack)
+11. [Data](#data)
+12. [Experiments (v2 bake-off)](#experiments-v2-bake-off)
+13. [Advanced suite (v3+)](#advanced-suite-v3)
+14. [Run locally](#run-locally)
+15. [Train and export](#train-and-export)
+16. [Privacy, safety, and limits](#privacy-safety-and-limits)
+17. [Author and copyright](#author-and-copyright)
+18. [Cite](#cite)
+19. [Acknowledgements](#acknowledgements)
 
 ---
 
-## What it does
+## Introduce Kaan
 
-Kaan turns a short contact recording into one of four labels and shows a short advisory. Classification runs **on the device or in the browser**. Audio does not need to be uploaded for inference.
+**Problem.** Post-harvest insects (rice weevil, lesser grain borer, red flour beetle) feed inside kernels. Early damage is hard to see. Lab acoustic sensors and commercial probes are expensive for many farms.
 
-Typical flow:
+**What Kaan does.** Contact phone audio → mel spectrogram → compact CNN → one of four labels + multilingual advisory. Low confidence triggers a re-record prompt instead of a forced pest call.
 
-1. Place the phone flat against a grain bag or bin.
-2. Record ~10–30 seconds (canonical training window is 10 s at 16 kHz mono).
-3. The client builds a mel spectrogram and runs the compact CNN (TFLite or ONNX).
-4. If confidence is low, the UI asks for a quieter, closer re-record.
+**What it is not.** Not a laboratory or legal diagnosis. Not trained on a large Indian phone-on-bag field corpus yet (IRRI contact acoustics + ambient clean windows). See [`LIMITATIONS.md`](LIMITATIONS.md).
 
-The shipped product path is the mel-CNN. The `experiments/` suite compares additional approaches on the same leakage-aware split; it does **not** automatically replace production weights.
+**Why open source.** Agriculture departments, KVKs, and researchers can inspect the pipeline, load the shipped weights, retrain on local grain, and redistribute under Apache-2.0.
 
 ---
 
-## Why it exists
+## Open-source specifications
 
-India stores large volumes of food grain. Insects cause substantial storage losses (IGMRI, 2015). Rice weevil, lesser grain borer, and red flour beetle often feed inside kernels, so early damage is hard to see. Lab acoustic systems and commercial probes are expensive for many smallholders.
+| Spec | Detail |
+|---|---|
+| Licence | Apache License 2.0 (root + `web/`) |
+| Copyright | © 2026 Arnav Dhiman (`arnavd371@gmail.com`) |
+| SPDX | `Apache-2.0` |
+| Version | see [`VERSION`](VERSION) / [`CHANGELOG.md`](CHANGELOG.md) |
+| Source | https://github.com/arnavd371/Project-Kaan |
+| Demo | https://kaan-web.vercel.app |
+| Shipped weights | Keras H5, INT8 TFLite, ONNX (Apache-2.0 grant; see `NOTICE`) |
+| Training audio | Not redistributed in-repo; IRRI + Speech Commands terms stay with publishers |
+| Input | 16 kHz mono, ~10 s window (pad/crop) |
+| Features | Mel 128×128×1 (`n_fft=2048`, `hop_length=512`, 128 mels, dB, min-max) |
+| Output | Softmax over 4 classes; UI confidence gate 0.6 |
+| Production model | Distilled deep mel-CNN (~333 KB INT8 TFLite; ~3.7 MB H5) |
+| Native path | TFLite via LiteRT / TF Lite Interpreter (`utils/inference.py`) |
+| Web path | ONNX Runtime Web (`web/public/model/project-kaan.onnx`) |
+| Mobile shell | Capacitor (`web/android`, `web/ios`) |
+| Languages | English, Hindi, Marathi, Punjabi, Telugu |
 
-Kaan targets a **free, offline phone workflow**: contact audio, on-device model, multilingual text, no special hardware beyond a smartphone.
+Anyone may use, modify, and redistribute the software under the Apache-2.0 conditions in [`LICENSE`](LICENSE). Keep the attribution notices in [`NOTICE`](NOTICE).
 
-Unaided listening can catch late, loud infestation. Early bag sounds are sparse and hard to classify by ear at scale. Kaan is a **screening aid**, not a claim that a phone microphone outranks human absolute hearing sensitivity.
+---
+
+## Load the trained models
+
+Shipped artifacts (also attached to GitHub releases):
+
+| File | Role |
+|---|---|
+| `model/project-kaan_model.h5` | Keras float model (train / export / research) |
+| `model/project-kaan.tflite` | INT8 production weights (native / Python) |
+| `web/public/model/project-kaan.onnx` | Browser / ONNX Runtime |
+| `web/public/model/mel_filterbank.json` | Mel filterbank used by the web preprocessor |
+
+### Python (TFLite)
+
+```bash
+pip install -r requirements.txt
+# optional: tensorflow>=2.13 if you prefer tf.lite over LiteRT
+```
+
+```python
+from pathlib import Path
+from utils.inference import ProjectKaanPredictor
+
+predictor = ProjectKaanPredictor(
+    model_path=Path("model/project-kaan.tflite")
+)
+result = predictor.predict("path/to/contact.wav")
+print(result["class"], result["confidence"], result["confident"], result["all_scores"])
+```
+
+`ProjectKaanPredictor` loads INT8 TFLite, builds the mel the same way as training (`model/preprocess.py`), dequantizes softmax, and applies the 0.6 confidence gate (`confident` is true when confidence > 0.6). If the `.tflite` file is missing it falls back to a demo heuristic (not for production).
+
+### Python (Keras H5)
+
+```python
+import numpy as np
+from tensorflow import keras
+from model.preprocess import preprocess_audio
+
+model = keras.models.load_model("model/project-kaan_model.h5")
+mel = preprocess_audio("path/to/contact.wav")  # float32 (128, 128, 1)
+probs = model.predict(mel[None, ...], verbose=0)[0]
+classes = ["clean", "rice_weevil", "lesser_grain_borer", "red_flour_beetle"]
+print(classes[int(probs.argmax())], float(probs.max()))
+```
+
+### Browser / Node (ONNX)
+
+The live app loads `/model/project-kaan.onnx` via ONNX Runtime Web (`web/src/lib/model.ts`). Mel prep must match training (`web/src/lib/mel.ts` + `mel_filterbank.json`). INT8 input/output scales in `model.ts` must match the TFLite quantization (re-synced by `python -m model.export_deploy`).
+
+```bash
+cd web && npm install && npm run dev
+# open http://localhost:3000 → App records or uploads audio and runs ONNX locally
+```
+
+Standalone ONNX (Node example):
+
+```bash
+npm install onnxruntime-node
+```
+
+```js
+import * as ort from "onnxruntime-node";
+const session = await ort.InferenceSession.create("web/public/model/project-kaan.onnx");
+// feed UINT8 NHWC mel [1,128,128,1] with the same scales as web/src/lib/model.ts
+```
+
+### Download from a release
+
+```bash
+gh release download v3.1.1 -R arnavd371/Project-Kaan -p '*.tflite' -p '*.onnx' -p '*.h5' -D ./weights
+# or clone the repo; weights are already under model/ and web/public/model/
+```
 
 ---
 
@@ -77,11 +166,13 @@ Phone on bag
     → confidence gate (threshold 0.6) → class + advisory
 ```
 
-**Mel parameters:** 128 mel bands, `n_fft=2048`, `hop_length=512`, power→dB, min–max normalize, resize to 128×128×1.
+**Mel parameters:** 128 mel bands, `n_fft=2048`, `hop_length=512`, power→dB, min-max normalize, resize to 128×128×1.
 
 **Training-time robustness (production / Kaggle CNN path):** pink noise at controlled SNR, pitch shift, time stretch, SpecAugment (time/frequency masks), class weights, label smoothing, cosine LR (strong recipe).
 
 **Clean class:** real ambient noise windows (Speech Commands `_background_noise_`), not synthetic silence.
+
+The shipped product path is the mel-CNN. The `experiments/` suite compares additional approaches on the same leakage-aware split; it does **not** automatically replace production weights.
 
 ---
 
@@ -159,9 +250,9 @@ Seeds **42 / 43 / 44**, bootstrap 95% CI of the mean. Full tables: [`experiments
 For climate / AI-for-good workshops, lead with **deployment constraints**, not peak lab accuracy:
 
 1. **On-device / offline** INT8 + ONNX screening (no cloud required for inference)
-2. **Robustness ladder** — phone-like degradations; treat SNR/band-pass collapse as a primary finding
-3. **Calibration + abstain** — temperature scaling and coverage–accuracy curves
-4. **Open bake-off + distillation** — classical ≈ deep; distilled production weights released
+2. **Robustness ladder** - phone-like degradations; treat SNR/band-pass collapse as a primary finding
+3. **Calibration + abstain** - temperature scaling and coverage-accuracy curves
+4. **Open bake-off + distillation** - classical ≈ deep; distilled production weights released
 
 Accuracy vs the cited 84.51% reference is **supporting**. Draft: [`workshop/`](workshop/) (CCAI @ NeurIPS 2026 Papers track, ≤4 pages).
 
@@ -278,7 +369,7 @@ python -m experiments.run_advanced --smoke
 # Multi-seed + bootstrap CIs (prefer Kaggle GPU)
 python -m experiments.run_advanced_multiseed --seeds 42,43,44 --copy-results
 
-# Kaggle GPU — preferred
+# Kaggle GPU - preferred
 bash experiments/kaggle/push_advanced.sh
 # https://www.kaggle.com/code/arnavd371/kaan-advanced-suite
 
@@ -323,12 +414,12 @@ python model/convert_tflite.py
 **Distilled production model** (recommended): ensemble soft labels from `gbdt` + `extratrees` + `cnn_deep` into the deep mel-CNN, then INT8 TFLite + ONNX for `web/`.
 
 ```bash
-# Local (CPU-heavy — prefer Kaggle GPU)
+# Local (CPU-heavy - prefer Kaggle GPU)
 python -m experiments.prepare_kaggle_data --out .
 python -m model.distill
 python -m model.export_deploy
 
-# Kaggle GPU (T4) — preferred
+# Kaggle GPU (T4) - preferred
 bash experiments/kaggle/push_distill.sh
 # https://www.kaggle.com/code/arnavd371/kaan-distill-production
 kaggle kernels status arnavd371/kaan-distill-production
@@ -365,7 +456,7 @@ Production weights live under `model/` (`project-kaan_model.h5`, `project-kaan.t
 | Portfolio | https://arnavdportfolio.vercel.app/ |
 | Project | https://github.com/arnavd371/Project-Kaan |
 
-Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) (appendix filled with copyright-owner identity — not empty brackets) and [`NOTICE`](NOTICE) (owner contacts, data attributions, dependency notes). The `web/` client uses the same Apache-2.0 grant (`web/LICENSE`, `web/NOTICE`).
+Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) (appendix filled with copyright-owner identity - not empty brackets) and [`NOTICE`](NOTICE) (owner contacts, data attributions, dependency notes). The `web/` client uses the same Apache-2.0 grant (`web/LICENSE`, `web/NOTICE`).
 
 ---
 
@@ -373,7 +464,7 @@ Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) (ap
 
 See [`CITATION.cff`](CITATION.cff). Software citation (APA-style):
 
-> Dhiman, A. (2026). *Kaan (कान): Acoustic grain pest detector for Indian farmers* (Version 3.1.0) [Computer software]. https://github.com/arnavd371/Project-Kaan
+> Dhiman, A. (2026). *Kaan (कान): Acoustic grain pest detector for Indian farmers* (Version 3.1.1) [Computer software]. https://github.com/arnavd371/Project-Kaan
 
 ---
 

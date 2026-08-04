@@ -95,7 +95,7 @@ def ladder_specs() -> list[tuple[str, str]]:
         ("snr10", "Pink noise SNR 10 dB"),
         ("snr5", "Pink noise SNR 5 dB"),
         ("snr0", "Pink noise SNR 0 dB"),
-        ("phone_band", "Telephone band-pass 300–3400 Hz"),
+        ("phone_band", "Telephone band-pass 300-3400 Hz"),
         ("muffle", "Bag-muffle LPF ~1.2 kHz"),
         ("compress", "Soft compression"),
         ("clip", "Hard clip"),

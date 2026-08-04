@@ -57,7 +57,7 @@ def _ensure_src_on_path() -> Path:
     if (PROJECT / "model" / "distill.py").exists():
         sys.path.insert(0, str(PROJECT))
         return PROJECT
-    raise SystemExit("distill.py not found — embed extract failed")
+    raise SystemExit("distill.py not found - embed extract failed")
 
 
 def _prepare(src_root: Path) -> Path:
