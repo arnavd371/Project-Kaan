@@ -50,3 +50,4 @@ workshop/*.fls
 workshop/*.fdb_latexmk
 workshop/*.synctex.gz
 
+model/training_log.txt
