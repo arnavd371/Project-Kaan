@@ -50,6 +50,7 @@ def _extract() -> Path:
 
 if __name__ == "__main__":
     root = _extract()
+    os.environ.setdefault("SEEDS", "42,43,44")
     os.environ.setdefault("SEED", "42")
     os.environ.setdefault("EPOCHS", "60")
     os.environ.setdefault("SSL_PRETRAIN_EPOCHS", "30")

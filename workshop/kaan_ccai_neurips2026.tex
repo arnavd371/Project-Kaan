@@ -1,0 +1,137 @@
+\documentclass{article}
+
+% CCAI NeurIPS workshop style (NeurIPS-based). Anonymous submission.
+\usepackage[preprint]{neurips_2025}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\title{Kaan: On-Device Acoustic Screening for Stored-Grain Pests\\
+under Phone-Mic Domain Shift}
+
+\author{
+  Anonymous Author(s)
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Post-harvest insect damage is a major food-security and climate-relevant loss pathway in stored grain.
+We present \textbf{Kaan}, an open, offline smartphone system that classifies contact acoustics into clean grain versus three primary stored-rice pests using a compact INT8 CNN.
+Rather than chasing laboratory accuracy alone, we emphasize deployment constraints: leakage-aware evaluation, multi-approach bake-offs, teacher distillation into a phone-sized model, temperature calibration with selective abstention, and a \emph{robustness ladder} that stress-tests phone-like degradations without new field recordings.
+On IRRI acoustic data with ambient clean windows, a distilled production model reaches 97.2\% validation accuracy; multi-seed bake-offs show classical and deep models both exceed a cited 84.51\% reference under our protocol.
+The robustness ladder reveals sharp drops under additive noise and telephone band-limiting---a limitation we treat as a first-class result for climate-adaptation tooling that must survive rural handsets.
+Code and models are released under Apache-2.0.
+\end{abstract}
+
+\section{Climate impact pathway}
+Reducing avoidable post-harvest loss lowers pressure to expand production and associated emissions, while improving food availability for smallholders~\cite{igmri2015,worldbank_phl}.
+Acoustic screening can catch internal feeders before visual symptoms, enabling earlier aeration, sunning, or fumigation decisions.
+Kaan targets \emph{adaptation} (protecting stored food under climate stress on storage conditions) and indirect \emph{mitigation} (less waste).
+We deliberately optimize for offline phones: no cloud inference, multilingual advisories, and models small enough for browser/ONNX and TFLite.
+
+\section{Problem and system}
+\textbf{Classes:} clean, rice weevil (\emph{Sitophilus oryzae}), lesser grain borer (\emph{Rhyzopertha dominica}), red flour beetle (\emph{Tribolium castaneum}).
+\textbf{Pipeline:} 10\,s @ 16\,kHz mono $\rightarrow$ 128$\times$128 mel $\rightarrow$ INT8 CNN $\rightarrow$ confidence gate.
+Pest WAVs come from the IRRI Rice Acoustic Sensor dataset~\cite{balingbing2024}; clean uses Speech Commands ambient windows rather than synthetic silence.
+Splits are stratified at \emph{file} level after byte-deduplication to avoid train/val twins.
+
+\section{Methods}
+\paragraph{Bake-off.}
+Eleven approaches (mel-CNNs, 1D CNN, YAMNet probe, SVM/MLP/GBDT/RF/ExtraTrees/kNN/logreg) share one leakage-aware split; we report multi-seed means, bootstrap CIs, and McNemar tests.
+\paragraph{Distillation.}
+Soft labels from GBDT + ExtraTrees + deep CNN train a deep student for deployment (TFLite $\sim$333\,KB; ONNX for web).
+\paragraph{Robustness ladder.}
+Without field mics, we replay validation audio under pink SNR, phone band-pass, muffling, compression, clipping, reverb, gain/AGC, and combinations---reporting accuracy per rung.
+\paragraph{Calibration.}
+Temperature scaling fitted on a validation slice; abstain curves trade coverage for accuracy.
+\paragraph{Confusion-focused heads.}
+Cost-sensitive upweighting and a fine-tuned weevil$\leftrightarrow$borer specialist on the baseline encoder with \emph{strict} fusion (override only when top-2 are that pair and margin is small; gate swept on val).
+\paragraph{SSL.}
+SimCLR-style SpecAugment views on IRRI+ambient mels, then supervised fine-tune.
+
+\section{Results}
+Table~\ref{tab:bakeoff} summarizes the multi-seed bake-off (reference line: cited 84.51\%~\cite{balingbing2024} under \emph{our} protocol, not a locked reimplementation).
+Distillation (seed 42) yields \textbf{97.15\%} val accuracy (macro-F1 0.977) versus 95.57\% hard-only deep and 95.89\% teacher ensemble.
+SSL fine-tune reaches 97.78\% on the same seed.
+Calibration reduces ECE (e.g., $0.044\rightarrow0.030$ at $T{=}0.5$ on seed 42).
+
+\begin{table}[t]
+\centering
+\caption{Multi-seed bake-off accuracy (mean$\pm$std; seeds 42/43/44).}
+\label{tab:bakeoff}
+\small
+\begin{tabular}{lcc}
+\toprule
+Approach & Acc mean$\pm$std & Seeds $>$ 84.51\% \\
+\midrule
+GBDT & $95.36\pm1.50$ & 3/3 \\
+CNN deep & $95.15\pm0.48$ & 3/3 \\
+ExtraTrees & $94.94\pm1.10$ & 3/3 \\
+SVM-RBF & $94.73\pm1.20$ & 3/3 \\
+YAMNet probe & $85.65\pm1.83$ & 2/3 \\
+CNN-1D & $64.77\pm20.7$ & 1/3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Robustness ladder on seed-42 baseline (clean $=97.15\%$).}
+\label{tab:robust}
+\small
+\begin{tabular}{lc}
+\toprule
+Rung & Acc \\
+\midrule
+Muffle / reverb / compress / gain & $92$--$97\%$ \\
+Clip & $87.7\%$ \\
+Phone band-pass & $52.2\%$ \\
+SNR $20$\,dB & $30.4\%$ \\
+SNR $\le10$\,dB / phone combos & $\sim7.6\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:robust} is the deployment-facing result: laboratory mel-CNNs survive mild muffling but \textbf{fail under phone-band and noise}---exactly the shift rural handsets induce.
+From-scratch hierarchical cascades collapse; fine-tuned specialists reach $\sim$97\% on the pair subset alone, and strict gating aims to preserve baseline overall accuracy (multi-seed aggregates in the supplement / released JSON).
+
+\section{Limitations (domain shift)}
+\begin{itemize}
+  \item \textbf{No Indian phone-on-bag corpus yet.} All numbers use IRRI contact sensors plus ambient clean windows. The robustness ladder is a proxy, not a substitute for field labels.
+  \item \textbf{Species coverage.} Pulse beetle and other pests are out of scope.
+  \item \textbf{Reference comparison} to 84.51\% is soft (protocol-matched claim, not identical reimplementation).
+  \item \textbf{Single geography / grain type} in source data; storage bag materials and vernacular mics vary.
+  \item \textbf{Screening aid only}---not legal or lab diagnosis; low-confidence UX must abstain.
+\end{itemize}
+
+\section{Open release and outlook}
+Apache-2.0 code, distilled weights, bake-off tables, robustness/calibration JSON, and a static results dashboard are public.\footnote{Anonymized for review; camera-ready will cite the repository.}
+Next: multi-seed CIs for the full advanced suite (released JSON when complete), tighter fusion gates, and---when feasible---phone-mic field collection with extension partners.
+Ground-up, small-model, offline tooling matches CCAI's call for resource-aware climate ML.
+
+\begin{thebibliography}{9}
+\bibitem[Balingbing et al.(2024)]{balingbing2024}
+C.~Balingbing et al.
+\newblock Application of a multi-layer CNN and acoustic device for stored rice pests.
+\newblock \emph{Computers and Electronics in Agriculture}, 225:109297, 2024.
+\bibitem[IGMRI(2015)]{igmri2015}
+IGMRI.
+\newblock Annual Report.
+\newblock Indian Grain Storage Management \& Research Institute, 2015.
+\bibitem[World Bank and FAO()]{worldbank_phl}
+World Bank / FAO reports on post-harvest loss (food loss \& waste).
+\newblock See also regional grain storage extension literature.
+\end{thebibliography}
+
+\end{document}

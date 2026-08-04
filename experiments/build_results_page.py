@@ -54,7 +54,10 @@ def build() -> Path:
     distill = _load_json(RESULTS / "distill" / "distill_report.json")
     advanced = _load_json(RESULTS / "advanced" / "advanced_summary.json")
     adv_md = _read(RESULTS / "advanced" / "advanced_report.md")
+    multi = _load_json(RESULTS / "advanced_multiseed" / "advanced_aggregate.json")
+    multi_md = _read(RESULTS / "advanced_multiseed" / "advanced_aggregate.md")
     findings42 = _read(RESULTS / "findings_seed42.md")
+    limitations = _read(ROOT / "LIMITATIONS.md")
 
     distill_block = "<p>No distill report yet.</p>"
     if distill:
@@ -86,6 +89,14 @@ def build() -> Path:
            (T={c['after']['temperature']:.3f});
            NLL {c['before']['nll']:.4f} → {c['after']['nll']:.4f}</p>
         """
+
+    multi_block = "<p>Multi-seed aggregate pending (<code>push_advanced.sh</code> with SEEDS=42,43,44).</p>"
+    if multi_md:
+        multi_block = f"<pre>{_esc(multi_md[:5000])}</pre>"
+    elif multi:
+        multi_block = f"<pre>{_esc(json.dumps(multi, indent=2)[:5000])}</pre>"
+
+    lim_block = f"<pre>{_esc(limitations[:3500])}</pre>" if limitations else ""
 
     models_block = ""
     if advanced:
@@ -173,6 +184,14 @@ def build() -> Path:
   <section>
     <h2>Robustness ladder</h2>
     {robust_block}
+  </section>
+  <section>
+    <h2>Multi-seed advanced aggregate (CIs)</h2>
+    {multi_block}
+  </section>
+  <section>
+    <h2>Limitations / domain shift</h2>
+    {lim_block or "<p>See LIMITATIONS.md</p>"}
   </section>
   <section>
     <h2>Multi-seed bake-off (v2)</h2>
