@@ -73,15 +73,10 @@ def _split_encoder_and_head(model):
     from tensorflow import keras
     from tensorflow.keras import layers
 
-    # Find the pre-softmax Dense(192) or GAP output: last Dropout input is Dense(192)
-    # Robust path: clone up to the layer before final Dense
     final = model.layers[-1]
     if not isinstance(final, layers.Dense):
         raise ValueError("expected final Dense softmax")
-    # Build encoder: input → layer before final Dense
-    # For Functional/Sequential-like Model from build_cnn_deep:
-    # ... GAP → Dense(192) → Dropout → Dense(n)
-    backbone_out = model.layers[-3].output  # Dense(192) relu
+    backbone_out = model.layers[-3].output  # Dense(192) before softmax
     encoder = keras.Model(model.input, backbone_out, name="hier_encoder")
     return encoder, int(backbone_out.shape[-1])
 
@@ -229,7 +224,6 @@ def finetune_hierarchical_from_base(
             swaps = int(cm[WEEVIL, BORER] + cm[BORER, WEEVIL])
             row = {"gate": g, "accuracy": acc_g, "n_overrides": n_g, "swaps": swaps}
             gate_sweep.append(row)
-            # Prefer: not below baseline, then max acc, then fewer swaps, then fewer overrides
             better = False
             if acc_g + 1e-12 >= base_acc and best_acc + 1e-12 < base_acc:
                 better = True
@@ -415,7 +409,6 @@ def _train_hierarchical_from_scratch(
 
 def _pack(name: str, y_true, y_pred, probs, model, extra) -> dict[str, Any]:
     per = f1_score(y_true, y_pred, average=None, labels=list(range(4)), zero_division=0)
-    # weevil↔borer swap count
     cm = confusion_matrix(y_true, y_pred, labels=list(range(4)))
     swap = int(cm[WEEVIL, BORER] + cm[BORER, WEEVIL])
     return {

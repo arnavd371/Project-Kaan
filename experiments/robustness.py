@@ -57,7 +57,6 @@ def soft_compress(y: np.ndarray, ratio: float = 4.0, threshold: float = 0.2) -> 
     mag = np.abs(y)
     out = y.copy()
     mask = mag > threshold
-    # soft knee toward threshold
     over = mag[mask] - threshold
     mag_c = threshold + over / ratio
     out[mask] = np.sign(y[mask]) * mag_c
@@ -89,7 +88,6 @@ def agc(y: np.ndarray, target_rms: float = 0.1) -> np.ndarray:
     return (y * (target_rms / rms)).astype(np.float32)
 
 
-# Named ladder rungs: (id, description, fn(y, rng) -> y)
 def ladder_specs() -> list[tuple[str, str]]:
     return [
         ("clean", "Identity (no degradation)"),

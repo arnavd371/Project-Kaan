@@ -50,7 +50,6 @@ def _pip_install() -> None:
 
 
 def _ensure_src_on_path() -> Path:
-    """Prefer embedded extract under /kaggle/temp/_kaan_src; else PROJECT."""
     embed = Path("/kaggle/temp/_kaan_src")
     if (embed / "model" / "distill.py").exists():
         sys.path.insert(0, str(embed))
@@ -124,7 +123,6 @@ def main() -> None:
     env["PYTHONPATH"] = str(src) + os.pathsep + env.get("PYTHONPATH", "")
     subprocess.run(distill_cmd, check=True, cwd=str(src), env=env)
 
-    # Promote distill report next to working root for easy download
     art = OUT_MODEL / "distill_artifacts"
     if art.is_dir():
         for f in art.iterdir():
@@ -152,8 +150,6 @@ def main() -> None:
         "--skip-web-patch",
     ]
     print("+", " ".join(export_cmd), flush=True)
-    # export_deploy calibrates via model.train.load_dataset → needs data/ relative or env
-    # Point a symlink so load_dataset finds WAVs
     link = src / "data"
     if link.exists() or link.is_symlink():
         if link.is_symlink() or link.is_dir():
@@ -167,13 +163,11 @@ def main() -> None:
     try:
         link.symlink_to(data_dir)
     except Exception:
-        # copytree too heavy; set cwd trick — load_dataset uses DATA_DIR under model parent
         if not (src / "data").exists():
             shutil.copytree(data_dir, src / "data", dirs_exist_ok=True)
 
     subprocess.run(export_cmd, check=True, cwd=str(src), env=env)
 
-    # Flat copies for Kaggle output UI
     for src_f, name in (
         (h5, "project-kaan_model.h5"),
         (tflite, "project-kaan.tflite"),

@@ -12,7 +12,6 @@ from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.keras import layers
 
-# Allow imports when run as script
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from model.preprocess import (  # noqa: E402

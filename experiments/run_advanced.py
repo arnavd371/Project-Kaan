@@ -93,7 +93,6 @@ def _train_baseline(X_tr, y_tr, X_va, y_va, epochs: int, smoke: bool):
 def _eval_robustness(model, paths_val, y_val, seed: int, smoke: bool) -> dict:
     rng = np.random.default_rng(seed)
     rows = []
-    # limit files in smoke
     n = min(len(paths_val), 24 if smoke else len(paths_val))
     paths = list(paths_val[:n])
     labels = np.asarray(y_val[:n])
@@ -149,7 +148,6 @@ def run(args: argparse.Namespace) -> dict:
         X_mel_va = rng.random((n_va, 128, 128, 1), dtype=np.float32)
         y_tr = rng.integers(0, 4, n_tr).astype(np.int32)
         y_va = rng.integers(0, 4, n_va).astype(np.int32)
-        # fake paths for robustness using smoke: waveforms
         paths_va = np.array([f"smoke:{int(y_va[i])}:{i}" for i in range(n_va)], dtype=object)
         X_pretrain = np.concatenate([X_mel_tr, X_mel_va], axis=0)
         dedupe = {"smoke": True}
@@ -312,7 +310,6 @@ def run(args: argparse.Namespace) -> dict:
     (out / "advanced_report.md").write_text("\n".join(md))
     print("\n".join(md), flush=True)
 
-    # Copy into committed results when not smoke
     if not args.smoke and args.copy_results:
         dest = ROOT / "experiments" / "results" / "advanced"
         dest.mkdir(parents=True, exist_ok=True)

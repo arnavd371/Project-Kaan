@@ -61,9 +61,6 @@ random.seed(SEED)
 np.random.seed(SEED)
 tf.random.set_seed(SEED)
 
-# ---------------------------------------------------------------------------
-# 1. Fetch pest audio
-# ---------------------------------------------------------------------------
 print("Cloning IRRI Rice-Acoustic-Sensor repo...", flush=True)
 REPO_DIR = TEMP_DIR / "Rice-Acoustic-Sensor"
 if not REPO_DIR.exists():
@@ -93,9 +90,6 @@ for species, class_name in SPECIES_MAP.items():
             dst_file.write_bytes(f.read_bytes())
     print(class_name, "->", len(list(dst.glob("*.wav"))), "files")
 
-# ---------------------------------------------------------------------------
-# 2. Real clean-class background audio
-# ---------------------------------------------------------------------------
 BG_URL = "http://download.tensorflow.org/data/speech_commands_v0.02.tar.gz"
 bg_dir = TEMP_DIR / "background_real"
 bg_src_dir = bg_dir / "_background_noise_"
@@ -249,9 +243,6 @@ class SpecAugmentSequence(keras.utils.Sequence):
             np.random.shuffle(self.indices)
 
 
-# ---------------------------------------------------------------------------
-# 3. Load pest data + dedupe BEFORE split
-# ---------------------------------------------------------------------------
 print("\nLoading pest datasets...")
 pest_specs, pest_labels, pest_paths = [], [], []
 seen_file_hashes = set()
@@ -273,7 +264,6 @@ for class_idx, class_name in enumerate(CLASS_NAMES):
 
 print(f"Removed {removed_file_dupes} byte-identical duplicate WAV files before split.")
 
-# Also drop spectrogram-identical rows (near-duplicates after trim/mel)
 seen_spec = {}
 keep_idx = []
 removed_spec_dupes = 0
@@ -327,12 +317,8 @@ print(f"clean -> {len(clean_val_windows)} val windows from {CLEAN_VAL_FILES}")
 clean_X_val = np.array([waveform_to_mel_spectrogram(w) for w in clean_val_windows], dtype=np.float32)
 clean_y_val = np.zeros(len(clean_X_val), dtype=np.int32)
 
-# ---------------------------------------------------------------------------
-# 4. Build augmented training set
-# ---------------------------------------------------------------------------
 X_train_aug, y_train_aug = [], []
 
-# Harder pest classes get slightly higher augmentation chance
 AUG_PROB = {
     "rice_weevil": 0.85,
     "lesser_grain_borer": 0.9,
@@ -349,7 +335,6 @@ for spec, label in zip(pest_X_train, pest_y_train):
         y_wave = augment_waveform(trim_and_pad(load_audio(wav_path)))
         X_train_aug.append(waveform_to_mel_spectrogram(y_wave))
         y_train_aug.append(label)
-    # Extra augmented copy for lesser_grain_borer (most confused class)
     if cname == "lesser_grain_borer" and np.random.random() < 0.5:
         candidates = train_files_by_class[cname]
         wav_path = np.random.choice(candidates)
@@ -378,9 +363,6 @@ print("\n=== Dataset composition after augmentation ===")
 for class_idx, class_name in enumerate(CLASS_NAMES):
     print(f"  {class_name:22s} train={int(np.sum(y_train == class_idx)):4d}  val={int(np.sum(y_val == class_idx)):4d}")
 
-# ---------------------------------------------------------------------------
-# 5. Audits
-# ---------------------------------------------------------------------------
 print("\n=== AUDIT 1: file-level leakage check (pest classes) ===")
 train_file_set = set(pest_paths_train.tolist())
 val_file_set = set(pest_paths_val.tolist())
@@ -394,9 +376,7 @@ assert len(set(CLEAN_TRAIN_FILES) & set(CLEAN_VAL_FILES)) == 0
 print("  PASS")
 
 print("\n=== AUDIT 3: exact-duplicate spectrogram check (train vs val) ===")
-# Compare only unaugmented originals that could collide: check all train vs val hashes
 val_hashes = {spec_hash(s) for s in X_val}
-# Prefer checking unaugmented pest train originals; also check full train set
 dupe_count = sum(1 for s in X_train if spec_hash(s) in val_hashes)
 print(f"  Exact duplicate spectrograms shared between train and val: {dupe_count}")
 if dupe_count > 0:
@@ -404,9 +384,6 @@ if dupe_count > 0:
 else:
     print("  PASS: zero exact duplicates between train and val.")
 
-# ---------------------------------------------------------------------------
-# 6. Model + training
-# ---------------------------------------------------------------------------
 inputs = layers.Input(shape=(128, 128, 1))
 x = layers.Conv2D(32, (3, 3), activation="relu", padding="same")(inputs)
 x = layers.BatchNormalization()(x)
@@ -471,7 +448,6 @@ history = model.fit(
     verbose=1,
 )
 
-# Prefer best val-accuracy checkpoint if it exists
 best_w = MODEL_DIR / "best_val_acc.weights.h5"
 if best_w.exists():
     model.load_weights(best_w)
@@ -494,7 +470,6 @@ for i, row in enumerate(cm):
 
 best_val_acc = max(history.history["val_accuracy"])
 final_val_acc = history.history["val_accuracy"][-1]
-# Recompute accuracy of the restored/checkpoint weights
 restored_acc = float(np.mean(y_pred == y_val))
 f1_per_class = f1_score(y_val, y_pred, average=None)
 f1_macro = f1_score(y_val, y_pred, average="macro")
@@ -522,9 +497,6 @@ plt.tight_layout()
 fig.savefig(MODEL_DIR / "training_history.png", dpi=150)
 print("Training history saved.")
 
-# ---------------------------------------------------------------------------
-# 7. TFLite INT8
-# ---------------------------------------------------------------------------
 NUM_CALIBRATION_SAMPLES = 100
 X_all_for_calib = np.concatenate([X_train, X_val], axis=0)
 

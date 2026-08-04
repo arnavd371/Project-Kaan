@@ -17,7 +17,7 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Kaan",
-  description: "AI-Powered Acoustic Grain Pest Detector for Indian Farmers",
+  description: "Acoustic grain pest detector for Indian farmers — on-device screening with a phone microphone.",
 };
 
 export const viewport: Viewport = {
