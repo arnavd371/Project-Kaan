@@ -22,20 +22,18 @@ It is built for Indian smallholders and extension pilots: no special probe hardw
 3. [Load the trained models](#load-the-trained-models)
 4. [How it works](#how-it-works)
 5. [Classes](#classes)
-6. [Results](#results)
-7. [Workshop contribution framing](#workshop-contribution-framing)
+6. [Models and experiments](#models-and-experiments)
+7. [Results summary](#results-summary)
 8. [Limitations](#limitations)
 9. [Repository layout](#repository-layout)
 10. [Technical stack](#technical-stack)
 11. [Data](#data)
-12. [Experiments (v2 bake-off)](#experiments-v2-bake-off)
-13. [Advanced suite (v3+)](#advanced-suite-v3)
-14. [Run locally](#run-locally)
-15. [Train and export](#train-and-export)
-16. [Privacy, safety, and limits](#privacy-safety-and-limits)
-17. [Author and copyright](#author-and-copyright)
-18. [Cite](#cite)
-19. [Acknowledgements](#acknowledgements)
+12. [Run locally](#run-locally)
+13. [Train and export](#train-and-export)
+14. [Privacy, safety, and limits](#privacy-safety-and-limits)
+15. [Author and copyright](#author-and-copyright)
+16. [Cite](#cite)
+17. [Acknowledgements](#acknowledgements)
 
 ---
 
@@ -186,24 +184,47 @@ Out of scope: pulse beetle and other legume pests; legal certification; lab diag
 
 ---
 
-## Results
+## Models and experiments
 
-### Production CNN (shipped path)
+Everything below uses the **same leakage-aware protocol** unless noted: IRRI pest WAVs + Speech Commands ambient `clean`, **byte-dedupe**, stratified **file-level** train/val, seeds **42 / 43 / 44** for multi-seed tables. Soft reference line: cited Balingbing et al. **84.51%** under *our* protocol (not a locked reimplementation).
 
-| Metric | Value |
-|---|---|
-| Validation accuracy (v3 distilled, seed 42) | **97.15%** |
-| Macro F1 | 0.977 |
-| Hard-only deep baseline (same split) | 95.57% |
-| Teacher ensemble | 95.89% |
-| INT8 TFLite | ~333 KB |
-| Keras H5 | ~3.7 MB |
+Shared feature families:
 
-v3 ships a deep mel-CNN distilled from `gbdt` + `extratrees` + `cnn_deep` soft labels (Kaggle T4). Report: [`experiments/results/distill/`](experiments/results/distill/). Do not conflate this with the multi-seed bake-off means below.
+| Feature | Shape / dim | Used by |
+|---|---|---|
+| Mel spectrogram | 128×128×1 | `cnn_shallow`, `cnn_deep`, distillation student, advanced CNN heads |
+| Mel as time×freq (no channel) | 128×128 | `cnn1d` |
+| Waveform | 16 kHz mono ~10 s | `yamnet_probe` |
+| Handcrafted vector | ~74-D (MFCC-20 + spectral + chroma summaries) | `svm_rbf`, `mlp`, `gbdt`, `rf`, `extratrees`, `knn`, `logreg` |
 
-### Multi-approach bake-off (v2.0.0)
+Code: [`experiments/models.py`](experiments/models.py), [`experiments/features.py`](experiments/features.py), [`experiments/run_benchmark.py`](experiments/run_benchmark.py).
 
-Same **file-level** stratified split after **byte-dedupe**, IRRI pest WAVs + Speech Commands ambient windows for `clean`, seeds **42 / 43 / 44**. Reference line: cited Balingbing et al. accuracy **84.51%** on this protocol (not a locked reimplementation).
+### 1. Eleven-approach bake-off (v2)
+
+Same split for all approaches so classical vs deep is fair.
+
+#### Deep / neural (mel or waveform)
+
+| ID | What it is | Input | Notes |
+|---|---|---|---|
+| `cnn_shallow` | 3× Conv2D (32/64/128) + BN + GAP + Dense(128) + Dropout | Mel 128×128×1 | App-style / `model/train.py` depth (~111k params). Acc mean **93.57% ± 1.28%**. |
+| `cnn_deep` | Deeper mel-CNN v5: paired 32/64/128 conv blocks, SpatialDropout, Dense(192) | Mel 128×128×1 | Strong Kaggle recipe (~314k params). Acc mean **95.15% ± 0.48%**. Backbone for distillation + advanced suite. |
+| `cnn1d` | Conv1D stack over mel time (freq bins as channels) | Mel 128×128 | Unstable across seeds. Acc mean **64.77% ± 20.7%** (only 1/3 seeds > 84.51%). |
+| `yamnet_probe` | Frozen YAMNet embeddings + logistic head | Raw waveform | Transfer probe; near the soft reference only. Acc mean **85.65% ± 1.83%** (2/3 seeds > 84.51%). |
+
+#### Classical (handcrafted ~74-D)
+
+| ID | What it is | Notes |
+|---|---|---|
+| `gbdt` | `HistGradientBoostingClassifier` (depth 6, lr 0.08) | Best multi-seed mean: **95.36% ± 1.50%**. Fast (~2 s). Teacher for distillation. |
+| `extratrees` | `ExtraTreesClassifier` | **94.94% ± 1.10%**. Teacher for distillation. |
+| `svm_rbf` | RBF SVM (`C=10`, class_weight balanced) + StandardScaler | **94.73% ± 1.20%**. |
+| `logreg` | Logistic regression + scaler | **94.09% ± 1.59%**. Strong linear baseline. |
+| `rf` | `RandomForestClassifier` | **93.67% ± 0.95%**. |
+| `mlp` | Sklearn MLP (128, 64), early stopping | **92.09% ± 0.32%**. |
+| `knn` | k-nearest neighbors | **90.30% ± 0.37%**. |
+
+#### Bake-off leaderboard (seeds 42/43/44)
 
 | Approach | Acc mean ± std | Macro-F1 mean ± std | Seeds > 84.51% | CI above ref? |
 |---|---:|---:|:---:|:---:|
@@ -219,13 +240,61 @@ Same **file-level** stratified split after **byte-dedupe**, IRRI pest WAVs + Spe
 | `yamnet_probe` | 85.65% ± 1.83 | 88.28% ± 1.50 | 2/3 | no |
 | `cnn1d` | 64.77% ± 20.7 | 69.44% ± 19.0 | 1/3 | no |
 
-**Findings (seed 42):** best classical `gbdt` (95.89%) vs best CNN `cnn_deep` (95.57%); McNemar not significant. Main confusions: rice weevil ↔ lesser grain borer. `cnn1d` is unstable; `yamnet_probe` is near the reference line only.
+**Seed-42 findings:** best classical `gbdt` (95.89%) vs best CNN `cnn_deep` (95.57%); McNemar not significant. Main confusion across strong models: rice weevil ↔ lesser grain borer. Tables: [`experiments/results/`](experiments/results/). Release: [v2.0.0](https://github.com/arnavd371/Project-Kaan/releases/tag/v2.0.0).
 
-Committed tables: [`experiments/results/`](experiments/results/). Release assets: [v2.0.0](https://github.com/arnavd371/Project-Kaan/releases/tag/v2.0.0).
+```bash
+pip install -r requirements.txt
+pip install 'tensorflow>=2.13.0'    # CNN approaches
+# optional: tensorflow_hub          # yamnet_probe
 
-### Advanced suite multi-seed (v3.1.0)
+python -m experiments.run_benchmark --smoke
+python -m experiments.run_benchmark --seeds 42,43,44 --out experiments/outputs/multi
+bash experiments/kaggle/push_and_run.sh
+```
 
-Seeds **42 / 43 / 44**, bootstrap 95% CI of the mean. Full tables: [`experiments/results/advanced_multiseed/`](experiments/results/advanced_multiseed/).
+### 2. CNN recipe ablations
+
+Named ablations of the deep CNN training recipe (SpecAugment, class weights, label smoothing, etc.) as separate release tags under `v1.1.x-ablate-*`. Runner: `experiments/run_ablations.py`. See [`experiments/KAGGLE.md`](experiments/KAGGLE.md).
+
+### 3. Distillation → production model (v3)
+
+Goal: one **phone-sized** student that keeps (or beats) teacher accuracy.
+
+| Role | Models |
+|---|---|
+| Teachers | `gbdt` + `extratrees` + `cnn_deep` (soft labels, temperature T=2, mix with hard labels) |
+| Student | `cnn_deep` architecture |
+| Export | INT8 TFLite (~333 KB) + ONNX for `web/` via `model/export_deploy.py` |
+
+| Checkpoint (seed 42) | Val acc | Macro-F1 |
+|---|---:|---:|
+| Teacher ensemble | 95.89% | 0.967 |
+| Hard-only deep | 95.57% | 0.965 |
+| **Distilled student (shipped)** | **97.15%** | **0.977** |
+
+Do not conflate distill seed-42 accuracy with bake-off multi-seed means. Report: [`experiments/results/distill/`](experiments/results/distill/). Code: `model/distill.py`.
+
+```bash
+bash experiments/kaggle/push_distill.sh
+# or: python -m model.distill && python -m model.export_deploy
+```
+
+### 4. Advanced suite (v3+)
+
+Built on the deep mel-CNN baseline (desk-bound; no field mics). Orchestrator: `experiments/run_advanced.py` / `run_advanced_multiseed.py`.
+
+| Module | What it does |
+|---|---|
+| **Baseline CNN** | Train/eval `cnn_deep`-style model on the shared split |
+| **Robustness ladder** | Replay val audio under SNR, phone band-pass (300-3400 Hz), muffle, compress, clip, reverb, gain, combos |
+| **Calibration** | Temperature scaling; ECE/NLL before/after; abstain curves |
+| **Cost-sensitive** | Upweight weevil↔borer errors during training |
+| **Hierarchical** | Coarse + pair head, or fine-tuned weevil↔borer specialist with **strict** top-2 fusion gate |
+| **SSL** | SimCLR-style SpecAugment views on mels → supervised fine-tune |
+
+#### Multi-seed advanced aggregate (42/43/44)
+
+Full tables: [`experiments/results/advanced_multiseed/`](experiments/results/advanced_multiseed/).
 
 | Metric | Mean ± std | 95% CI |
 |---|---:|---:|
@@ -236,22 +305,31 @@ Seeds **42 / 43 / 44**, bootstrap 95% CI of the mean. Full tables: [`experiments
 | ECE after temperature | 0.029 ± 0.015 | [0.015, 0.046] |
 | Robustness: clean | 96.73% ± 0.37% | [96.52%, 97.15%] |
 | Robustness: phone band | 60.86% ± 8.35% | [51.27%, 66.46%] |
-| Robustness: SNR ≤10 / hard combos | ~7.59% | (collapse) |
+| Robustness: SNR ≤10 / hard combos | ~7.59% | collapse |
 
-**Hierarchical fine-tune (seed 42, strict gate):** baseline **96.84%** → fused hierarchy **97.15%** (scratch cascade 94.30%). Report: [`experiments/results/hier_finetune/`](experiments/results/hier_finetune/).
+**Hierarchical fine-tune (seed 42, strict gate):** baseline **96.84%** → fused hierarchy **97.15%** (pair subset 0.96; scratch cascade 94.30%). Report: [`experiments/results/hier_finetune/`](experiments/results/hier_finetune/).
+
+```bash
+python -m experiments.run_advanced --smoke
+python -m experiments.run_advanced_multiseed --seeds 42,43,44 --copy-results
+bash experiments/kaggle/push_advanced.sh
+python -m experiments.build_results_page   # → experiments/results/index.html
+```
+
+### 5. What ships in the app
+
+Only the **distilled INT8 / ONNX** path. Bake-off and advanced suite are research comparisons; they do not auto-replace production weights.
 
 ---
 
-## Workshop contribution framing
+## Results summary
 
-For climate / AI-for-good workshops, lead with **deployment constraints**, not peak lab accuracy:
-
-1. **On-device / offline** INT8 + ONNX screening (no cloud required for inference)
-2. **Robustness ladder** - phone-like degradations; treat SNR/band-pass collapse as a primary finding
-3. **Calibration + abstain** - temperature scaling and coverage-accuracy curves
-4. **Open bake-off + distillation** - classical ≈ deep; distilled production weights released
-
-Accuracy vs the cited 84.51% reference is **supporting**. Draft: [`workshop/`](workshop/) (CCAI @ NeurIPS 2026 Papers track, ≤4 pages).
+| Stage | Headline |
+|---|---|
+| Bake-off | Classical ≈ deep; `gbdt` / `cnn_deep` lead; soft ref 84.51% cleared by most models |
+| Distillation | Shipped student **97.15%** (seed 42) |
+| Advanced multi-seed | Baseline **96.73% ± 0.37%**; phone-band / noise collapse is the deployment finding |
+| Hier fine-tune | Strict gate can beat baseline (**97.15%** vs **96.84%**, seed 42) |
 
 ---
 
@@ -268,16 +346,15 @@ Project-Kaan/
 ├── README.md                 # this file
 ├── CHANGELOG.md              # release notes
 ├── VERSION                   # current semver
-├── LIMITATIONS.md            # domain shift / ethics for workshop claims
-├── LICENSE                   # Apache-2.0 (appendix filled: Arnav Dhiman)
+├── LIMITATIONS.md            # domain shift / ethics
+├── LICENSE                   # Apache-2.0 (appendix: Arnav Dhiman)
 ├── NOTICE                    # copyright owner + data + dependency notices
 ├── CITATION.cff
 ├── requirements.txt
-├── workshop/                 # CCAI @ NeurIPS 2026 draft (≤4 pages)
-├── model/                    # train, preprocess, TFLite export, weights
+├── model/                    # train, distill, preprocess, TFLite/ONNX, weights
 ├── utils/                    # inference helpers
 ├── data/                     # how to obtain WAVs (data not always committed)
-├── experiments/              # bake-off, audits, stats, findings, Kaggle
+├── experiments/              # bake-off, advanced suite, audits, Kaggle
 │   ├── results/              # committed multi-seed summaries
 │   ├── kaggle/               # GPU kernel push scripts
 │   └── outputs/              # local run artifacts (gitignored)
@@ -286,15 +363,15 @@ Project-Kaan/
 
 | Path | Role |
 |---|---|
-| `model/train.py` | Shallow / production-style mel-CNN training |
-| `model/train_kaggle.py` | Deeper CNN + strong recipe (Kaggle-oriented) |
+| `model/train.py` | Shallow mel-CNN training |
+| `model/train_kaggle.py` | Deeper CNN + strong recipe |
 | `model/distill.py` | Distill gbdt+extratrees+cnn_deep → production CNN |
 | `model/export_deploy.py` | INT8 TFLite + ONNX export and web sync |
-| `model/convert_tflite.py` | INT8 TFLite export (legacy entry) |
 | `model/project-kaan.tflite` | Shipped INT8 weights |
 | `experiments/run_benchmark.py` | Eleven-approach same-split benchmark |
-| `experiments/run_ablations.py` | CNN recipe ablations |
-| `experiments/findings.py` | McNemar, confusions, SNR proxy, INT8 parity |
+| `experiments/run_advanced.py` | Robustness / heads / calibration / SSL |
+| `experiments/run_advanced_multiseed.py` | Multi-seed advanced + bootstrap CIs |
+| `experiments/findings.py` | McNemar, confusions, SNR proxy |
 | `web/` | Canonical UI (Vercel root directory = `web`) |
 
 ---
@@ -332,50 +409,7 @@ data/red_flour_beetle/*.wav
 | [IRRI Rice Acoustic Sensor](https://github.com/cbalingbing/Rice-Acoustic-Sensor) (Balingbing et al., 2024) | Pest class WAVs |
 | Speech Commands `_background_noise_` | Ambient windows for `clean` |
 
-**Eval hygiene:** byte-dedupe identical files before split; stratified **file-level** train/val (not window-level); before/after training audits (`experiments/audit.py`). See `data/HOW_TO_GET_DATA.md` and `experiments/KAGGLE.md`.
-
----
-
-## Experiments (v2 bake-off)
-
-Approaches: `cnn_shallow`, `cnn_deep`, `cnn1d`, `yamnet_probe`, `svm_rbf`, `mlp`, `gbdt`, `rf`, `extratrees`, `knn`, `logreg`.
-
-```bash
-pip install -r requirements.txt
-pip install 'tensorflow>=2.13.0'    # CNN approaches
-# optional: tensorflow_hub          # yamnet_probe
-
-python -m experiments.run_benchmark --smoke
-python -m experiments.run_benchmark --seeds 42,43,44 --out experiments/outputs/multi
-python -m experiments.run_ablations --out experiments/outputs/ablations
-bash experiments/kaggle/push_and_run.sh
-```
-
-Details: [`experiments/README.md`](experiments/README.md).
-
----
-
-## Advanced suite (v3+)
-
-Desk-bound follow-ons (no field mics): phone-like **robustness ladder**, **weevil↔borer** cost-sensitive + hierarchical heads, **temperature calibration / abstain curves**, **SimCLR mel SSL** on IRRI + Speech Commands ambient → fine-tune, and a static **results dashboard**.
-
-```bash
-# Local smoke
-python -m experiments.run_advanced --smoke
-
-# Multi-seed + bootstrap CIs (prefer Kaggle GPU)
-python -m experiments.run_advanced_multiseed --seeds 42,43,44 --copy-results
-
-# Kaggle GPU - preferred
-bash experiments/kaggle/push_advanced.sh
-# https://www.kaggle.com/code/arnavd371/kaan-advanced-suite
-
-# Dashboard from committed JSON/MD
-python -m experiments.build_results_page
-# → experiments/results/index.html
-```
-
-Artifacts: `experiments/results/advanced/` (single-seed reference) and `experiments/results/advanced_multiseed/` (v3.1 means ± std, 95% CIs). Hierarchical fine-tune: `experiments/results/hier_finetune/`. Skips farmer-app UX (multi-clip vote, etc.).
+**Eval hygiene:** byte-dedupe identical files before split; stratified **file-level** train/val (not window-level); before/after training audits (`experiments/audit.py`). See `data/HOW_TO_GET_DATA.md` and `experiments/KAGGLE.md`. More experiment detail: [`experiments/README.md`](experiments/README.md).
 
 ---
 

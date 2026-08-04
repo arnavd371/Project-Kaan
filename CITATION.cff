@@ -16,8 +16,9 @@ abstract: >-
   borer, or red flour beetle with an on-device INT8 CNN. Version 3.1 adds
   multi-seed advanced-suite aggregates with bootstrap CIs (robustness,
   calibration, hierarchical fusion, SSL), a hierarchical fine-tune that beats
-  baseline on seed 42, LIMITATIONS documentation, and a CCAI@NeurIPS workshop
-  draft. Version 3.0 shipped the distilled production model.
+  baseline on seed 42, and LIMITATIONS documentation. Version 3.0 shipped the
+  distilled production model.
+
 keywords:
   - acoustic pest detection
   - stored grain
