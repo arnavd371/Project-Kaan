@@ -1,24 +1,29 @@
 cff-version: 1.2.0
-title: "Kaan (कान): AI-Powered Acoustic Grain Pest Detector for Indian Farmers"
+title: "Kaan (कान): Acoustic Grain Pest Detector for Indian Farmers"
 message: "If you use Project Kaan, please cite it as below."
 type: software
 authors:
   - family-names: Dhiman
     given-names: Arnav
     email: arnavd371@gmail.com
+    website: "https://arnavdportfolio.vercel.app/"
+    alias: arnavd371
 repository-code: "https://github.com/arnavd371/Project-Kaan"
 url: "https://kaan-web.vercel.app"
 license: Apache-2.0
-version: "1.0.0"
-date-released: "2026-07-28"
+version: "3.0.0"
+date-released: "2026-08-04"
 abstract: >-
   Kaan listens to stored grain using a smartphone microphone, converts audio to
   a mel spectrogram, and classifies clean grain versus rice weevil, lesser grain
-  borer, or red flour beetle with an on-device INT8 CNN.
+  borer, or red flour beetle with an on-device INT8 CNN. Version 3 ships a
+  production model distilled from classical + deep teachers; version 2 added a
+  leakage-aware multi-approach bake-off.
 keywords:
   - acoustic pest detection
   - stored grain
   - agriculture
   - tensorflow lite
+  - onnx
   - india
   - open source
