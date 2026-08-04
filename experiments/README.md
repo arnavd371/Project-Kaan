@@ -1,30 +1,46 @@
 # Experiments
 
-Paper evidence pipeline for Project Kaan. The live app is under `web/`. This folder runs same-split model comparisons, ablations, audits, and figures.
+Same-split model comparisons, audits, ablations, and figures for Project Kaan.
+The live app is under `web/`.
+
+## Layout
+
+| Path | Role |
+|---|---|
+| `run_benchmark.py` | Multi-approach benchmark entry |
+| `run_ablations.py` | CNN recipe ablations |
+| `run_benchmark_kaggle.py` | Kaggle orchestrator |
+| `models.py` | Approach builders / trainers |
+| `features.py` | Mel + handcrafted + waveforms |
+| `audit.py` / `stats.py` / `findings.py` / `plots.py` | Checks, stats, reports, figures |
+| `prepare_kaggle_data.py` | IRRI + clean window prep |
+| `kaggle/` | Embedded kernel + push script |
+| `results/` | Committed multi-seed summary tables |
+| `outputs/` | Local run artifacts (gitignored) |
 
 ## Research question
 
-Under a leakage-aware file-level split, do multiple approaches (deep mel-CNN and classical models) exceed the cited ~84.51% reference accuracy of Balingbing et al. (2024)?
+Under a leakage-aware file-level split, do multiple approaches exceed the cited ~84.51% reference accuracy of Balingbing et al. (2024)?
 
-## Models compared
+## Models
 
 | ID | Method | Features |
 |---|---|---|
-| `cnn_shallow` | Project Kaan mel-CNN (`model/train.py`) | 128x128 mel image |
-| `cnn_deep` | Deeper mel-CNN v5 (`model/train_kaggle.py`) | 128x128 mel image |
-| `cnn1d` | 1D CNN over mel time (freq as channels) | Mel sequence |
-| `yamnet_probe` | Frozen YAMNet embeddings + logistic probe | Waveform |
-| `svm_rbf` | SVM (RBF) | MFCC + spectral summary vector |
-| `mlp` | Shallow MLP | Same handcrafted vector |
-| `gbdt` | HistGradientBoosting | Same handcrafted vector |
-| `rf` | RandomForest | Same handcrafted vector |
-| `extratrees` | ExtraTrees | Same handcrafted vector |
-| `knn` | k-NN | Same handcrafted vector |
-| `logreg` | Logistic regression (optional floor) | Same handcrafted vector |
+| `cnn_shallow` | Mel-CNN (`model/train.py`) | 128×128 mel |
+| `cnn_deep` | Mel-CNN v5 (`model/train_kaggle.py`) | 128×128 mel |
+| `cnn1d` | 1D CNN on mel time | Mel sequence |
+| `yamnet_probe` | Frozen YAMNet + logistic | Waveform |
+| `svm_rbf` | RBF SVM | Handcrafted ~74-D |
+| `mlp` | MLP | Handcrafted |
+| `gbdt` | HistGradientBoosting | Handcrafted |
+| `rf` | RandomForest | Handcrafted |
+| `extratrees` | ExtraTrees | Handcrafted |
+| `knn` | k-NN | Handcrafted |
+| `logreg` | Logistic regression | Handcrafted |
 
-The app still ships the existing INT8 / ONNX CNN only. This folder compares approaches on the same file-level split; it does not replace the production model path.
+The app still ships the existing INT8 / ONNX CNN only.
 
-## Data layout
+## Data
 
 ```
 data/clean/*.wav
@@ -33,55 +49,33 @@ data/lesser_grain_borer/*.wav
 data/red_flour_beetle/*.wav
 ```
 
-See `data/HOW_TO_GET_DATA.md`. Use file-level splits only.
+See `data/HOW_TO_GET_DATA.md`. Use file-level splits only. Byte-dedupe before split.
 
-## Quick start
+## Run
 
 ```bash
 pip install -r requirements.txt
-pip install tensorflow>=2.13.0   # optional; needed for CNN approaches
+pip install 'tensorflow>=2.13.0'   # CNNs
+# optional: tensorflow_hub           # yamnet_probe
 
 python -m experiments.run_benchmark --smoke
-python -m experiments.run_benchmark --seed 42 --out experiments/outputs/run_seed42
 python -m experiments.run_benchmark --seeds 42,43,44 --out experiments/outputs/multi
 python -m experiments.run_ablations --out experiments/outputs/ablations
 ```
 
-### Kaggle
-
-Full IRRI data + GPU: see `experiments/KAGGLE.md`.
+Kaggle GPU (full IRRI):
 
 ```bash
 bash experiments/kaggle/push_and_run.sh
-kaggle kernels status arnavd371/kaan-multi-approach-benchmark
 ```
 
-Data prep matches `model/train_kaggle.py` (IRRI clone + Speech Commands clean windows).
+See `KAGGLE.md`.
 
 ## Outputs
 
-- `metrics.json` / `metrics.csv`
-- `stats.md` / `stats.json` / `aggregate_metrics.json` (multi-seed)
-- `per_seed_metrics.json`
-- `findings.md` / `findings.json` (McNemar, confusions, SNR proxy, INT8 parity)
-- `audit_before_training.*` / `audit_after_training.*`
-- `ablation_table.*` (ablation runs)
-- `confusion_*.png`, `fig_*.png`
-- `split_manifest.json`
-- `report.md`
-
-Committed Kaggle summary tables: `experiments/results/`.
-
-## Workshop checklist
-
-See `experiments/WORKSHOP_CHECKLIST.md`.
+Per run directory: `metrics.*`, `stats.*`, `findings.*`, audits, plots, `split_manifest.json`, `report.md`.  
+Committed summaries: `results/`.
 
 ## Licence
 
-Apache License 2.0 (same as the Project Kaan monorepo).
-
-## Paper pack
-
-Full methods + results tables for writing: [`PAPER_METHODOLOGY.md`](PAPER_METHODOLOGY.md).
-
-35–40 page LaTeX format: [`../paper/FORMAT.md`](../paper/FORMAT.md).
+Apache License 2.0.

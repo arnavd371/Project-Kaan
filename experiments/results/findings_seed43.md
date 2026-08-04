@@ -58,7 +58,7 @@
 - SNR 10.0 dB: probe_acc=0.7263 (drop=+0.1368)
 - SNR 5.0 dB: probe_acc=0.6842 (drop=+0.1789)
 - SNR 0.0 dB: probe_acc=0.6105 (drop=+0.2526)
-- Note: Proxy robustness only. Phone-mic external set remains the gold domain-shift test.
+- Proxy only; not a phone-mic field test.
 
 ## INT8 vs float
 
@@ -66,7 +66,7 @@
 
 ## Notes
 
-- McNemar is paired on the same file-level val fold; multi-seed CIs still matter more than single-seed p.
+- McNemar is single-fold; report multi-seed CIs with it.
 - SNR curve is a proxy, not a phone-mic field study.
-- Soft claim vs Balingbing 84.51%: cited number on own protocol, not locked reimplementation.
+- Reference 84.51% is the cited Balingbing number on this protocol, not a locked reimplementation.
 

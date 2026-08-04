@@ -1,8 +1,4 @@
-"""Model builders and trainers for the multi-approach benchmark.
-
-CNN builders match model/train.py and model/train_kaggle.py v5.
-Classical models share the handcrafted feature matrix and split.
-"""
+"""Model builders and trainers for the multi-approach benchmark."""
 
 from __future__ import annotations
 

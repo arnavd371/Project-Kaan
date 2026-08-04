@@ -25,7 +25,7 @@ India stores over 80 million tonnes of food grain. Insects cause about 1,300 cro
 
 ## Results
 
-### Production CNN (audited training run)
+### Production CNN
 
 | Metric | Value |
 |---|---|
@@ -36,7 +36,7 @@ India stores over 80 million tonnes of food grain. Insects cause about 1,300 cro
 
 Training data: IRRI Rice Acoustic Sensor Dataset (Balingbing et al., 2024), leakage-aware file-level splits.
 
-### Workshop multi-approach bake-off
+### Multi-approach bake-off (v2)
 
 Same file-level split, byte-deduped IRRI pest WAVs + Speech Commands background windows for `clean`, seeds **42 / 43 / 44**. Reference line cited from Balingbing et al.: **84.51%**.
 
@@ -54,9 +54,7 @@ Same file-level split, byte-deduped IRRI pest WAVs + Speech Commands background 
 | yamnet_probe | 85.65% ± 1.83 | 2/3 |
 | cnn1d | 64.77% ± 20.7 | 1/3 |
 
-Bootstrap 95% CIs for the strong mel-CNN and handcrafted models sit above 84.51%. `yamnet_probe` is near the reference line; `cnn1d` is unstable and not competitive. Main confusions are rice weevil ↔ lesser grain borer. Audits, findings (McNemar, SNR proxy), plots, and release assets live under `experiments/` and [GitHub Releases](https://github.com/arnavd371/Project-Kaan/releases).
-
-CNN ablation (seed 42): full strong recipe keeps `cnn_deep` near ~95%; a bare Adam / sparse-CE baseline collapsed (`cnn_deep` ~7.6%). Leave-one-out removals of SpecAugment / class weights / label smoothing are single-seed and should not be over-interpreted.
+Summary tables: `experiments/results/`. Release notes: [v2.0.0](https://github.com/arnavd371/Project-Kaan/releases).
 
 ## Technical stack
 
@@ -75,59 +73,33 @@ CNN ablation (seed 42): full strong recipe keeps `cnn_deep` near ~95%; a bare Ad
 
 | Path | Role |
 |---|---|
-| `model/`, `utils/` | Preprocess, train, TFLite convert, inference helpers |
-| `experiments/` | Same-split benchmarks, audits, multi-seed stats, CNN ablations |
-| `web/` | Public Next.js site (canonical UI) |
+| `model/`, `utils/` | Preprocess, train, TFLite convert, inference |
+| `experiments/` | Benchmarks, audits, stats, findings, Kaggle |
+| `experiments/results/` | Committed multi-seed tables |
+| `data/` | How to obtain WAVs |
+| `web/` | Public Next.js site |
 | `web/android`, `web/ios` | Capacitor wrappers |
-
-Copyright 2026 Arnav Dhiman.
-
 
 ## Run locally
 
-Website:
-
 ```bash
-cd web
-npm install
-npm run dev
+cd web && npm install && npm run dev
 ```
-
-Open http://localhost:3000. For Vercel, set the project Root Directory to `web`.
-
-Python helpers / training:
 
 ```bash
 pip install -r requirements.txt
-```
-
-Benchmarks (install TensorFlow if you want CNN approaches):
-
-```bash
 python -m experiments.run_benchmark --smoke
 python -m experiments.run_benchmark --seeds 42,43,44 --out experiments/outputs/multi
-```
-
-Full IRRI GPU runs on Kaggle: see `experiments/KAGGLE.md`.
-
-```bash
 bash experiments/kaggle/push_and_run.sh
-```
-
-Retrain / export:
-
-```bash
-python model/train.py
-# or model/train_kaggle.py on Kaggle
-python model/convert_tflite.py
+python model/train.py && python model/convert_tflite.py
 ```
 
 ## Privacy and limits
 
 - Classification audio stays on device / in browser for inference.
-- Screening aid only, not a lab diagnosis; low-confidence outputs ask for a re-record.
+- Screening aid only; low-confidence outputs ask for a re-record.
 - Pulse beetle and other legume pests are out of scope.
-- Workshop numbers use IRRI + ambient clean windows, not a large Indian phone-mic field corpus.
+- Benchmark numbers use IRRI + ambient clean windows, not a large Indian phone-mic field corpus.
 
 ## Citations
 
