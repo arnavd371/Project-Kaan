@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Match website cream / ink palette -->
+    <color name="colorPrimary">#111111</color>
+    <color name="colorPrimaryDark">#111111</color>
+    <color name="colorAccent">#111111</color>
+    <color name="cream">#F7F6F2</color>
+    <color name="ink">#111111</color>
+</resources>

@@ -6,6 +6,7 @@ import GuideTour from "@/components/GuideTour";
 import { LANGUAGES, CLASS_NAMES, type Lang, getUi, getAdvisory, getPestName } from "@/lib/language";
 import { decodeToMono16k, estimateSeverity, type DemoPrediction, type SeverityResult } from "@/lib/audio";
 import { predictCnn, prefetchModel } from "@/lib/model";
+import { recordContactClip, type RecordProgress } from "@/lib/record";
 import {
   APP_GUIDE_ORDER,
   GUIDE_TAB,
@@ -65,6 +66,8 @@ export default function AppPage() {
   const [severity, setSeverity] = useState<SeverityResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tourActive, setTourActive] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [recordProgress, setRecordProgress] = useState<RecordProgress | null>(null);
   const chrome = getGuideChrome(lang);
 
   useEffect(() => {
@@ -110,6 +113,29 @@ export default function AppPage() {
       setError(e instanceof Error ? e.message : "Could not analyze this audio file.");
     } finally {
       setAnalyzing(false);
+    }
+  }
+
+  async function startRecording() {
+    if (recording || analyzing) return;
+    setError(null);
+    setResult(null);
+    setSeverity(null);
+    setRecording(true);
+    setRecordProgress({ elapsedMs: 0, targetMs: 10_000, recording: true });
+    try {
+      const clip = await recordContactClip((p) => setRecordProgress(p));
+      setFile(clip);
+      await analyze(clip);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Recording failed.";
+      const denied =
+        /permission|not allowed|denied|secure/i.test(msg) ||
+        (typeof DOMException !== "undefined" && e instanceof DOMException && e.name === "NotAllowedError");
+      setError(denied ? getUi(lang, "record_denied") : msg);
+    } finally {
+      setRecording(false);
+      setRecordProgress(null);
     }
   }
 
@@ -169,11 +195,21 @@ export default function AppPage() {
           <label className="block font-mono text-xs uppercase mb-2">{getUi(lang, "upload_label")}</label>
           <p className="text-sm mb-4 text-black/70">{getUi(lang, "upload_help")}</p>
           <div data-guide="guide-app-upload" className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 items-stretch sm:items-center">
-            <label className="btn-pi cursor-pointer inline-flex items-center justify-center">
+            <button
+              type="button"
+              disabled={recording || analyzing}
+              onClick={startRecording}
+              className="btn-pi !bg-black !text-white"
+              aria-busy={recording}
+            >
+              {recording ? getUi(lang, "recording_btn") : getUi(lang, "record_btn")}
+            </button>
+            <label className={`btn-pi cursor-pointer inline-flex items-center justify-center ${recording ? "opacity-45 pointer-events-none" : ""}`}>
               <span>Choose audio file</span>
               <input
                 type="file"
-                accept="audio/*,.wav,.mp3,.m4a,.ogg"
+                accept="audio/*,.wav,.mp3,.m4a,.ogg,.webm"
+                disabled={recording || analyzing}
                 onChange={(e) => {
                   const f = e.target.files?.[0] ?? null;
                   setFile(f);
@@ -184,7 +220,7 @@ export default function AppPage() {
             </label>
             <button
               type="button"
-              disabled={analyzing}
+              disabled={recording || analyzing}
               onClick={async () => {
                 try {
                   const demoFile = await loadDemoSample();
@@ -198,7 +234,7 @@ export default function AppPage() {
             >
               {getUi(lang, "try_demo_btn")}
             </button>
-            {file && (
+            {file && !recording && (
               <button
                 type="button"
                 onClick={() => {
@@ -213,6 +249,23 @@ export default function AppPage() {
               </button>
             )}
           </div>
+
+          {recording && recordProgress && (
+            <div className="panel mb-6" aria-live="polite">
+              <p className="panel-label mb-2">{getUi(lang, "record_progress")}</p>
+              <div className="h-2 bg-black/10">
+                <div
+                  className="h-2 bg-black transition-[width] duration-200"
+                  style={{
+                    width: `${Math.min(100, (100 * recordProgress.elapsedMs) / recordProgress.targetMs)}%`,
+                  }}
+                />
+              </div>
+              <p className="font-mono text-xs mt-2">
+                {(recordProgress.elapsedMs / 1000).toFixed(1)}s / {(recordProgress.targetMs / 1000).toFixed(0)}s
+              </p>
+            </div>
+          )}
 
           <div data-guide="guide-app-samples" className="panel mb-6">
             <p className="panel-label mb-1">{getUi(lang, "sample_section_title")}</p>

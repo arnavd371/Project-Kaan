@@ -89,12 +89,12 @@
       "mode_upload": "Upload Audio File",
       "mode_record": "Record Instructions",
       "upload_label": "Upload a WAV or MP3 recording",
-      "upload_help": "Record 10-30 seconds of audio with your phone placed against the grain bag.",
+      "upload_help": "Press Record with the phone flat on the bag (10 seconds), or upload a WAV / MP3.",
       "analyze_btn": "Analyze Audio",
       "record_title": "How to Record",
       "record_step_1": "1. Place your phone flat against the grain storage bag or bin.",
-      "record_step_2": "2. Open your voice memo or audio recorder app.",
-      "record_step_3": "3. Record for at least 30 seconds in a quiet environment.",
+      "record_step_2": "2. Tap Record 10 seconds in Kaan (or use any audio recorder).",
+      "record_step_3": "3. Stay quiet for the full 10-second capture (or 10-30 seconds if using an external recorder).",
       "record_step_4": "4. Save the file and upload it using the Upload tab.",
       "record_diagram": "📱 → 🎒 Grain Bag\nPhone pressed firmly against bag surface",
       "waveform_title": "Audio Waveform",
@@ -128,7 +128,7 @@
       "about_audience": "Small and marginal farmers across India who store rice, wheat, and pulses at home or in community warehouses, plus Krishi Vigyan Kendra (KVK) extension workers who advise them.",
       "about_sdg": "SDG 2 (Zero Hunger): cuts post-harvest food loss. SDG 12 (Responsible Consumption & Production): enables targeted intervention instead of routine chemical fumigation.",
       "about_env": "Early acoustic screening reduces unnecessary phosphine fumigation, protecting farmer health, stored food, and the environment.",
-      "about_privacy": "All audio is processed entirely in your browser. Nothing is uploaded to a server, and recordings are not stored.",
+      "about_privacy": "All audio is processed on your device. Nothing is uploaded to a server, and recordings are not stored.",
       "about_limitations": "Phone microphone quality varies. Background noise, low insect density, and container material affect accuracy. The clean class is trained on real ambient recordings, so field clean-detection still needs local validation. This tool screens; it does not replace expert inspection.",
       "about_gtm": "Partner with Krishi Vigyan Kendras (KVKs), Farmer Producer Organizations (FPOs), and state agriculture departments for field pilots and local-language outreach.",
       "about_why_ai": "Rice weevil, lesser grain borer, and red flour beetle produce overlapping acoustic signatures in the 300-4000 Hz range. Simple frequency-threshold rules cannot reliably separate them. A trained CNN learns the subtle spectral-temporal patterns needed to tell species apart - this is not achievable with traditional rule-based software.",
@@ -162,7 +162,11 @@
       "clear_btn": "Clear",
       "analyzing": "Analyzing with CNN...",
       "a11y_result_note": "Result indicated by both colour and a symbol for accessibility.",
-      "cnn_note": "Classification runs the trained INT8 CNN in your browser (97.76% validation accuracy). First analysis may take a few seconds while the model loads."
+      "cnn_note": "Classification runs the trained INT8 CNN in your browser (97.76% validation accuracy). First analysis may take a few seconds while the model loads.",
+      "record_btn": "Record 10 seconds",
+      "recording_btn": "Recording...",
+      "record_progress": "Keep the phone flat on the bag",
+      "record_denied": "Microphone permission is required to record on this phone."
     },
     "hi": {
       "app_title": "Kaan",
@@ -182,7 +186,7 @@
       "mode_upload": "ऑडियो फ़ाइल अपलोड करें",
       "mode_record": "रिकॉर्डिंग निर्देश",
       "upload_label": "WAV या MP3 रिकॉर्डिंग अपलोड करें",
-      "upload_help": "फोन को अनाज की थैली पर रखकर 10-30 सेकंड ऑडियो रिकॉर्ड करें।",
+      "upload_help": "थैली पर फोन रखकर Record दबाएँ (10 सेकंड), या WAV / MP3 अपलोड करें।",
       "analyze_btn": "ऑडियो का विश्लेषण करें",
       "record_title": "रिकॉर्ड कैसे करें",
       "record_step_1": "1. अपना फोन अनाज भंडारण थैली या बिन पर सपाट रखें।",
@@ -255,7 +259,11 @@
       "about_ethics_title": "Ethics & bias",
       "about_innovation_title": "Innovation",
       "about_techstack_title": "Tech stack",
-      "about_deployment_title": "Deployment status"
+      "about_deployment_title": "Deployment status",
+      "record_btn": "10 सेकंड रिकॉर्ड करें",
+      "recording_btn": "रिकॉर्ड हो रहा है...",
+      "record_progress": "फोन को थैली पर सपाट रखें",
+      "record_denied": "रिकॉर्ड करने के लिए माइक्रोफ़ोन अनुमति आवश्यक है।"
     },
     "mr": {
       "app_title": "Kaan",
@@ -275,7 +283,7 @@
       "mode_upload": "ऑडिओ फाइल अपलोड करा",
       "mode_record": "रेकॉर्डिंग सूचना",
       "upload_label": "WAV किंवा MP3 रेकॉर्डिंग अपलोड करा",
-      "upload_help": "फोन धान्य पिशवीवर ठेवून 10-30 सेकंद ऑडिओ रेकॉर्ड करा.",
+      "upload_help": "पिशवीवर फोन ठेवून Record दाबा (10 सेकंद), किंवा WAV / MP3 अपलोड करा.",
       "analyze_btn": "ऑडिओ विश्लेषण करा",
       "record_title": "कसे रेकॉर्ड करावे",
       "record_step_1": "1. फोन धान्य साठवण पिशवी किंवा बिनवर सपाट ठेवा.",
@@ -348,7 +356,11 @@
       "about_ethics_title": "Ethics & bias",
       "about_innovation_title": "Innovation",
       "about_techstack_title": "Tech stack",
-      "about_deployment_title": "Deployment status"
+      "about_deployment_title": "Deployment status",
+      "record_btn": "10 सेकंद रेकॉर्ड करा",
+      "recording_btn": "रेकॉर्ड होत आहे...",
+      "record_progress": "फोन पिशवीवर सपाट ठेवा",
+      "record_denied": "रेकॉर्ड करण्यासाठी मायक्रोफोन परवानगी आवश्यक आहे."
     },
     "pa": {
       "app_title": "Kaan",
@@ -368,7 +380,7 @@
       "mode_upload": "ਆਡੀਓ ਫਾਈਲ ਅਪਲੋਡ ਕਰੋ",
       "mode_record": "ਰਿਕਾਰਡਿੰਗ ਨਿਰਦੇਸ਼",
       "upload_label": "WAV ਜਾਂ MP3 ਰਿਕਾਰਡਿੰਗ ਅਪਲੋਡ ਕਰੋ",
-      "upload_help": "ਫੋਨ ਅਨਾਜ ਦੇ ਥੈਲੇ ਤੇ ਰੱਖ ਕੇ 10-30 ਸਕਿੰਟ ਆਡੀਓ ਰਿਕਾਰਡ ਕਰੋ।",
+      "upload_help": "ਥੈਲੇ ਤੇ ਫੋਨ ਰੱਖ ਕੇ Record ਦਬਾਓ (10 ਸਕਿੰਟ), ਜਾਂ WAV / MP3 ਅਪਲੋਡ ਕਰੋ।",
       "analyze_btn": "ਆਡੀਓ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ",
       "record_title": "ਕਿਵੇਂ ਰਿਕਾਰਡ ਕਰਨਾ ਹੈ",
       "record_step_1": "1. ਫੋਨ ਅਨਾਜ ਭੰਡਾਰਣ ਥੈਲੇ ਜਾਂ ਬਿਨ ਤੇ ਸਪਾਟ ਰੱਖੋ।",
@@ -441,7 +453,11 @@
       "about_ethics_title": "Ethics & bias",
       "about_innovation_title": "Innovation",
       "about_techstack_title": "Tech stack",
-      "about_deployment_title": "Deployment status"
+      "about_deployment_title": "Deployment status",
+      "record_btn": "10 ਸਕਿੰਟ ਰਿਕਾਰਡ ਕਰੋ",
+      "recording_btn": "ਰਿਕਾਰਡ ਹੋ ਰਿਹਾ ਹੈ...",
+      "record_progress": "ਫੋਨ ਥੈਲੇ ਤੇ ਸਪਾਟ ਰੱਖੋ",
+      "record_denied": "ਰਿਕਾਰਡ ਕਰਨ ਲਈ ਮਾਈਕ੍ਰੋਫੋਨ ਇਜਾਜ਼ਤ ਲੋੜੀਂਦੀ ਹੈ।"
     },
     "te": {
       "app_title": "Kaan",
@@ -461,7 +477,7 @@
       "mode_upload": "ఆడియో ఫైల్ అప్‌లోడ్ చేయండి",
       "mode_record": "రికార్డింగ్ సూచనలు",
       "upload_label": "WAV లేదా MP3 రికార్డింగ్ అప్‌లోడ్ చేయండి",
-      "upload_help": "ఫోన్‌ను ధాన్యం సంచిపై ఉంచి 10-30 సెకన్ల ఆడియో రికార్డ్ చేయండి.",
+      "upload_help": "సంచిపై ఫోన్ ఉంచి Record నొక్కండి (10 సెకన్లు), లేదా WAV / MP3 అప్‌లోడ్ చేయండి.",
       "analyze_btn": "ఆడియో విశ్లేషించండి",
       "record_title": "ఎలా రికార్డ్ చేయాలి",
       "record_step_1": "1. ఫోన్‌ను ధాన్యం నిల్వ సంచి లేదా బిన్‌పై లేవనెత్తి ఉంచండి.",
@@ -534,7 +550,11 @@
       "about_ethics_title": "Ethics & bias",
       "about_innovation_title": "Innovation",
       "about_techstack_title": "Tech stack",
-      "about_deployment_title": "Deployment status"
+      "about_deployment_title": "Deployment status",
+      "record_btn": "10 సెకన్లు రికార్డ్ చేయండి",
+      "recording_btn": "రికార్డ్ అవుతోంది...",
+      "record_progress": "ఫోన్‌ను సంచిపై సమాంతరంగా ఉంచండి",
+      "record_denied": "రికార్డ్ చేయడానికి మైక్రోఫోన్ అనుమతి అవసరం."
     }
   }
 }

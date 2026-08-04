@@ -1,52 +1,72 @@
-# Kaan mobile apps (Play Store & App Store)
+# Kaan Android app
 
-Kaan wraps the **same pi.website design** (cream background, ink type, Libre Baskerville,
-IBM Plex Mono, black-border panels and timeline) in [Capacitor](https://capacitorjs.com/)
-for Android and iOS. No separate mobile skin. Copy has no em dashes.
+Kaan wraps the **same website design** (cream `#f7f6f2`, ink type, Libre Baskerville,
+IBM Plex Mono, black-border panels and timeline) in [Capacitor](https://capacitorjs.com/).
+No separate mobile skin.
 
-Package ID: `com.arnavdhiman.kaan`
+Package ID: `com.arnavdhiman.kaan`  
+Version: `3.1.1` (`versionCode` 311)
+
+## What works on Android
+
+- Intro + Detect / How / About (same UI as [kaan-web.vercel.app](https://kaan-web.vercel.app))
+- **Record 10 seconds** in-app (microphone permission)
+- Upload / IRRI sample clips
+- On-device INT8 CNN via ONNX Runtime Web in the WebView
+- Multilingual UI (en / hi / mr / pa / te)
 
 ## Prerequisites
 
 - Node.js 20+
-- **Android:** Android Studio (SDK 35+, build tools)
-- **iOS:** full Xcode from the Mac App Store (Command Line Tools alone are not enough), CocoaPods optional (SPM is used by current Capacitor iOS template)
+- JDK **21+** recommended for Capacitor 8 / current Android Gradle Plugin (JDK 17 is too old for `sourceCompatibility 21`)
+- Android Studio (SDK 35+, build-tools) **or** Homebrew `android-commandlinetools`
 
-## Build & sync
+## Build & open in Android Studio
 
 ```bash
+cd web
 npm install
-npm run build:mobile   # next static export -> out/ then cap sync
+npm run build:mobile   # next static export -> out/ then npx cap sync
+npm run android        # opens Android Studio on the android/ project
 ```
 
-Open native IDEs:
+In Android Studio:
+
+1. Wait for Gradle sync.
+2. Pick an emulator or USB device (enable USB debugging).
+3. Run **app**.
+4. Allow microphone when prompted, then tap **Record 10 seconds**.
+
+## Debug APK (CLI)
+
+With `ANDROID_HOME` set and SDK platform 36 + build-tools installed:
 
 ```bash
-npm run android   # opens Android Studio
-npm run ios       # opens Xcode (requires full Xcode)
+cd web
+export JAVA_HOME=$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java_home)
+# example Homebrew SDK root:
+# export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
+echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+npm run android:apk
+# APK: android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## Android (Play Store)
+Install:
 
-1. Install Android Studio and accept SDK licenses.
-2. `npm run android`
-3. In Android Studio: **Build > Generate Signed Bundle / APK** → Android App Bundle (`.aab`).
-4. Create a Play Console listing (app name: **Kaan**, category: Tools / Agriculture).
-5. Upload the `.aab`, complete Data safety (audio processed on-device; no account required), content rating, and store listing screenshots.
-6. Privacy policy URL: use your GitHub README or a short page stating audio stays on device.
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
 
-Version is set in `android/app/build.gradle` (`versionCode` / `versionName`).
+## Play Store (later)
 
-## iOS (App Store)
+1. **Build > Generate Signed Bundle / APK** → Android App Bundle (`.aab`).
+2. Play Console listing: name **Kaan**, category Tools / Agriculture.
+3. Data safety: audio processed on-device; no account required.
+4. Privacy: audio stays on device (see About tab / README).
 
-1. Install **Xcode** (not only Command Line Tools).
-2. `npm run ios`
-3. In Xcode: set Team / signing for `com.arnavdhiman.kaan`.
-4. Archive → Distribute App → App Store Connect.
-5. Complete App Privacy (microphone / media library only if you enable recording; file upload uses the photo/files picker).
+## Notes
 
-## Notes for reviewers
-
-- Inference runs the INT8 CNN in the WebView (ONNX Runtime). First launch may download the WASM runtime from the CDN unless later bundled.
-- IRRI sample WAVs are packaged under `public/samples/` for demos.
-- License: Apache License 2.0 (see `LICENSE`).
+- First analysis may take a few seconds while the ONNX WASM runtime loads (CDN unless later bundled).
+- IRRI sample WAVs ship under `public/samples/`.
+- iOS shell exists under `web/ios/` but is deferred; focus is Android first.
+- License: Apache-2.0 (`LICENSE`).
