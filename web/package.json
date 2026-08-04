@@ -34,15 +34,11 @@
     "typescript": "5.5.3"
   },
   "license": "Apache-2.0",
-  "author": {
-    "name": "Arnav Dhiman",
-    "email": "arnavd371@gmail.com",
-    "url": "https://arnavdportfolio.vercel.app/"
-  },
-  "homepage": "https://kaan-web.vercel.app",
+  "author": "Arnav Dhiman",
   "repository": {
     "type": "git",
     "url": "https://github.com/arnavd371/Project-Kaan.git",
     "directory": "web"
-  }
+  },
+  "homepage": "https://kaan-web.vercel.app"
 }

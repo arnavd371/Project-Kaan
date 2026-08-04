@@ -13,17 +13,9 @@ Copyright owner (Licensor)
 ---------------------------------------------------------------------------
 
   Legal name:   Arnav Dhiman
-  Email:        arnavd371@gmail.com
-  GitHub user:  arnavd371
-  GitHub:       https://github.com/arnavd371
-  Portfolio:    https://arnavdportfolio.vercel.app/
-  Project repo: https://github.com/arnavd371/Project-Kaan
-  Live demo:    https://kaan-web.vercel.app
-  Kaggle:       https://www.kaggle.com/arnavd371
-
-  Project title:  Kaan (कान) - Acoustic stored-grain pest detector
-  Software SPDX:  Apache-2.0
-  Version:        3.1.1 (this NOTICE ships with the tagged release)
+  Project:      Kaan (कान) - Acoustic stored-grain pest detector
+  Software SPDX: Apache-2.0
+  Version:      see VERSION / CHANGELOG.md
 
 This product includes software developed by Arnav Dhiman.
 
@@ -77,7 +69,7 @@ authors / NeurIPS.
 Trademarks
 ---------------------------------------------------------------------------
 
-“Kaan”, “कान”, and Project Kaan branding are used to identify this project.
+"Kaan", "कान", and Project Kaan branding are used to identify this project.
 Apache License §6: this License does not grant permission to use trade names
 except as required for reasonable and customary use in describing the origin
 of the Work and reproducing this NOTICE.

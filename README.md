@@ -7,11 +7,8 @@ It is built for Indian smallholders and extension pilots: no special probe hardw
 | | |
 |---|---|
 | **Author** | Arnav Dhiman |
-| **Email** | [arnavd371@gmail.com](mailto:arnavd371@gmail.com) |
-| **GitHub** | [arnavd371](https://github.com/arnavd371) |
-| **Portfolio** | [arnavdportfolio.vercel.app](https://arnavdportfolio.vercel.app/) |
 | **Live demo** | [kaan-web.vercel.app](https://kaan-web.vercel.app) |
-| **Repository** | [arnavd371/Project-Kaan](https://github.com/arnavd371/Project-Kaan) |
+| **Repository** | [Project-Kaan](https://github.com/arnavd371/Project-Kaan) |
 | **Latest release** | [v3.1.1](https://github.com/arnavd371/Project-Kaan/releases/tag/v3.1.1) |
 | **Licence** | [Apache License 2.0](LICENSE) (see [`LICENSE`](LICENSE), [`NOTICE`](NOTICE), [`CHANGELOG.md`](CHANGELOG.md)) |
 | **SPDX** | `Apache-2.0` |
@@ -59,7 +56,7 @@ It is built for Indian smallholders and extension pilots: no special probe hardw
 | Spec | Detail |
 |---|---|
 | Licence | Apache License 2.0 (root + `web/`) |
-| Copyright | © 2026 Arnav Dhiman (`arnavd371@gmail.com`) |
+| Copyright | © 2026 Arnav Dhiman |
 | SPDX | `Apache-2.0` |
 | Version | see [`VERSION`](VERSION) / [`CHANGELOG.md`](CHANGELOG.md) |
 | Source | https://github.com/arnavd371/Project-Kaan |
@@ -448,15 +445,7 @@ Production weights live under `model/` (`project-kaan_model.h5`, `project-kaan.t
 
 **Copyright © 2026 Arnav Dhiman.**
 
-| Field | Value |
-|---|---|
-| Legal name | Arnav Dhiman |
-| Email | arnavd371@gmail.com |
-| GitHub | https://github.com/arnavd371 |
-| Portfolio | https://arnavdportfolio.vercel.app/ |
-| Project | https://github.com/arnavd371/Project-Kaan |
-
-Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) (appendix filled with copyright-owner identity - not empty brackets) and [`NOTICE`](NOTICE) (owner contacts, data attributions, dependency notes). The `web/` client uses the same Apache-2.0 grant (`web/LICENSE`, `web/NOTICE`).
+Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). The `web/` client uses the same Apache-2.0 grant (`web/LICENSE`, `web/NOTICE`).
 
 ---
 

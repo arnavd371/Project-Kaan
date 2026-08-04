@@ -136,7 +136,7 @@
       "about_ethics": "The model reports a confidence score and shows \"uncertain\" rather than guessing when unsure. Validation used a stratified 80/20 split and per-class F1 (not only overall accuracy) to catch bias toward any single pest class. Kaan is a screening aid that supports human judgement; it is not a medical or legal diagnosis.",
       "about_innovation": "Kaan adapts peer-reviewed acoustic pest detection research (Balingbing et al. 2024) into an offline-capable, phone-microphone, multilingual, colour-blind-accessible web tool. Prior systems needed dedicated hardware (Raspberry Pi + MEMS mics); Kaan runs the INT8 CNN in the browser on a standard phone.",
       "about_techstack": "Training: Python, TensorFlow/Keras, librosa, scikit-learn. Inference: INT8 TFLite converted to ONNX for in-browser ONNX Runtime Web. Interface: Next.js on Vercel with 5-language UI. Open training pipeline on GitHub for local retraining.",
-      "about_deployment": "Publicly deployed at kaan-web.vercel.app and open-sourced under Apache License 2.0 on GitHub (arnavd371/Project-Kaan), including the full training pipeline so agriculture departments and KVKs can retrain on local grain varieties.",
+      "about_deployment": "Publicly deployed at kaan-web.vercel.app and open-sourced under Apache License 2.0 on GitHub (Project-Kaan), including the full training pipeline so agriculture departments and KVKs can retrain on local grain varieties.",
       "about_team": "Built by Arnav Dhiman. Future versions will add pulse beetle detection for legume storage once validated Indian storage audio datasets are available.",
       "try_demo_btn": "Try IRRI rice weevil sample",
       "about_problem_title": "Problem & evidence",

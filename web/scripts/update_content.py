@@ -145,7 +145,7 @@ def main() -> None:
             "about_deployment_title": "Deployment status",
             "about_deployment": (
                 "Publicly deployed at kaan-web.vercel.app and open-sourced under Apache License 2.0 on GitHub "
-                "(arnavd371/Project-Kaan), including the full training "
+                "(Project-Kaan), including the full training "
                 "pipeline so agriculture departments and KVKs can retrain on local grain "
                 "varieties."
             ),
