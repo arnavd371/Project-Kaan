@@ -1,6 +1,6 @@
 # Limitations and domain shift
 
-Kaan is a **screening aid**, not a laboratory or legal diagnosis. The points below are intentional product and research constraints - especially for workshop-facing claims.
+Kaan is a **screening aid**, not a laboratory or legal diagnosis. The points below are intentional product and research constraints.
 
 ## Data domain
 

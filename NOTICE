@@ -61,10 +61,6 @@ Next.js, React, Capacitor, and related tooling. Each dependency retains its
 own license (Apache-2.0, MIT, BSD, or otherwise) as published by its authors.
 Binary distributions of this project should preserve required notices.
 
-The NeurIPS LaTeX style file workshop/neurips_2025.sty is used for the
-optional workshop draft under workshop/; its terms are those of the style
-authors / NeurIPS.
-
 ---------------------------------------------------------------------------
 Trademarks
 ---------------------------------------------------------------------------
