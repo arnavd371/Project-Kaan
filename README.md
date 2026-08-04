@@ -24,17 +24,19 @@ Hold a phone against a storage bag, record about ten seconds of audio, and get a
 3. [How it works](#how-it-works)
 4. [Classes](#classes)
 5. [Results](#results)
-6. [Repository layout](#repository-layout)
-7. [Technical stack](#technical-stack)
-8. [Data](#data)
-9. [Experiments (v2 bake-off)](#experiments-v2-bake-off)
-10. [Advanced suite (v3+)](#advanced-suite-v3)
-11. [Run locally](#run-locally)
-12. [Train and export](#train-and-export)
-13. [Privacy, safety, and limits](#privacy-safety-and-limits)
-14. [Author and copyright](#author-and-copyright)
-15. [Cite](#cite)
-16. [Acknowledgements](#acknowledgements)
+6. [Workshop contribution framing](#workshop-contribution-framing)
+7. [Limitations](#limitations)
+8. [Repository layout](#repository-layout)
+9. [Technical stack](#technical-stack)
+10. [Data](#data)
+11. [Experiments (v2 bake-off)](#experiments-v2-bake-off)
+12. [Advanced suite (v3+)](#advanced-suite-v3)
+13. [Run locally](#run-locally)
+14. [Train and export](#train-and-export)
+15. [Privacy, safety, and limits](#privacy-safety-and-limits)
+16. [Author and copyright](#author-and-copyright)
+17. [Cite](#cite)
+18. [Acknowledgements](#acknowledgements)
 
 ---
 
@@ -135,15 +137,36 @@ Committed tables: [`experiments/results/`](experiments/results/). Release assets
 
 ---
 
+## Workshop contribution framing
+
+For climate / AI-for-good workshops, lead with **deployment constraints**, not peak lab accuracy:
+
+1. **On-device / offline** INT8 + ONNX screening (no cloud required for inference)
+2. **Robustness ladder** — phone-like degradations; treat SNR/band-pass collapse as a primary finding
+3. **Calibration + abstain** — temperature scaling and coverage–accuracy curves
+4. **Open bake-off + distillation** — classical ≈ deep; distilled production weights released
+
+Accuracy vs the cited 84.51% reference is **supporting**. Draft: [`workshop/`](workshop/) (CCAI @ NeurIPS 2026 Papers track, ≤4 pages).
+
+---
+
+## Limitations
+
+See **[`LIMITATIONS.md`](LIMITATIONS.md)** for domain shift, species coverage, soft reference comparison, and ethics. Short version: IRRI lab acoustics ≠ Indian phone-on-bag; the robustness ladder shows how badly phone-band and noise can hurt.
+
+---
+
 ## Repository layout
 
 ```
 Project-Kaan/
 ├── README.md                 # this file
+├── LIMITATIONS.md            # domain shift / ethics for workshop claims
 ├── LICENSE                   # Apache-2.0 (copyright: Arnav Dhiman)
 ├── NOTICE                    # copyright owner contact + data notices
 ├── CITATION.cff
 ├── requirements.txt
+├── workshop/                 # CCAI @ NeurIPS 2026 draft (≤4 pages)
 ├── model/                    # train, preprocess, TFLite export, weights
 ├── utils/                    # inference helpers
 ├── data/                     # how to obtain WAVs (data not always committed)
@@ -233,7 +256,10 @@ Desk-bound follow-ons (no field mics): phone-like **robustness ladder**, **weevi
 # Local smoke
 python -m experiments.run_advanced --smoke
 
-# Kaggle GPU (full IRRI) — preferred
+# Multi-seed + bootstrap CIs (prefer Kaggle GPU)
+python -m experiments.run_advanced_multiseed --seeds 42,43,44 --copy-results
+
+# Kaggle GPU — preferred
 bash experiments/kaggle/push_advanced.sh
 # https://www.kaggle.com/code/arnavd371/kaan-advanced-suite
 
@@ -242,7 +268,7 @@ python -m experiments.build_results_page
 # → experiments/results/index.html
 ```
 
-Artifacts land in `experiments/results/advanced/` after `--copy-results` (Kaggle sets this). Skips farmer-app UX (multi-clip vote, etc.).
+Artifacts: `experiments/results/advanced/` (single-seed) and `experiments/results/advanced_multiseed/` (means ± std, 95% CIs). Skips farmer-app UX (multi-clip vote, etc.).
 
 ---
 

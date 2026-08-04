@@ -41,3 +41,12 @@ web/ios/**/xcuserdata/
 # Experiment run artifacts (regenerate with python -m experiments.run_benchmark)
 experiments/outputs/
 
+# Workshop LaTeX build junk (keep .tex / .sty / .pdf)
+workshop/*.aux
+workshop/*.log
+workshop/*.out
+workshop/*.toc
+workshop/*.fls
+workshop/*.fdb_latexmk
+workshop/*.synctex.gz
+

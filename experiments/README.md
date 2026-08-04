@@ -10,6 +10,8 @@ The live app is under `web/`.
 | `run_benchmark.py` | Multi-approach benchmark entry |
 | `run_ablations.py` | CNN recipe ablations |
 | `run_advanced.py` | Robustness / hierarchical / calibration / SSL |
+| `run_advanced_multiseed.py` | Multi-seed advanced + bootstrap CI aggregate |
+| `aggregate_advanced.py` | Means / std / bootstrap CIs over seed summaries |
 | `run_advanced_kaggle.py` | Kaggle orchestrator for advanced suite |
 | `run_benchmark_kaggle.py` | Kaggle orchestrator |
 | `robustness.py` | Phone-like degradation ladder |
