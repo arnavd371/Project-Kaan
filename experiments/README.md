@@ -73,7 +73,8 @@ python -m experiments.run_ablations --out experiments/outputs/ablations
 
 # Advanced suite (prefer Kaggle GPU for full IRRI):
 python -m experiments.run_advanced --smoke
-bash experiments/kaggle/push_advanced.sh
+python -m experiments.run_advanced_multiseed --seeds 42,43,44 --smoke
+bash experiments/kaggle/push_advanced.sh   # SEEDS=42,43,44 + aggregate CIs
 python -m experiments.build_results_page
 ```
 
