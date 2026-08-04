@@ -210,15 +210,31 @@ def run(args: argparse.Namespace) -> dict:
     (out / "cost_sensitive.json").write_text(json.dumps(_jsonable(cost), indent=2) + "\n")
     print(f"  cost-sensitive acc={cost.get('accuracy')} swaps={cost.get('weevil_borer_swap_count')}", flush=True)
 
-    print("=== Hierarchical weevil/borer ===", flush=True)
-    hier = train_hierarchical_cnn(X_mel_tr, y_tr, X_mel_va, y_va, epochs=args.epochs, smoke=args.smoke)
+    print("=== Hierarchical weevil/borer (fine-tuned from baseline) ===", flush=True)
+    hier = train_hierarchical_cnn(
+        X_mel_tr,
+        y_tr,
+        X_mel_va,
+        y_va,
+        epochs=args.epochs,
+        smoke=args.smoke,
+        base_model=baseline["model"],
+    )
     summary["hierarchical"] = _jsonable(hier)
     (out / "hierarchical.json").write_text(json.dumps(_jsonable(hier), indent=2) + "\n")
     print(
-        f"  hierarchical acc={hier.get('accuracy')} pair_subset={hier.get('pair_subset_accuracy')} "
-        f"swaps={hier.get('weevil_borer_swap_count')}",
+        f"  hierarchical_ft acc={hier.get('accuracy')} pair_subset={hier.get('pair_subset_accuracy')} "
+        f"swaps={hier.get('weevil_borer_swap_count')} specialist_alone={hier.get('pair_specialist_alone_acc')}",
         flush=True,
     )
+
+    if args.hier_scratch:
+        print("=== Hierarchical from-scratch (ablation) ===", flush=True)
+        hier_s = train_hierarchical_cnn(
+            X_mel_tr, y_tr, X_mel_va, y_va, epochs=args.epochs, smoke=args.smoke, base_model=None
+        )
+        summary["hierarchical_scratch"] = _jsonable(hier_s)
+        (out / "hierarchical_scratch.json").write_text(json.dumps(_jsonable(hier_s), indent=2) + "\n")
 
     print("=== Calibration + abstain (baseline) ===", flush=True)
     cal = calibration_report(y_va, baseline["probs"], treat_as_logits=False, seed=args.seed)
@@ -248,6 +264,26 @@ def run(args: argparse.Namespace) -> dict:
         cal_s = calibration_report(y_va, ssl["probs"], seed=args.seed)
         summary["calibration_ssl"] = cal_s
 
+    hier_ssl = {"skipped": True}
+    if not ssl.get("skipped") and ssl.get("model") is not None:
+        print("=== Hierarchical fine-tuned from SSL model ===", flush=True)
+        hier_ssl = train_hierarchical_cnn(
+            X_mel_tr,
+            y_tr,
+            X_mel_va,
+            y_va,
+            epochs=args.epochs,
+            smoke=args.smoke,
+            base_model=ssl["model"],
+        )
+        summary["hierarchical_from_ssl"] = _jsonable(hier_ssl)
+        (out / "hierarchical_from_ssl.json").write_text(json.dumps(_jsonable(hier_ssl), indent=2) + "\n")
+        print(
+            f"  hierarchical_ssl acc={hier_ssl.get('accuracy')} swaps={hier_ssl.get('weevil_borer_swap_count')} "
+            f"pair_subset={hier_ssl.get('pair_subset_accuracy')}",
+            flush=True,
+        )
+
     summary["elapsed_sec"] = time.perf_counter() - t0
     (out / "advanced_summary.json").write_text(json.dumps(_jsonable(summary), indent=2) + "\n")
 
@@ -257,8 +293,11 @@ def run(args: argparse.Namespace) -> dict:
         f"- Seed: `{args.seed}` smoke={args.smoke}",
         f"- Baseline cnn_deep: **{baseline['accuracy']:.2%}** (macro F1 {baseline['macro_f1']:.4f})",
         f"- Cost-sensitive: **{cost.get('accuracy', 0):.2%}** (weevil↔borer swaps={cost.get('weevil_borer_swap_count')})",
-        f"- Hierarchical: **{hier.get('accuracy', 0):.2%}** (pair subset={hier.get('pair_subset_accuracy')})",
+        f"- Hierarchical fine-tuned: **{hier.get('accuracy', 0):.2%}** "
+        f"(pair subset={hier.get('pair_subset_accuracy')}, swaps={hier.get('weevil_borer_swap_count')}, "
+        f"specialist alone={hier.get('pair_specialist_alone_acc')})",
         f"- SSL fine-tune: **{ssl.get('accuracy', 0):.2%}**",
+        f"- Hierarchical←SSL: **{hier_ssl.get('accuracy', 0):.2%}** (swaps={hier_ssl.get('weevil_borer_swap_count')})",
         f"- Baseline ECE before→after T: "
         f"{cal['before']['ece']:.4f}→{cal['after']['ece']:.4f} (T={cal['after']['temperature']:.3f})",
         "",
@@ -283,6 +322,7 @@ def run(args: argparse.Namespace) -> dict:
             "robustness.json",
             "cost_sensitive.json",
             "hierarchical.json",
+            "hierarchical_from_ssl.json",
             "calibration_baseline.json",
             "ssl.json",
         ):
@@ -301,6 +341,7 @@ def main():
     p.add_argument("--epochs", type=int, default=60)
     p.add_argument("--ssl-pretrain-epochs", type=int, default=30)
     p.add_argument("--pair-boost", type=float, default=1.8)
+    p.add_argument("--hier-scratch", action="store_true", help="Also run legacy from-scratch hierarchy")
     p.add_argument("--out", type=str, default=str(ROOT / "experiments" / "outputs" / "advanced"))
     p.add_argument("--no-cache", action="store_true")
     p.add_argument("--copy-results", action="store_true", help="Copy JSON/MD into experiments/results/advanced")
