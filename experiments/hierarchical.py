@@ -86,6 +86,37 @@ def _split_encoder_and_head(model):
     return encoder, int(backbone_out.shape[-1])
 
 
+def _fuse_pair(
+    base_p: np.ndarray,
+    pair_p: np.ndarray,
+    *,
+    gate_margin: float,
+    mode: str = "strict",
+) -> tuple[np.ndarray, int]:
+    """Reallocate weevil/borer mass using specialist.
+
+    strict: only when top-2 classes are exactly {weevil, borer} and |p_w-p_b| < gate
+    """
+    probs = base_p.copy()
+    n_override = 0
+    for i in range(len(probs)):
+        order = np.argsort(probs[i])[::-1]
+        top, second = int(order[0]), int(order[1])
+        mass = probs[i, WEEVIL] + probs[i, BORER]
+        margin = abs(probs[i, WEEVIL] - probs[i, BORER])
+        if mode == "strict":
+            confused = {top, second} == {WEEVIL, BORER} and margin < gate_margin
+        else:
+            confused = top in (WEEVIL, BORER) and margin < gate_margin and mass >= 0.4
+        if not confused:
+            continue
+        probs[i, WEEVIL] = mass * pair_p[i, 0]
+        probs[i, BORER] = mass * pair_p[i, 1]
+        n_override += 1
+    probs = probs / probs.sum(axis=1, keepdims=True).clip(min=1e-12)
+    return probs, n_override
+
+
 def finetune_hierarchical_from_base(
     base_model,
     X_train: np.ndarray,
@@ -97,15 +128,13 @@ def finetune_hierarchical_from_base(
     smoke: bool = False,
     pair_lr: float = 3e-4,
     unfreeze_last_blocks: bool = True,
-    gate_margin: float = 0.15,
+    gate_margin: float = 0.08,
+    tune_gate: bool = True,
 ) -> dict[str, Any]:
     """Fine-tune a weevil↔borer specialist on a trained 4-class CNN backbone.
 
-    Inference soft-fusion:
-      - keep baseline probs for clean / red_flour_beetle mass
-      - when baseline top class is weevil or borer (or their combined mass is high),
-        reallocate that mass with the pair head
-      - optional gate: only override when |p_weevil - p_borer| < gate_margin
+    Inference: strict soft-fusion only when the baseline's top-2 are weevil vs borer
+    and their probability margin is below ``gate_margin``. Optionally sweep gate on val.
     """
     if not tensorflow_available():
         return {"skipped": True, "reason": "no tensorflow"}
@@ -124,13 +153,10 @@ def finetune_hierarchical_from_base(
 
     encoder, _ = _split_encoder_and_head(base_model)
 
-    # Pair head on frozen/lightly-unfrozen encoder
     for layer in encoder.layers:
         layer.trainable = False
     if unfreeze_last_blocks:
-        # Unfreeze last conv block + Dense(192)
-        trainable_tail = {encoder.layers[-1].name}  # Dense 192
-        # also last few conv/BN before GAP
+        trainable_tail = {encoder.layers[-1].name}
         for layer in encoder.layers[::-1]:
             if isinstance(layer, (layers.Conv2D, layers.Dense, layers.BatchNormalization)):
                 trainable_tail.add(layer.name)
@@ -186,45 +212,56 @@ def finetune_hierarchical_from_base(
 
     base_p = base_model.predict(X_val, verbose=0).astype(np.float64)
     pair_p = pair_model.predict(X_val, verbose=0).astype(np.float64)
+    base_acc = float(accuracy_score(y_val, base_p.argmax(1)))
 
-    # Soft fusion
-    probs = base_p.copy()
-    n_override = 0
-    for i in range(len(y_val)):
-        mass = probs[i, WEEVIL] + probs[i, BORER]
-        top = int(np.argmax(probs[i]))
-        margin = abs(probs[i, WEEVIL] - probs[i, BORER])
-        should = top in (WEEVIL, BORER) or mass >= 0.45
-        if should and margin < gate_margin:
-            probs[i, WEEVIL] = mass * pair_p[i, 0]
-            probs[i, BORER] = mass * pair_p[i, 1]
-            n_override += 1
-        elif should and margin >= gate_margin:
-            # still soft-blend lightly toward specialist
-            alpha = 0.35
-            probs[i, WEEVIL] = (1 - alpha) * probs[i, WEEVIL] + alpha * mass * pair_p[i, 0]
-            probs[i, BORER] = (1 - alpha) * probs[i, BORER] + alpha * mass * pair_p[i, 1]
-            # renormalize weevil+borer to mass
-            s = probs[i, WEEVIL] + probs[i, BORER]
-            if s > 0:
-                probs[i, WEEVIL] *= mass / s
-                probs[i, BORER] *= mass / s
-            n_override += 1
-    probs = probs / probs.sum(axis=1, keepdims=True).clip(min=1e-12)
+    gate_sweep = []
+    best_gate = float(gate_margin)
+    best_probs, best_n = _fuse_pair(base_p, pair_p, gate_margin=best_gate, mode="strict")
+    best_acc = float(accuracy_score(y_val, best_probs.argmax(1)))
+    best_swaps = None
+
+    if tune_gate and not smoke:
+        for g in (0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.15, 0.20, 0.25, 0.35):
+            probs_g, n_g = _fuse_pair(base_p, pair_p, gate_margin=g, mode="strict")
+            pred_g = probs_g.argmax(1)
+            acc_g = float(accuracy_score(y_val, pred_g))
+            cm = confusion_matrix(y_val, pred_g, labels=list(range(4)))
+            swaps = int(cm[WEEVIL, BORER] + cm[BORER, WEEVIL])
+            row = {"gate": g, "accuracy": acc_g, "n_overrides": n_g, "swaps": swaps}
+            gate_sweep.append(row)
+            # Prefer: not below baseline, then max acc, then fewer swaps, then fewer overrides
+            better = False
+            if acc_g + 1e-12 >= base_acc and best_acc + 1e-12 < base_acc:
+                better = True
+            elif (acc_g >= base_acc) == (best_acc >= base_acc):
+                if acc_g > best_acc + 1e-12:
+                    better = True
+                elif abs(acc_g - best_acc) < 1e-12:
+                    if best_swaps is None or swaps < best_swaps:
+                        better = True
+                    elif swaps == best_swaps and n_g < best_n:
+                        better = True
+            if better:
+                best_gate, best_probs, best_n, best_acc, best_swaps = g, probs_g, n_g, acc_g, swaps
+        print(f"  [hier-ft] gate sweep chose margin={best_gate} acc={best_acc:.4f} overrides={best_n}", flush=True)
+
+    probs, n_override = best_probs, best_n
     pred = probs.argmax(1)
 
     out = _pack("hierarchical_finetuned", y_val, pred, probs, pair_model, None)
     out["n_pair_overrides"] = int(n_override)
-    out["gate_margin"] = float(gate_margin)
+    out["gate_margin"] = float(best_gate)
+    out["gate_mode"] = "strict_top2"
+    out["gate_sweep"] = gate_sweep
     out["pair_val_acc_hist"] = [float(x) for x in hist.history.get("val_accuracy", [])]
-    out["baseline_acc_reference"] = float(accuracy_score(y_val, base_p.argmax(1)))
+    out["baseline_acc_reference"] = base_acc
+    out["delta_vs_baseline"] = float(best_acc - base_acc)
     out["models"] = {"base": base_model, "pair": pair_model}
     if int(mask_va.sum()):
         yt = y_val[mask_va]
         yp = pred[mask_va]
         out["pair_subset_accuracy"] = float(accuracy_score(yt, yp))
         out["pair_confusion"] = confusion_matrix(yt, yp, labels=[WEEVIL, BORER]).tolist()
-        # specialist alone on true pair subset
         pair_alone = pair_p[mask_va].argmax(1)
         pair_alone_lbl = np.where(pair_alone == 1, BORER, WEEVIL)
         out["pair_specialist_alone_acc"] = float(accuracy_score(yt, pair_alone_lbl))
