@@ -12,8 +12,8 @@ Hold a phone against a storage bag, record about ten seconds of audio, and get a
 | **Portfolio** | [arnavdportfolio.vercel.app](https://arnavdportfolio.vercel.app/) |
 | **Live demo** | [kaan-web.vercel.app](https://kaan-web.vercel.app) |
 | **Repository** | [arnavd371/Project-Kaan](https://github.com/arnavd371/Project-Kaan) |
-| **Latest release** | [v3.0.0](https://github.com/arnavd371/Project-Kaan/releases/tag/v3.0.0) |
-| **Licence** | [Apache License 2.0](LICENSE) (`LICENSE`, `NOTICE`) |
+| **Latest release** | [v3.1.0](https://github.com/arnavd371/Project-Kaan/releases/tag/v3.1.0) |
+| **Licence** | [Apache License 2.0](LICENSE) — see [`LICENSE`](LICENSE), [`NOTICE`](NOTICE), [`CHANGELOG.md`](CHANGELOG.md) |
 
 ---
 
@@ -135,6 +135,23 @@ Same **file-level** stratified split after **byte-dedupe**, IRRI pest WAVs + Spe
 
 Committed tables: [`experiments/results/`](experiments/results/). Release assets: [v2.0.0](https://github.com/arnavd371/Project-Kaan/releases/tag/v2.0.0).
 
+### Advanced suite multi-seed (v3.1.0)
+
+Seeds **42 / 43 / 44**, bootstrap 95% CI of the mean. Full tables: [`experiments/results/advanced_multiseed/`](experiments/results/advanced_multiseed/).
+
+| Metric | Mean ± std | 95% CI |
+|---|---:|---:|
+| Baseline accuracy | 96.73% ± 0.37% | [96.52%, 97.15%] |
+| SSL fine-tune accuracy | 96.62% ± 0.18% | [96.52%, 96.84%] |
+| Cost-sensitive accuracy | 96.73% ± 0.66% | [96.20%, 97.47%] |
+| Hierarchical accuracy | 94.09% ± 4.76% | [88.61%, 97.15%] |
+| ECE after temperature | 0.029 ± 0.015 | [0.015, 0.046] |
+| Robustness: clean | 96.73% ± 0.37% | [96.52%, 97.15%] |
+| Robustness: phone band | 60.86% ± 8.35% | [51.27%, 66.46%] |
+| Robustness: SNR ≤10 / hard combos | ~7.59% | (collapse) |
+
+**Hierarchical fine-tune (seed 42, strict gate):** baseline **96.84%** → fused hierarchy **97.15%** (scratch cascade 94.30%). Report: [`experiments/results/hier_finetune/`](experiments/results/hier_finetune/).
+
 ---
 
 ## Workshop contribution framing
@@ -161,9 +178,11 @@ See **[`LIMITATIONS.md`](LIMITATIONS.md)** for domain shift, species coverage, s
 ```
 Project-Kaan/
 ├── README.md                 # this file
+├── CHANGELOG.md              # release notes
+├── VERSION                   # current semver
 ├── LIMITATIONS.md            # domain shift / ethics for workshop claims
-├── LICENSE                   # Apache-2.0 (copyright: Arnav Dhiman)
-├── NOTICE                    # copyright owner contact + data notices
+├── LICENSE                   # Apache-2.0 (appendix filled: Arnav Dhiman)
+├── NOTICE                    # copyright owner + data + dependency notices
 ├── CITATION.cff
 ├── requirements.txt
 ├── workshop/                 # CCAI @ NeurIPS 2026 draft (≤4 pages)
@@ -174,7 +193,7 @@ Project-Kaan/
 │   ├── results/              # committed multi-seed summaries
 │   ├── kaggle/               # GPU kernel push scripts
 │   └── outputs/              # local run artifacts (gitignored)
-└── web/                      # Next.js app + Capacitor android/ios
+└── web/                      # Next.js app + Capacitor android/ios (Apache-2.0)
 ```
 
 | Path | Role |
@@ -268,7 +287,7 @@ python -m experiments.build_results_page
 # → experiments/results/index.html
 ```
 
-Artifacts: `experiments/results/advanced/` (single-seed) and `experiments/results/advanced_multiseed/` (means ± std, 95% CIs). Skips farmer-app UX (multi-clip vote, etc.).
+Artifacts: `experiments/results/advanced/` (single-seed reference) and `experiments/results/advanced_multiseed/` (v3.1 means ± std, 95% CIs). Hierarchical fine-tune: `experiments/results/hier_finetune/`. Skips farmer-app UX (multi-clip vote, etc.).
 
 ---
 
@@ -346,7 +365,7 @@ Production weights live under `model/` (`project-kaan_model.h5`, `project-kaan.t
 | Portfolio | https://arnavdportfolio.vercel.app/ |
 | Project | https://github.com/arnavd371/Project-Kaan |
 
-Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). The Apache appendix boilerplate in `LICENSE` is filled with the same copyright owner details.
+Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) (appendix filled with copyright-owner identity — not empty brackets) and [`NOTICE`](NOTICE) (owner contacts, data attributions, dependency notes). The `web/` client uses the same Apache-2.0 grant (`web/LICENSE`, `web/NOTICE`).
 
 ---
 
@@ -354,7 +373,7 @@ Licensed under the **Apache License, Version 2.0**. See [`LICENSE`](LICENSE) and
 
 See [`CITATION.cff`](CITATION.cff). Software citation (APA-style):
 
-> Dhiman, A. (2026). *Kaan (कान): Acoustic grain pest detector for Indian farmers* (Version 3.0.0) [Computer software]. https://github.com/arnavd371/Project-Kaan
+> Dhiman, A. (2026). *Kaan (कान): Acoustic grain pest detector for Indian farmers* (Version 3.1.0) [Computer software]. https://github.com/arnavd371/Project-Kaan
 
 ---
 

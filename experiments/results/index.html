@@ -95,7 +95,48 @@
   </section>
   <section>
     <h2>Multi-seed advanced aggregate (CIs)</h2>
-    <p>Multi-seed aggregate pending (<code>push_advanced.sh</code> with SEEDS=42,43,44).</p>
+    <pre># Advanced suite — multi-seed aggregate
+
+Seeds: `[42, 43, 44]` (n=3)
+
+Bootstrap 95% CI of the mean (10k resamples).
+
+| Metric | Mean ± std | 95% CI |
+|---|---:|---:|
+| `baseline_acc` | 0.9673 ± 0.0037 | [0.9652, 0.9715] |
+| `baseline_macro_f1` | 0.9713 ± 0.0051 | [0.9683, 0.9772] |
+| `cost_sensitive_acc` | 0.9673 ± 0.0066 | [0.9620, 0.9747] |
+| `cost_sensitive_swaps` | 7.6667 ± 1.5275 | [6.0000, 9.0000] |
+| `hierarchical_acc` | 0.9409 ± 0.0476 | [0.8861, 0.9715] |
+| `hierarchical_swaps` | 8.0000 ± 2.6458 | [6.0000, 11.0000] |
+| `hierarchical_pair_subset` | 0.9233 ± 0.0679 | [0.8450, 0.9650] |
+| `hierarchical_ssl_acc` | 0.8914 ± 0.0413 | [0.8449, 0.9241] |
+| `ssl_acc` | 0.9662 ± 0.0018 | [0.9652, 0.9684] |
+| `ssl_macro_f1` | 0.9718 ± 0.0010 | [0.9707, 0.9725] |
+| `ece_before` | 0.0424 ± 0.0120 | [0.0317, 0.0554] |
+| `ece_after` | 0.0289 ± 0.0154 | [0.0152, 0.0455] |
+| `nll_before` | 0.1183 ± 0.0184 | [0.1035, 0.1389] |
+| `nll_after` | 0.1120 ± 0.0258 | [0.0918, 0.1411] |
+| `temperature` | 0.6667 ± 0.0577 | [0.6000, 0.7000] |
+
+## Robustness ladder
+
+| Rung | Acc mean ± std | 95% CI |
+|---|---:|---:|
+| `clean` | 96.73% ± 0.37% | [96.52%, 97.15%] |
+| `clip` | 77.85% ± 9.66% | [67.09%, 85.76%] |
+| `combo_hard` | 7.59% ± 0.00% | [7.59%, 7.59%] |
+| `combo_phone` | 7.59% ± 0.00% | [7.59%, 7.59%] |
+| `compress` | 87.87% ± 2.85% | [85.13%, 90.82%] |
+| `gain_-12` | 96.73% ± 0.37% | [96.52%, 97.15%] |
+| `muffle` | 91.14% ± 0.84% | [90.51%, 92.09%] |
+| `phone_band` | 60.86% ± 8.35% | [51.27%, 66.46%] |
+| `reverb` | 94.41% ± 1.28% | [93.04%, 95.57%] |
+| `snr0` | 7.59% ± 0.00% | [7.59%, 7.59%] |
+| `snr10` | 7.59% ± 0.00% | [7.59%, 7.59%] |
+| `snr20` | 16.03% ± 10.90% | [8.23%, 28.48%] |
+| `snr5` | 7.59% ± 0.00% | [7.59%, 7.59%] |
+</pre>
   </section>
   <section>
     <h2>Limitations / domain shift</h2>
@@ -113,7 +154,7 @@ Kaan is a **screening aid**, not a laboratory or legal diagnosis. The points bel
 
 - Reported accuracies use **leakage-aware file-level splits** after byte-dedupe on the above sources.
 - Comparison to Balingbing et al. **84.51%** is a **soft reference** under our protocol, not a locked reimplementation of their exact pipeline.
-- Bake-off numbers are multi-seed (42/43/44). Some advanced figures began as single-seed; multi-seed aggregates with bootstrap CIs are the preferred citation (`experiments/results/advanced_multiseed/` when present).
+- Bake-off numbers are multi-seed (42/43/44). Advanced-suite citation preferred: [`experiments/results/advanced_multiseed/`](experiments/results/advanced_multiseed/) (means ± std, bootstrap 95% CIs).
 
 ## Deployment domain shift (first-class finding)
 
@@ -135,8 +176,8 @@ So laboratory accuracy **does not** imply phone-mic field accuracy. Any climate-
 ## What would close the gap
 
 1. Labeled **phone-on-bag** recordings under Indian storage conditions (same four classes).
-2. Multi-seed CIs for every advanced table (robustness, calibration, hierarchical fusion).
-3. Human factors study with farmers / FPOs on false-alarm cost.
+2. Human factors study with farmers / FPOs on false-alarm cost.
+3. Tighter phone-mic augmentation matched to measured handset frequency responses.
 </pre>
   </section>
   <section>

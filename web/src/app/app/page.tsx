@@ -369,7 +369,7 @@ export default function AppPage() {
           <div className="panel">
             <p className="font-bold mb-2">Open source & accessibility</p>
             <p className="mb-3">
-              Kaan is released under the MIT licence. The full training pipeline is on GitHub so state agriculture
+              Kaan is released under the Apache License 2.0. The full training pipeline is on GitHub so state agriculture
               departments and Krishi Vigyan Kendras can retrain on locally recorded data for their region and grain
               variety.
             </p>
