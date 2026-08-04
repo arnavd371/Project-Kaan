@@ -11,19 +11,24 @@ authors:
 repository-code: "https://github.com/arnavd371/Project-Kaan"
 url: "https://kaan-web.vercel.app"
 license: Apache-2.0
-version: "3.0.0"
+version: "3.1.0"
 date-released: "2026-08-04"
 abstract: >-
   Kaan listens to stored grain using a smartphone microphone, converts audio to
   a mel spectrogram, and classifies clean grain versus rice weevil, lesser grain
-  borer, or red flour beetle with an on-device INT8 CNN. Version 3 ships a
-  production model distilled from classical + deep teachers; version 2 added a
-  leakage-aware multi-approach bake-off.
+  borer, or red flour beetle with an on-device INT8 CNN. Version 3.1 adds
+  multi-seed advanced-suite aggregates with bootstrap CIs (robustness,
+  calibration, hierarchical fusion, SSL), a hierarchical fine-tune that beats
+  baseline on seed 42, LIMITATIONS documentation, and a CCAI@NeurIPS workshop
+  draft. Version 3.0 shipped the distilled production model.
 keywords:
   - acoustic pest detection
   - stored grain
   - agriculture
+  - robustness
+  - calibration
   - tensorflow lite
   - onnx
   - india
   - open source
+  - climate

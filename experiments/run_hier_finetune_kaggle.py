@@ -112,6 +112,9 @@ def main() -> None:
                 "pair_subset_accuracy",
                 "pair_specialist_alone_acc",
                 "n_pair_overrides",
+                "gate_margin",
+                "gate_mode",
+                "gate_sweep",
                 "confusion",
             )
         },
@@ -128,13 +131,16 @@ def main() -> None:
     }
     (OUT / "hier_finetune_report.json").write_text(json.dumps(report, indent=2) + "\n")
     (WORK / "hier_finetune_report.json").write_text(json.dumps(report, indent=2) + "\n")
+    gate_note = ""
+    if hier.get("gate_margin") is not None:
+        gate_note = f", gate={hier.get('gate_margin')} ({hier.get('gate_mode', 'strict')})"
     md = [
         "# Hierarchical fine-tune report",
         "",
         f"- Baseline: **{base_acc:.2%}**",
         f"- Fine-tuned hierarchy: **{hier.get('accuracy', 0):.2%}** "
         f"(swaps={hier.get('weevil_borer_swap_count')}, pair={hier.get('pair_subset_accuracy')}, "
-        f"specialist alone={hier.get('pair_specialist_alone_acc')})",
+        f"specialist alone={hier.get('pair_specialist_alone_acc')}{gate_note})",
         f"- Scratch hierarchy: **{scratch.get('accuracy', 0):.2%}** "
         f"(swaps={scratch.get('weevil_borer_swap_count')})",
         "",

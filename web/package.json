@@ -1,6 +1,6 @@
 {
   "name": "kaan-web",
-  "version": "1.0.0",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -33,5 +33,16 @@
     "tsx": "^4.23.1",
     "typescript": "5.5.3"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Arnav Dhiman",
+    "email": "arnavd371@gmail.com",
+    "url": "https://arnavdportfolio.vercel.app/"
+  },
+  "homepage": "https://kaan-web.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arnavd371/Project-Kaan.git",
+    "directory": "web"
+  }
 }

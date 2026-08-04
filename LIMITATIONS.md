@@ -12,7 +12,7 @@ Kaan is a **screening aid**, not a laboratory or legal diagnosis. The points bel
 
 - Reported accuracies use **leakage-aware file-level splits** after byte-dedupe on the above sources.
 - Comparison to Balingbing et al. **84.51%** is a **soft reference** under our protocol, not a locked reimplementation of their exact pipeline.
-- Bake-off numbers are multi-seed (42/43/44). Some advanced figures began as single-seed; multi-seed aggregates with bootstrap CIs are the preferred citation (`experiments/results/advanced_multiseed/` when present).
+- Bake-off numbers are multi-seed (42/43/44). Advanced-suite citation preferred: [`experiments/results/advanced_multiseed/`](experiments/results/advanced_multiseed/) (means ± std, bootstrap 95% CIs).
 
 ## Deployment domain shift (first-class finding)
 
@@ -34,5 +34,5 @@ So laboratory accuracy **does not** imply phone-mic field accuracy. Any climate-
 ## What would close the gap
 
 1. Labeled **phone-on-bag** recordings under Indian storage conditions (same four classes).
-2. Multi-seed CIs for every advanced table (robustness, calibration, hierarchical fusion).
-3. Human factors study with farmers / FPOs on false-alarm cost.
+2. Human factors study with farmers / FPOs on false-alarm cost.
+3. Tighter phone-mic augmentation matched to measured handset frequency responses.
