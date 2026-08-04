@@ -12,7 +12,7 @@ the full copyright owner details, data attributions, and third-party notices.
   Project:      https://github.com/arnavd371/Project-Kaan
   Live demo:    https://kaan-web.vercel.app
   SPDX:         Apache-2.0
-  Version:      3.1.0
+  Version:      3.1.1
 
 npm dependencies installed under node_modules/ (not committed) retain their
 own licenses.

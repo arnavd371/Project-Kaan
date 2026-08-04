@@ -1,4 +1,4 @@
-# Advanced suite — multi-seed aggregate
+# Advanced suite - multi-seed aggregate
 
 Seeds: `[42, 43, 44]` (n=3)
 

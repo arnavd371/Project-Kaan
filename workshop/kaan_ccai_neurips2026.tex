@@ -30,7 +30,7 @@ Post-harvest insect damage is a major food-security and climate-relevant loss pa
 We present \textbf{Kaan}, an open, offline smartphone system that classifies contact acoustics into clean grain versus three primary stored-rice pests using a compact INT8 CNN.
 Rather than chasing laboratory accuracy alone, we emphasize deployment constraints: leakage-aware evaluation, multi-approach bake-offs, teacher distillation into a phone-sized model, temperature calibration with selective abstention, and a \emph{robustness ladder} that stress-tests phone-like degradations without new field recordings.
 On IRRI acoustic data with ambient clean windows, a distilled production model reaches 97.2\% validation accuracy; multi-seed bake-offs show classical and deep models both exceed a cited 84.51\% reference under our protocol.
-The robustness ladder reveals sharp drops under additive noise and telephone band-limiting---a limitation we treat as a first-class result for climate-adaptation tooling that must survive rural handsets.
+The robustness ladder reveals sharp drops under additive noise and telephone band-limiting: a limitation we treat as a first-class result for climate-adaptation tooling that must survive rural handsets.
 Code and models are released under Apache-2.0.
 \end{abstract}
 
@@ -52,7 +52,7 @@ Eleven approaches (mel-CNNs, 1D CNN, YAMNet probe, SVM/MLP/GBDT/RF/ExtraTrees/kN
 \paragraph{Distillation.}
 Soft labels from GBDT + ExtraTrees + deep CNN train a deep student for deployment (TFLite $\sim$333\,KB; ONNX for web).
 \paragraph{Robustness ladder.}
-Without field mics, we replay validation audio under pink SNR, phone band-pass, muffling, compression, clipping, reverb, gain/AGC, and combinations---reporting accuracy per rung.
+Without field mics, we replay validation audio under pink SNR, phone band-pass, muffling, compression, clipping, reverb, gain/AGC, and combinations, reporting accuracy per rung.
 \paragraph{Calibration.}
 Temperature scaling fitted on a validation slice; abstain curves trade coverage for accuracy.
 \paragraph{Confusion-focused heads.}
@@ -103,7 +103,7 @@ SNR $\le10$\,dB / phone combos & $\sim7.6\%$ \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:robust} is the deployment-facing result: laboratory mel-CNNs survive mild muffling but \textbf{fail under phone-band and noise}---exactly the shift rural handsets induce.
+Table~\ref{tab:robust} is the deployment-facing result: laboratory mel-CNNs survive mild muffling but \textbf{fail under phone-band and noise}, exactly the shift rural handsets induce.
 From-scratch hierarchical cascades collapse; fine-tuned specialists reach $\sim$97\% on the pair subset alone, and strict gating aims to preserve baseline overall accuracy (multi-seed aggregates in the supplement / released JSON).
 
 \section{Limitations (domain shift)}
@@ -112,7 +112,7 @@ From-scratch hierarchical cascades collapse; fine-tuned specialists reach $\sim$
   \item \textbf{Species coverage.} Pulse beetle and other pests are out of scope.
   \item \textbf{Reference comparison} to 84.51\% is soft (protocol-matched claim, not identical reimplementation).
   \item \textbf{Single geography / grain type} in source data; storage bag materials and vernacular mics vary.
-  \item \textbf{Screening aid only}---not legal or lab diagnosis; low-confidence UX must abstain.
+  \item \textbf{Screening aid only}: not legal or lab diagnosis; low-confidence UX must abstain.
 \end{itemize}
 
 \section{Open release and outlook}

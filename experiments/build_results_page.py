@@ -116,7 +116,7 @@ def build() -> Path:
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Project Kaan — Experiment Results</title>
+<title>Project Kaan - Experiment Results</title>
 <style>
   :root {{
     --bg: #f3efe6;
@@ -167,7 +167,7 @@ def build() -> Path:
 <header>
   <h1>Kaan experiment results</h1>
   <p>Desk-bound acoustic pest detection: bake-off, distillation, robustness ladder,
-     weevil↔borer heads, calibration, and SSL — without field recordings.</p>
+     weevil↔borer heads, calibration, and SSL - without field recordings.</p>
 </header>
 <main>
   <div class="grid two">

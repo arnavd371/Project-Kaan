@@ -21,9 +21,9 @@ Copyright owner (Licensor)
   Live demo:    https://kaan-web.vercel.app
   Kaggle:       https://www.kaggle.com/arnavd371
 
-  Project title:  Kaan (कान) — Acoustic stored-grain pest detector
+  Project title:  Kaan (कान) - Acoustic stored-grain pest detector
   Software SPDX:  Apache-2.0
-  Version:        3.1.0 (this NOTICE ships with the tagged release)
+  Version:        3.1.1 (this NOTICE ships with the tagged release)
 
 This product includes software developed by Arnav Dhiman.
 
@@ -46,7 +46,7 @@ repository by default. Their terms remain those of the original publishers
 Third-party data (not licensed under this Apache grant)
 ---------------------------------------------------------------------------
 
-1) IRRI Rice Acoustic Sensor Dataset — pest class audio
+1) IRRI Rice Acoustic Sensor Dataset - pest class audio
    Balingbing C. et al. (2024). Application of a multi-layer CNN to classify
    major insect pests in stored rice detected by an acoustic device.
    Computers and Electronics in Agriculture, 225, 109297.

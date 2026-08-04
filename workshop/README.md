@@ -1,6 +1,6 @@
 # Workshop submission (CCAI @ NeurIPS 2026)
 
-Target: **Tackling Climate Change with Machine Learning** workshop — Papers track (≤4 pages + refs), agriculture/food, ground-up / on-device theme.
+Target: **Tackling Climate Change with Machine Learning** workshop - Papers track (≤4 pages + refs), agriculture/food, ground-up / on-device theme.
 
 | File | Role |
 |---|---|
