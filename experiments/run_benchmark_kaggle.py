@@ -49,7 +49,6 @@ def _find_code_input() -> Path | None:
     for p in INPUT_CANDIDATES:
         if p.is_dir():
             return p
-    # Any input dataset that contains experiments/ or experiments.zip
     input_root = Path("/kaggle/input")
     if input_root.is_dir():
         for child in sorted(input_root.iterdir()):
@@ -116,7 +115,6 @@ def _sync_project_code() -> Path:
     if not (PROJECT / "experiments" / "run_benchmark_kaggle.py").exists():
         hits = list(PROJECT.rglob("run_benchmark_kaggle.py"))
         raise SystemExit(f"experiments code missing after sync; found={hits}")
-    # Ensure model is a package
     (PROJECT / "model").mkdir(exist_ok=True)
     (PROJECT / "model" / "__init__.py").touch(exist_ok=True)
     (PROJECT / "experiments" / "__init__.py").touch(exist_ok=True)
@@ -226,7 +224,6 @@ def main() -> None:
     )
     subprocess.run(cmd, check=True, cwd=str(project))
 
-    # Mirror a short summary to /kaggle/working root for easy download
     report = OUT_DIR / "report.md"
     if report.exists():
         shutil.copy2(report, WORK / "benchmark_report.md")

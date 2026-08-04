@@ -50,18 +50,14 @@ def estimate_severity(audio_path):
     y, sr = librosa.load(audio_path, sr=16000)
     y, _ = librosa.effects.trim(y, top_db=20)
 
-    # RMS energy - correlates with insect population density
-    # per Balingbing et al. 2024 (Computers & Electronics in Agriculture)
     rms = librosa.feature.rms(y=y)[0]
     mean_rms = float(np.mean(rms))
 
-    # Impulse rate - number of high-energy frames per second
-    # insects produce distinct impulses when feeding/moving
     threshold = np.mean(rms) + 1.5 * np.std(rms)
     impulse_frames = np.sum(rms > threshold)
     impulse_rate = impulse_frames / (len(y) / sr)
 
-    # Map to three-tier severity scale
+    # per Balingbing et al. 2024 (Computers & Electronics in Agriculture)
     # thresholds derived from RMS distribution in training data
     if mean_rms < 0.015 or impulse_rate < 2:
         return {

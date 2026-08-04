@@ -63,7 +63,6 @@ def main() -> None:
     _, X_va = build_feature_matrices(split["val_paths"], labels=split["y_val"], smoke_seed=seed)
     y_tr, y_va = split["y_train"], split["y_val"]
 
-    # Baseline
     model = build_cnn_deep(4)
     bs = min(32, max(4, len(X_tr)))
     y_tr_oh = keras.utils.to_categorical(y_tr, 4)

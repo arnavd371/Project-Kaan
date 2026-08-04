@@ -68,7 +68,6 @@ def aggregate_advanced(summaries: list[dict[str, Any]]) -> dict[str, Any]:
     for name, path in metrics:
         out_metrics[name] = summarize_values(collect_metric(summaries, path), name)
 
-    # Robustness: per-rung across seeds
     rung_vals: dict[str, list[float]] = {}
     for s in summaries:
         for r in _get(s, "robustness", "rungs", default=[]) or []:

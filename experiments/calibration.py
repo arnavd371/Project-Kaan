@@ -150,7 +150,6 @@ def calibration_report(
         probs = softmax_np(logits, 1.0)
     else:
         probs = probs_from_model_outputs(raw)
-        # recover pseudo-logits for T fit
         logits = np.log(np.clip(probs, 1e-12, 1.0))
 
     rng = np.random.default_rng(seed)
@@ -177,7 +176,6 @@ def calibration_report(
         "accuracy": float(accuracy_score(y_e, probs_t.argmax(1))),
         "temperature": t_star,
     }
-    # full-set abstain on temperature-scaled probs
     full_scaled = softmax_np(logits, t_star)
     return {
         "before": before,

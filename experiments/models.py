@@ -112,8 +112,6 @@ def tensorflow_available() -> bool:
         return False
 
 
-# CNN architectures
-
 
 def build_cnn_shallow(n_classes: int = 4):
     """Shallow mel-CNN (model/train.py)."""
@@ -342,8 +340,6 @@ def train_cnn(
     result._recipe = flags  # type: ignore[attr-defined]
     return result
 
-
-# Classical approaches
 
 
 def _count_sklearn_params(est) -> int | None:

@@ -51,10 +51,8 @@ def nt_xent(z1, z2, temperature: float = 0.2):
     batch = tf.shape(z1)[0]
     z = tf.concat([z1, z2], axis=0)  # 2B, D
     sim = tf.matmul(z, z, transpose_b=True) / temperature
-    # mask self
     logits_mask = tf.ones_like(sim) - tf.eye(2 * batch)
     sim = sim * logits_mask - 1e9 * (1.0 - logits_mask)
-    # positives: i ↔ i+B
     labels = tf.range(batch)
     labels = tf.concat([labels + batch, labels], axis=0)
     loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=sim)
@@ -120,11 +118,9 @@ def finetune_from_encoder(
     from tensorflow.keras import layers
     from experiments.models import _make_spec_augment_sequence
 
-    # Reuse embedding trunk
     emb_layer = encoder.get_layer("embedding")
     inp = encoder.input
     h = emb_layer.output
-    # freeze early? unfreeze all for small data
     x = layers.Dense(192, activation="relu")(h)
     x = layers.Dropout(0.45)(x)
     out = layers.Dense(len(CLASS_NAMES), activation="softmax")(x)

@@ -152,7 +152,7 @@ def _teacher_probs(
     stacks = []
     for name, clf in teachers_classical.items():
         p = clf.predict_proba(X_hand)
-        # Ensure column order matches class indices 0..C-1
+        # sklearn predict_proba columns follow classes_, not 0..C-1
         order = list(clf.classes_)
         aligned = np.zeros((len(X_hand), len(CLASS_NAMES)), dtype=np.float64)
         for j, c in enumerate(order):
@@ -258,7 +258,6 @@ def run_distill(args: argparse.Namespace) -> dict:
 
     t0 = time.perf_counter()
     if args.smoke:
-        # Synthetic mel/handcrafted features — no WAV required
         rng = np.random.default_rng(args.seed)
         n_train, n_val = 64, 32
         X_hand_train = rng.normal(size=(n_train, 74)).astype(np.float32)
@@ -345,7 +344,6 @@ def run_distill(args: argparse.Namespace) -> dict:
     ens_f1 = float(f1_score(y_val, ensemble_pred, average="macro"))
     print(f"  ensemble soft val_acc={ens_acc:.4f} macro_f1={ens_f1:.4f}", flush=True)
 
-    # Baseline: hard-only shallow (for report)
     print("Training hard-only shallow baseline…", flush=True)
     from tensorflow import keras
 
@@ -397,7 +395,6 @@ def run_distill(args: argparse.Namespace) -> dict:
     print(f"  distilled student val_acc={dist_acc:.4f} macro_f1={dist_f1:.4f}", flush=True)
     print(classification_report(y_val, dist_pred, target_names=CLASS_NAMES, digits=4))
 
-    # Ship distilled only if it keeps pace with hard-only; otherwise ship hard-only.
     ship = deploy
     shipped = "distilled"
     if dist_acc + 1e-6 < base_acc - 0.005:
