@@ -1,10 +1,22 @@
 Project Kaan (कान)
 Copyright 2026 Arnav Dhiman
 
+Copyright owner:
+  Name:     Arnav Dhiman
+  Email:    arnavd371@gmail.com
+  GitHub:   https://github.com/arnavd371
+  Portfolio: https://arnavdportfolio.vercel.app/
+  Project:  https://github.com/arnavd371/Project-Kaan
+  Demo:     https://kaan-web.vercel.app
+
 This product includes software developed by Arnav Dhiman.
+Licensed under the Apache License, Version 2.0. See the LICENSE file.
 
 Training data citation (not redistributed as part of this license grant):
 Balingbing C. et al. (2024). Application of a multi-layer CNN to classify major
 insect pests in stored rice detected by an acoustic device. Computers and
 Electronics in Agriculture, 225, 109297. Dataset terms remain those of the
 original authors / IRRI Rice Acoustic Sensor Dataset.
+
+Speech Commands ambient windows (Warden / Google) may be used when preparing
+the clean class for training; their terms remain those of the original dataset.

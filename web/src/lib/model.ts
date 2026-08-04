@@ -4,11 +4,11 @@ import { loadMelFilterbank, preprocessWaveform, MEL_SHAPE } from "./mel";
 export const CLASS_NAMES = ["clean", "rice_weevil", "lesser_grain_borer", "red_flour_beetle"] as const;
 
 const CONFIDENCE_THRESHOLD = 0.6;
-const INPUT_SCALE = 0.003921477124094963;
+const INPUT_SCALE = 0.003921568859368563;
 const INPUT_ZERO_POINT = 0;
 const OUTPUT_SCALE = 0.00390625;
 const OUTPUT_ZERO_POINT = 0;
-const INPUT_NAME = "serving_default_keras_tensor:0";
+const INPUT_NAME = "serving_default_input_layer_2:0";
 const ORT_VERSION = "1.27.0";
 const ORT_SCRIPT = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/ort.wasm.min.js`;
 const ORT_WASM_PATH = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
