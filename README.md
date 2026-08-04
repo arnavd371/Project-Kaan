@@ -28,12 +28,13 @@ Hold a phone against a storage bag, record about ten seconds of audio, and get a
 7. [Technical stack](#technical-stack)
 8. [Data](#data)
 9. [Experiments (v2 bake-off)](#experiments-v2-bake-off)
-10. [Run locally](#run-locally)
-11. [Train and export](#train-and-export)
-12. [Privacy, safety, and limits](#privacy-safety-and-limits)
-13. [Author and copyright](#author-and-copyright)
-14. [Cite](#cite)
-15. [Acknowledgements](#acknowledgements)
+10. [Advanced suite (v3+)](#advanced-suite-v3)
+11. [Run locally](#run-locally)
+12. [Train and export](#train-and-export)
+13. [Privacy, safety, and limits](#privacy-safety-and-limits)
+14. [Author and copyright](#author-and-copyright)
+15. [Cite](#cite)
+16. [Acknowledgements](#acknowledgements)
 
 ---
 
@@ -221,6 +222,27 @@ bash experiments/kaggle/push_and_run.sh
 ```
 
 Details: [`experiments/README.md`](experiments/README.md).
+
+---
+
+## Advanced suite (v3+)
+
+Desk-bound follow-ons (no field mics): phone-like **robustness ladder**, **weevil↔borer** cost-sensitive + hierarchical heads, **temperature calibration / abstain curves**, **SimCLR mel SSL** on IRRI + Speech Commands ambient → fine-tune, and a static **results dashboard**.
+
+```bash
+# Local smoke
+python -m experiments.run_advanced --smoke
+
+# Kaggle GPU (full IRRI) — preferred
+bash experiments/kaggle/push_advanced.sh
+# https://www.kaggle.com/code/arnavd371/kaan-advanced-suite
+
+# Dashboard from committed JSON/MD
+python -m experiments.build_results_page
+# → experiments/results/index.html
+```
+
+Artifacts land in `experiments/results/advanced/` after `--copy-results` (Kaggle sets this). Skips farmer-app UX (multi-clip vote, etc.).
 
 ---
 

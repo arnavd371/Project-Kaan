@@ -9,7 +9,14 @@ The live app is under `web/`.
 |---|---|
 | `run_benchmark.py` | Multi-approach benchmark entry |
 | `run_ablations.py` | CNN recipe ablations |
+| `run_advanced.py` | Robustness / hierarchical / calibration / SSL |
+| `run_advanced_kaggle.py` | Kaggle orchestrator for advanced suite |
 | `run_benchmark_kaggle.py` | Kaggle orchestrator |
+| `robustness.py` | Phone-like degradation ladder |
+| `hierarchical.py` | Cost-sensitive + weevil↔borer hierarchy |
+| `calibration.py` | Temperature scaling + abstain curves |
+| `ssl_pretrain.py` | SimCLR mel pretrain → fine-tune |
+| `build_results_page.py` | Static `results/index.html` dashboard |
 | `models.py` | Approach builders / trainers |
 | `features.py` | Mel + handcrafted + waveforms |
 | `audit.py` / `stats.py` / `findings.py` / `plots.py` | Checks, stats, reports, figures |
@@ -61,9 +68,14 @@ pip install 'tensorflow>=2.13.0'   # CNNs
 python -m experiments.run_benchmark --smoke
 python -m experiments.run_benchmark --seeds 42,43,44 --out experiments/outputs/multi
 python -m experiments.run_ablations --out experiments/outputs/ablations
+
+# Advanced suite (prefer Kaggle GPU for full IRRI):
+python -m experiments.run_advanced --smoke
+bash experiments/kaggle/push_advanced.sh
+python -m experiments.build_results_page
 ```
 
-Kaggle GPU (full IRRI):
+Kaggle GPU (bake-off):
 
 ```bash
 bash experiments/kaggle/push_and_run.sh
