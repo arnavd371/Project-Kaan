@@ -5,9 +5,6 @@ type: software
 authors:
   - family-names: Dhiman
     given-names: Arnav
-    email: arnavd371@gmail.com
-    website: "https://arnavdportfolio.vercel.app/"
-    alias: arnavd371
 repository-code: "https://github.com/arnavd371/Project-Kaan"
 url: "https://kaan-web.vercel.app"
 license: Apache-2.0

@@ -5,14 +5,8 @@ This directory is part of Project Kaan and is licensed under the Apache
 License, Version 2.0. See the repository root LICENSE and NOTICE files for
 the full copyright owner details, data attributions, and third-party notices.
 
-  Legal name:   Arnav Dhiman
-  Email:        arnavd371@gmail.com
-  GitHub:       https://github.com/arnavd371
-  Portfolio:    https://arnavdportfolio.vercel.app/
-  Project:      https://github.com/arnavd371/Project-Kaan
-  Live demo:    https://kaan-web.vercel.app
-  SPDX:         Apache-2.0
-  Version:      3.1.1
+  Copyright owner: Arnav Dhiman
+  SPDX:            Apache-2.0
 
 npm dependencies installed under node_modules/ (not committed) retain their
 own licenses.
