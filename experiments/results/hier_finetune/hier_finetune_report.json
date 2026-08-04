@@ -1,0 +1,70 @@
+{
+  "baseline_acc": 0.9620253164556962,
+  "baseline_macro_f1": 0.9698295531712617,
+  "hierarchical_finetuned": {
+    "accuracy": 0.9525316455696202,
+    "macro_f1": 0.961401580572565,
+    "weevil_borer_swap_count": 6,
+    "pair_subset_accuracy": 0.925,
+    "pair_specialist_alone_acc": 0.97,
+    "n_pair_overrides": 199,
+    "confusion": [
+      [
+        24,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        90,
+        3,
+        7
+      ],
+      [
+        0,
+        3,
+        95,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        92
+      ]
+    ]
+  },
+  "hierarchical_scratch": {
+    "accuracy": 0.31645569620253167,
+    "macro_f1": 0.1201923076923077,
+    "weevil_borer_swap_count": 100,
+    "pair_subset_accuracy": 0.5,
+    "confusion": [
+      [
+        0,
+        24,
+        0,
+        0
+      ],
+      [
+        0,
+        100,
+        0,
+        0
+      ],
+      [
+        0,
+        100,
+        0,
+        0
+      ],
+      [
+        0,
+        92,
+        0,
+        0
+      ]
+    ]
+  }
+}
