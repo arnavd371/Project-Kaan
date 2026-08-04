@@ -1,5 +1,5 @@
 # Hierarchical fine-tune report
 
-- Baseline: **96.20%**
-- Fine-tuned hierarchy: **95.25%** (swaps=6, pair=0.925, specialist alone=0.97)
-- Scratch hierarchy: **31.65%** (swaps=100)
+- Baseline: **96.84%**
+- Fine-tuned hierarchy: **97.15%** (swaps=8, pair=0.96, specialist alone=0.96)
+- Scratch hierarchy: **94.30%** (swaps=16)
