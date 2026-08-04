@@ -11,7 +11,7 @@ authors:
 repository-code: "https://github.com/arnavd371/Project-Kaan"
 url: "https://kaan-web.vercel.app"
 license: Apache-2.0
-version: "3.1.0"
+version: "3.1.1"
 date-released: "2026-08-04"
 abstract: >-
   Kaan listens to stored grain using a smartphone microphone, converts audio to

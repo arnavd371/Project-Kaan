@@ -2,6 +2,12 @@
 
 All notable releases of Project Kaan are listed here.
 
+## [3.1.1] — 2026-08-04
+
+- Strip decorative section banners and narrating comments from Python sources
+- Keep leakage warnings, citations, and librosa parity notes
+- Web meta description no longer uses “AI-Powered”
+
 ## [3.1.0] — 2026-08-04
 
 Workshop-competitive research release on top of the v3 distilled production model.
