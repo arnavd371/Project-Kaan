@@ -72,13 +72,26 @@
     </section>
     <section>
       <h2>Advanced heads + SSL</h2>
-      <p>Pending advanced run.</p>
       
+        <ul>
+          <li>Baseline: <strong>97.15%</strong></li>
+          <li>Cost-sensitive: <strong>96.84%</strong>
+              (swaps=7)</li>
+          <li>Hierarchical: <strong>78.16%</strong>
+              (pair=0.67)</li>
+          <li>SSL fine-tune: <strong>97.78%</strong></li>
+        </ul>
+        
+      
+        <p>ECE 0.0442 → 0.0301
+           (T=0.500);
+           NLL 0.1257 → 0.1141</p>
+        
     </section>
   </div>
   <section>
     <h2>Robustness ladder</h2>
-    <p>Run advanced suite to populate.</p>
+    <table><tr><th>Rung</th><th>Accuracy</th><th>Macro-F1</th></tr><tr><td><code>clean</code></td><td>97.15%</td><td>0.9772</td></tr><tr><td><code>snr20</code></td><td>30.38%</td><td>0.2728</td></tr><tr><td><code>snr10</code></td><td>7.59%</td><td>0.0353</td></tr><tr><td><code>snr5</code></td><td>7.59%</td><td>0.0353</td></tr><tr><td><code>snr0</code></td><td>7.59%</td><td>0.0353</td></tr><tr><td><code>phone_band</code></td><td>52.22%</td><td>0.4759</td></tr><tr><td><code>muffle</code></td><td>93.35%</td><td>0.8713</td></tr><tr><td><code>compress</code></td><td>92.09%</td><td>0.9005</td></tr><tr><td><code>clip</code></td><td>87.66%</td><td>0.8355</td></tr><tr><td><code>reverb</code></td><td>93.35%</td><td>0.9464</td></tr><tr><td><code>gain_-12</code></td><td>97.15%</td><td>0.9772</td></tr><tr><td><code>combo_phone</code></td><td>7.59%</td><td>0.0353</td></tr><tr><td><code>combo_hard</code></td><td>7.59%</td><td>0.0353</td></tr></table>
   </section>
   <section>
     <h2>Multi-seed bake-off (v2)</h2>
@@ -99,7 +112,35 @@
   </section>
   <section>
     <h2>Advanced report</h2>
-    <pre>Run: python -m experiments.run_advanced --copy-results</pre>
+    <pre># Advanced suite report
+
+- Seed: `42` smoke=False
+- Baseline cnn_deep: **97.15%** (macro F1 0.9772)
+- Cost-sensitive: **96.84%** (weevil↔borer swaps=7)
+- Hierarchical: **78.16%** (pair subset=0.67)
+- SSL fine-tune: **97.78%**
+- Baseline ECE before→after T: 0.0442→0.0301 (T=0.500)
+
+## Robustness ladder (baseline)
+
+| Rung | Acc | Macro-F1 |
+|---|---:|---:|
+| `clean` | 97.15% | 0.9772 |
+| `snr20` | 30.38% | 0.2728 |
+| `snr10` | 7.59% | 0.0353 |
+| `snr5` | 7.59% | 0.0353 |
+| `snr0` | 7.59% | 0.0353 |
+| `phone_band` | 52.22% | 0.4759 |
+| `muffle` | 93.35% | 0.8713 |
+| `compress` | 92.09% | 0.9005 |
+| `clip` | 87.66% | 0.8355 |
+| `reverb` | 93.35% | 0.9464 |
+| `gain_-12` | 97.15% | 0.9772 |
+| `combo_phone` | 7.59% | 0.0353 |
+| `combo_hard` | 7.59% | 0.0353 |
+
+Elapsed: 1080.6s
+</pre>
   </section>
   <section>
     <h2>Findings seed 42 (excerpt)</h2>

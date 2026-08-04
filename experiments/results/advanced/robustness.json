@@ -1,0 +1,96 @@
+{
+  "rungs": [
+    {
+      "rung": "clean",
+      "description": "Identity (no degradation)",
+      "n": 316,
+      "accuracy": 0.9715189873417721,
+      "macro_f1": 0.9771676654029596
+    },
+    {
+      "rung": "snr20",
+      "description": "Pink noise SNR 20 dB",
+      "n": 316,
+      "accuracy": 0.3037974683544304,
+      "macro_f1": 0.2727777535926942
+    },
+    {
+      "rung": "snr10",
+      "description": "Pink noise SNR 10 dB",
+      "n": 316,
+      "accuracy": 0.0759493670886076,
+      "macro_f1": 0.03529411764705882
+    },
+    {
+      "rung": "snr5",
+      "description": "Pink noise SNR 5 dB",
+      "n": 316,
+      "accuracy": 0.0759493670886076,
+      "macro_f1": 0.03529411764705882
+    },
+    {
+      "rung": "snr0",
+      "description": "Pink noise SNR 0 dB",
+      "n": 316,
+      "accuracy": 0.0759493670886076,
+      "macro_f1": 0.03529411764705882
+    },
+    {
+      "rung": "phone_band",
+      "description": "Telephone band-pass 300\u20133400 Hz",
+      "n": 316,
+      "accuracy": 0.5221518987341772,
+      "macro_f1": 0.4758771929824561
+    },
+    {
+      "rung": "muffle",
+      "description": "Bag-muffle LPF ~1.2 kHz",
+      "n": 316,
+      "accuracy": 0.9335443037974683,
+      "macro_f1": 0.8713151930899629
+    },
+    {
+      "rung": "compress",
+      "description": "Soft compression",
+      "n": 316,
+      "accuracy": 0.9208860759493671,
+      "macro_f1": 0.9005011144864754
+    },
+    {
+      "rung": "clip",
+      "description": "Hard clip",
+      "n": 316,
+      "accuracy": 0.8765822784810127,
+      "macro_f1": 0.8355153685434837
+    },
+    {
+      "rung": "reverb",
+      "description": "Light delay reverb",
+      "n": 316,
+      "accuracy": 0.9335443037974683,
+      "macro_f1": 0.9464237540844928
+    },
+    {
+      "rung": "gain_-12",
+      "description": "Gain \u221212 dB then AGC",
+      "n": 316,
+      "accuracy": 0.9715189873417721,
+      "macro_f1": 0.9771676654029596
+    },
+    {
+      "rung": "combo_phone",
+      "description": "Phone band + SNR 10 + compress",
+      "n": 316,
+      "accuracy": 0.0759493670886076,
+      "macro_f1": 0.03529411764705882
+    },
+    {
+      "rung": "combo_hard",
+      "description": "Muffle + SNR 5 + clip",
+      "n": 316,
+      "accuracy": 0.0759493670886076,
+      "macro_f1": 0.03529411764705882
+    }
+  ],
+  "seed": 42
+}
