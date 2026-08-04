@@ -88,8 +88,8 @@
         "body": "Detect runs the CNN. How It Works explains the science. About and Impact covers problem, SDGs, ethics, and deployment."
       },
       "app_upload": {
-        "title": "Your own recording",
-        "body": "Upload a WAV or MP3 from your phone. Place the phone against a grain bag, record 10-30 seconds, then choose the file."
+        "title": "Record or upload",
+        "body": "Tap Record 10 seconds with the phone flat on the bag, or upload a WAV / MP3. The CNN runs on your device."
       },
       "app_samples": {
         "title": "Try IRRI samples",

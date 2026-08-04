@@ -17,6 +17,7 @@ android/.idea/
 *.apk
 *.aab
 *.keystore
+dist/
 
 # iOS build artifacts
 ios/App/build/

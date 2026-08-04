@@ -285,3 +285,21 @@ select.btn-pi {
   max-width: 22rem;
   line-height: 1.4;
 }
+
+/* Capacitor / Android WebView: match cream site, safer touch scrolling */
+html.kaan-native,
+html.kaan-native body {
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+html.kaan-native input,
+html.kaan-native textarea,
+html.kaan-native audio {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+html.kaan-native .btn-pi,
+html.kaan-native .kaan-tabs button {
+  min-height: 3rem;
+}
