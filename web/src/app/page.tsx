@@ -86,14 +86,24 @@ export default function IntroPage() {
           )}
         </div>
 
-        <button
-          data-guide="guide-intro-start"
-          type="button"
-          onClick={startApp}
-          className="btn-pi w-full sm:w-auto px-10"
-        >
-          Listen to your grain
-        </button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+          <button
+            data-guide="guide-intro-start"
+            type="button"
+            onClick={startApp}
+            className="btn-pi w-full sm:w-auto px-10"
+          >
+            Listen to your grain
+          </button>
+          <a
+            href="https://drive.google.com/file/d/1WwvMeZkdU7a_PKgA5OBt8x42VwzASELi/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-pi btn-pi-ghost w-full sm:w-auto px-10 inline-flex items-center justify-center"
+          >
+            Research paper
+          </a>
+        </div>
 
       </div>
 
