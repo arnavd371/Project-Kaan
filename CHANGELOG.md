@@ -26,4 +26,6 @@ Research release on top of the v3 distilled production model.
 
 - Leakage-aware multi-approach bake-off, multi-seed stats, ablations
 
-Earlier tags (`v1.x`) document experiment and ablation milestones.
+## [1.0.0] — 2026
+
+- Initial product release
